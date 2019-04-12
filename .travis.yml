@@ -1,0 +1,53 @@
+language: c
+
+os: osx
+
+osx_image:
+  - xcode8.3
+  - xcode10.2
+
+compiler:
+  - clang
+
+sudo: false
+
+addons:
+  homebrew:
+    packages:
+      - ruby
+    update: true
+
+script:
+  - set -e
+  - |
+    if [ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]; then
+      brew reinstall --build-from-source ruby
+    fi
+  - ruby --version
+  - cc -o test main.c
+
+jobs:
+  include:
+    - stage: test
+      name: Test1
+      script:
+        - ./test hello
+    - stage: test
+      name: Test2
+      script:
+        - ./test world
+    - stage: deploy
+      name: Deployment
+      deploy:
+        provider: releases
+        api_key:
+          secure: 
+        file: test
+        skip_cleanup: true
+        on:
+          condition: $TRAVIS_OSX_IMAGE = xcode10.2
+          all_branches: true
+          tags: true
+          repo: ichizok/travis-playground
+
+# vim:set sts=2 sw=2 tw=0 et:
