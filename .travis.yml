@@ -16,6 +16,7 @@ addons:
     packages:
       - ruby
     update: true
+    if: osx_image = xcode10.2
 
 script:
   - set -e
