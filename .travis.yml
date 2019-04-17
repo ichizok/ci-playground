@@ -18,6 +18,10 @@ addons:
     update: true
     if: osx_image = xcode10.2
 
+cache:
+  directories:
+    - /usr/local/Homebrew/Library/Homebrew/vendor/
+
 script:
   - set -e
   - |
