@@ -45,8 +45,8 @@ cache:
 
 script:
   - set -e
-  - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3 \( -type d -o -type l \)
-  - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2 -type d
+  - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
+  - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
   - set +e
   # - |
   #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
