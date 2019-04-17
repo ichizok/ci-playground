@@ -27,6 +27,7 @@ addons:
 cache:
   directories:
     - /usr/local/Homebrew/Library/Homebrew/vendor/
+    - /usr/local/Homebrew/Library/Taps/homebrew-bundle/
 
 script:
   - set -e
