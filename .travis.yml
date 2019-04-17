@@ -11,12 +11,19 @@ compiler:
 
 sudo: false
 
+env:
+  global:
+    - FOO=foo BAR=bar
+  matrix:
+    - TEST=test1
+    - TEST=test2
+
 addons:
   homebrew:
+    if: osx_image = xcode10.2
     packages:
       - ruby
     update: true
-    if: osx_image = xcode10.2
 
 cache:
   directories:
