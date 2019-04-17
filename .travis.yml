@@ -20,7 +20,6 @@ env:
 
 addons:
   homebrew:
-    if: osx_image = xcode10.2
     packages:
       - ruby
     update: true
