@@ -33,14 +33,15 @@ cache:
 
 before_cache:
   - |
+    : $(
     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
       if [[ -e ${repo}/.git ]]; then
         (
         cd ${repo}
         git gc --aggressive --prune=now
-        )
+        ) &
       fi
-    done
+    done)
 
 script:
   - set -e
