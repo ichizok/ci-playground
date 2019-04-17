@@ -32,7 +32,7 @@ cache:
 script:
   - set -e
   - |
-    if [ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]; then
+    if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
       brew reinstall --build-from-source ruby
     fi
   - ruby --version
