@@ -22,8 +22,7 @@ env:
 
 addons:
   homebrew:
-    packages:
-      - ruby
+    brewfile: Brewfile.travis
     update: true
 
 cache:
@@ -52,7 +51,7 @@ script:
   #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
   #     brew reinstall --build-from-source ruby
   #   fi
-  - ruby --version
+  - /usr/local/opt/ruby/bin/ruby --version
   - cc -o test main.c
 
 # jobs:
