@@ -29,12 +29,9 @@ cache:
   directories:
     - /usr/local/Homebrew/Library/Homebrew/vendor/
     - /usr/local/Homebrew/Library/Taps/
-    - $HOME/Library/Caches/Homebrew/
-
-before_cache:
-  - brew cleanup
 
 # before_cache:
+#   - brew cleanup
 #   - |
 #     : $(
 #     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
