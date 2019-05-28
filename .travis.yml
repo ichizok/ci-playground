@@ -2,12 +2,6 @@ language: c
 
 os: osx
 
-osx_image:
-  - xcode7.3
-  - xcode8.3
-  - xcode9.4
-  - xcode10.2
-
 compiler:
   - clang
 
@@ -20,28 +14,29 @@ env:
   #   - TEST=test1
   #   - TEST=test2
 
-addons:
-  homebrew:
-    brewfile: Brewfile.travis
-    update: true
+anchors:
+  addons: &addons
+    homebrew:
+      brewfile: Brewfile.travis
+      update: true
 
-cache:
-  directories:
-    - /usr/local/Homebrew/Library/Homebrew/vendor/
-    - /usr/local/Homebrew/Library/Taps/
+  cache: &cache
+    directories:
+      - /usr/local/Homebrew/Library/Homebrew/vendor/
+      - /usr/local/Homebrew/Library/Taps/
 
-# before_cache:
-#   - brew cleanup
-#   - |
-#     : $(
-#     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
-#       if [[ -e ${repo}/.git ]]; then
-#         (
-#         cd ${repo}
-#         git gc --aggressive --prune=now
-#         ) &
-#       fi
-#     done)
+  # before_cache: &before_cache
+  #   - brew cleanup
+  #   - |
+  #     : $(
+  #     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
+  #       if [[ -e ${repo}/.git ]]; then
+  #         (
+  #         cd ${repo}
+  #         git gc --aggressive --prune=now
+  #         ) &
+  #       fi
+  #     done)
 
 script:
   - set -e
@@ -53,19 +48,31 @@ script:
   #     brew reinstall --build-from-source ruby
   #   fi
   - cc -o test main.c
+  - ./test "hello world"
 
-# jobs:
-#   include:
-#     - stage: test
-#       name: Test1
-#       script:
-#         - ./test hello
-#     - stage: test
-#       name: Test2
-#       script:
-#         - ./test world
+jobs:
+  include:
+    - stage: test
+      name: Test1
+      osx_image: xcode7.3
+    - stage: test
+      name: Test2
+      osx_image: xcode8.3
+      addons: *addons
+      cache: *cache
+    - stage: test
+      name: Test3
+      osx_image: xcode9.4
+      addons: *addons
+      cache: *cache
+    - stage: test
+      name: Test4
+      osx_image: xcode10.2
+      addons: *addons
+      cache: *cache
 #     - stage: deploy
 #       name: Deployment
+#       osx_image: xcode10.2
 #       deploy:
 #         provider: releases
 #         api_key:
@@ -73,7 +80,7 @@ script:
 #         file: 'test'
 #         skip_cleanup: true
 #         on:
-#           condition: $TRAVIS_OSX_IMAGE = xcode10.2
+#           # condition: $TRAVIS_OSX_IMAGE = xcode10.2
 #           all_branches: true
 #           tags: true
 #           repo: ichizok/travis-playground
