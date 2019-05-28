@@ -68,19 +68,21 @@ jobs:
       name: Test4
       osx_image: xcode10.2
       <<: *homebrew
-
-deploy:
-  # provider: releases
-  # api_key:
-  #   secure: f96CLQZZCYIJ5TY2os6IHHbL2U2Jzx+tgh8+8m3Xsf65WeFNHreLKMYjyVhz70KSx4DrUxs6XpOoBdgmeue/5c+1IvXZkUFt6OL32a8MU07y2dPKAi69RMa/BA4i0wTtDmFKAKGxgT5klM2XOiCjchsiKuji7yDk3zX0RpbKP8cwnpZK+OH2TcOT3P1L+zaGZtlTmgmni3QSZieLQlAoUelYsy3KJmNKM2DF+n9iiOoFeY3OCMizFNKe0XjRkc90xDNcQdHnuzxAb4lPrQK1dy+w7niguiyUHwzu99vHc/ltm/mU/YQi3ZRma7gklj8/xSWArNqd0WfcAZZ+n5f4J5bnBY6gwinVCRYuTETlt+E6xcArUBl0ylRw8ee7JxIn60m2zIxl7LOgZEgijD4VvrFoExN36BE4KkccBqzjr3CFyAQzD0D326cLzmHTbp00IoVZgi8C40BakkQAAw22vI0PKc6jbfo/HIznQhCk9NnByiNtTnjb+UAB6wxxjiEI1DNj1XPEHQtOBvWMthEL3RD5SVbHIm7MiDEcB7U8c6dLZdUC7jYFUKVHJbd43MPgoOU49aMVeZqYX0nlX86lQoh24TY8yR7NPxt9LtuMwQZSNO8++lMW2F0APDwjIa1wXxmLTG4Pan/oQ7VLtffPGm9oi53nZBszpOeubdzDRnU=
-  # file: 'test'
-  provider: script
-  script: "echo finish"
-  skip_cleanup: true
-  on:
-    condition: $TRAVIS_OSX_IMAGE = xcode10.2
-    all_branches: true
-    # tags: true
-    repo: ichizok/travis-playground
+    - stage: deploy
+      name: Deployment
+      osx_image: xcode10.2
+      deploy:
+        # provider: releases
+        # api_key:
+        #   secure: f96CLQZZCYIJ5TY2os6IHHbL2U2Jzx+tgh8+8m3Xsf65WeFNHreLKMYjyVhz70KSx4DrUxs6XpOoBdgmeue/5c+1IvXZkUFt6OL32a8MU07y2dPKAi69RMa/BA4i0wTtDmFKAKGxgT5klM2XOiCjchsiKuji7yDk3zX0RpbKP8cwnpZK+OH2TcOT3P1L+zaGZtlTmgmni3QSZieLQlAoUelYsy3KJmNKM2DF+n9iiOoFeY3OCMizFNKe0XjRkc90xDNcQdHnuzxAb4lPrQK1dy+w7niguiyUHwzu99vHc/ltm/mU/YQi3ZRma7gklj8/xSWArNqd0WfcAZZ+n5f4J5bnBY6gwinVCRYuTETlt+E6xcArUBl0ylRw8ee7JxIn60m2zIxl7LOgZEgijD4VvrFoExN36BE4KkccBqzjr3CFyAQzD0D326cLzmHTbp00IoVZgi8C40BakkQAAw22vI0PKc6jbfo/HIznQhCk9NnByiNtTnjb+UAB6wxxjiEI1DNj1XPEHQtOBvWMthEL3RD5SVbHIm7MiDEcB7U8c6dLZdUC7jYFUKVHJbd43MPgoOU49aMVeZqYX0nlX86lQoh24TY8yR7NPxt9LtuMwQZSNO8++lMW2F0APDwjIa1wXxmLTG4Pan/oQ7VLtffPGm9oi53nZBszpOeubdzDRnU=
+        # file: 'test'
+        provider: script
+        script: "echo finish"
+        skip_cleanup: true
+        on:
+          # condition: $TRAVIS_OSX_IMAGE = xcode10.2
+          all_branches: true
+          tags: true
+          repo: ichizok/travis-playground
 
 # vim:set sts=2 sw=2 tw=0 et:
