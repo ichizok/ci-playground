@@ -65,8 +65,7 @@ jobs:
       env:
         - *myfoo
         - *mybar
-      script:
-        - false
+      script: *script
       after_script:
         - echo "after_script done"
     - stage: test
