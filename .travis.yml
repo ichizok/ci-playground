@@ -15,28 +15,29 @@ env:
   #   - TEST=test2
 
 anchors:
-  addons: &addons
-    homebrew:
-      brewfile: Brewfile.travis
-      update: true
+  homebrew: &homebrew
+    addons:
+      homebrew:
+        brewfile: Brewfile.travis
+        update: true
 
-  cache: &cache
-    directories:
-      - /usr/local/Homebrew/Library/Homebrew/vendor/
-      - /usr/local/Homebrew/Library/Taps/
+    cache:
+      directories:
+        - /usr/local/Homebrew/Library/Homebrew/vendor/
+        - /usr/local/Homebrew/Library/Taps/
 
-  # before_cache: &before_cache
-  #   - brew cleanup
-  #   - |
-  #     : $(
-  #     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
-  #       if [[ -e ${repo}/.git ]]; then
-  #         (
-  #         cd ${repo}
-  #         git gc --aggressive --prune=now
-  #         ) &
-  #       fi
-  #     done)
+    # before_cache: &before_cache
+    #   - brew cleanup
+    #   - |
+    #     : $(
+    #     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
+    #       if [[ -e ${repo}/.git ]]; then
+    #         (
+    #         cd ${repo}
+    #         git gc --aggressive --prune=now
+    #         ) &
+    #       fi
+    #     done)
 
 script:
   - set -e
@@ -58,18 +59,15 @@ jobs:
     - stage: test
       name: Test2
       osx_image: xcode8.3
-      addons: *addons
-      cache: *cache
+      <<: *homebrew
     - stage: test
       name: Test3
       osx_image: xcode9.4
-      addons: *addons
-      cache: *cache
+      <<: *homebrew
     - stage: test
       name: Test4
       osx_image: xcode10.2
-      addons: *addons
-      cache: *cache
+      <<: *homebrew
 #     - stage: deploy
 #       name: Deployment
 #       osx_image: xcode10.2
