@@ -39,35 +39,39 @@ anchors:
     #       fi
     #     done)
 
-script:
-  - set -e
-  - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
-  - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
-  - set +e
-  # - |
-  #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
-  #     brew reinstall --build-from-source ruby
-  #   fi
-  - cc -o test main.c
-  - ./test "hello world"
+  script: &script
+    - set -e
+    - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
+    - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
+    - set +e
+    # - |
+    #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
+    #     brew reinstall --build-from-source ruby
+    #   fi
+    - cc -o test main.c
+    - ./test "hello world"
 
 jobs:
   include:
     - stage: test
       name: Test1
       osx_image: xcode7.3
+      script: *script
     - stage: test
       name: Test2
       osx_image: xcode8.3
       <<: *homebrew
+      script: *script
     - stage: test
       name: Test3
       osx_image: xcode9.4
       <<: *homebrew
+      script: *script
     - stage: test
       name: Test4
       osx_image: xcode10.2
       <<: *homebrew
+      script: *script
     - stage: deploy
       name: Deployment
       osx_image: xcode10.2
