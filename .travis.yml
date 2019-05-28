@@ -75,6 +75,7 @@ jobs:
     - stage: deploy
       name: Deployment
       osx_image: xcode10.2
+      script: ls -al
       deploy:
         # provider: releases
         # api_key:
@@ -82,7 +83,6 @@ jobs:
         # file: 'test'
         provider: script
         script:
-          - ls -al
           - echo finish
         skip_cleanup: true
         on:
