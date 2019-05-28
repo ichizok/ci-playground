@@ -65,12 +65,16 @@ jobs:
       env:
         - *myfoo
         - *mybar
-      script: false
-      after_script: echo "after_script done"
+      script:
+        - false
+      after_script:
+        - echo "after_script done"
     - stage: test
       name: Test2
       osx_image: xcode8.3
       script: *script
+      after_script:
+        - false
     - stage: test
       name: Test3
       osx_image: xcode9.4
