@@ -51,24 +51,28 @@ anchors:
     - cc -o test main.c
     - ./test "hello world"
 
+  envs:
+    - &myfoo
+      MYFOO=myfoo
+    - &mybar
+      MYBAR=mybar
+
 jobs:
   include:
     - stage: test
       name: Test1
       osx_image: xcode7.3
       env:
-        - MYFOO=xcode
-        - MYBAR=7.3
+        - *myfoo
+        - *mybar
       script: *script
     - stage: test
       name: Test2
       osx_image: xcode8.3
-      <<: *homebrew
       script: *script
     - stage: test
       name: Test3
       osx_image: xcode9.4
-      <<: *homebrew
       script: *script
     - stage: test
       name: Test4
