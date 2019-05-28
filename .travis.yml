@@ -2,10 +2,6 @@ language: c
 
 os: osx
 
-compiler:
-  - clang
-  - gcc
-
 sudo: false
 
 env:
@@ -66,8 +62,11 @@ jobs:
       env:
         - *myfoo
         - *mybar
-      script:
-        - false
+      compiler:
+        matrix:
+          - clang
+          - gcc
+      script: *script
       after_script:
         - echo "after_script done"
     - stage: test
