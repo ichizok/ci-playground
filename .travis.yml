@@ -45,6 +45,9 @@ anchors:
     - &mybar
       MYBAR=mybar
 
+before_script:
+  - rm -fr build
+
 script:
   - set -e
   - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
@@ -54,7 +57,6 @@ script:
   #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
   #     brew reinstall --build-from-source ruby
   #   fi
-  - rm -fr build
   - mkdir -p build
   - cc -o build/test main.c
   - ./build/test "hello world"
@@ -91,8 +93,6 @@ jobs:
       cache:
         directories:
           - ${TRAVIS_BUILD_DIR}/build
-      before_cache:
-        - rm -fr ${TRAVIS_BUILD_DIR}/build
       before_deploy:
         - ls -al *
       deploy:
