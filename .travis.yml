@@ -39,23 +39,24 @@ anchors:
     #       fi
     #     done)
 
-  script: &script
-    - set -e
-    - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
-    - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
-    - set +e
-    # - |
-    #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
-    #     brew reinstall --build-from-source ruby
-    #   fi
-    - cc -o test main.c
-    - ./test "hello world"
-
   envs:
     - &myfoo
       MYFOO=myfoo
     - &mybar
       MYBAR=mybar
+
+script:
+  - set -e
+  - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
+  - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
+  - set +e
+  # - |
+  #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
+  #     brew reinstall --build-from-source ruby
+  #   fi
+  - mkdir -p build
+  - cc -o build/test main.c
+  - ./build/test "hello world"
 
 jobs:
   include:
@@ -65,28 +66,32 @@ jobs:
       env:
         - *myfoo
         - *mybar
-      script: *script
       after_script:
         - echo "after_script done"
     - stage: test
       name: Test2
       osx_image: xcode8.3
-      script: *script
       after_script:
         - false
     - stage: test
       name: Test3
       osx_image: xcode9.4
-      script: *script
     - stage: test
       name: Test4
       osx_image: xcode10.2
-      <<: *homebrew
-      script: *script
+      # <<: *homebrew
+      cache:
+        directories:
+          - ${TRAVIS_BUILD_DIR}/build
     - stage: deploy
       name: Deployment
       osx_image: xcode10.2
-      script: ls -al
+      script: skip
+      cache:
+        directories:
+          - ${TRAVIS_BUILD_DIR}/build
+      before_deploy:
+        - ls -al *
       deploy:
         # provider: releases
         # api_key:
