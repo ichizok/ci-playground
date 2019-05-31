@@ -83,6 +83,7 @@ jobs:
       # <<: *homebrew
       cache:
         directories:
+          - /usr/local/Homebrew/Library/Homebrew/vendor/
           - ${TRAVIS_BUILD_DIR}/build
     - stage: deploy
       name: Deployment
