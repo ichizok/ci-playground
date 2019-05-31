@@ -21,10 +21,12 @@ anchors:
         brewfile: Brewfile.travis
         update: true
 
+  caches: &cache
     cache:
       directories:
         - /usr/local/Homebrew/Library/Homebrew/vendor/
         - /usr/local/Homebrew/Library/Taps/
+        - ${TRAVIS_BUILD_DIR}/build
 
     # before_cache: &before_cache
     #   - brew cleanup
@@ -81,17 +83,12 @@ jobs:
       name: Test on Mojave
       osx_image: xcode10.2
       # <<: *homebrew
-      cache:
-        directories:
-          - /usr/local/Homebrew/Library/Homebrew/vendor/
-          - ${TRAVIS_BUILD_DIR}/build
+      <<: *cache
     - stage: deploy
       name: Deployment
       osx_image: xcode10.2
       script: skip
-      cache:
-        directories:
-          - ${TRAVIS_BUILD_DIR}/build
+      <<: *cache
       before_deploy:
         - ls -al *
       deploy:
