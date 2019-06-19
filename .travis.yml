@@ -1,109 +1,113 @@
 language: c
 
-os: osx
+# os: osx
+os: linux
 
 compiler:
   - clang
 
 sudo: false
 
-env:
-  global:
-    - FOO=foo BAR=bar
-  # matrix:
-  #   - TEST=test1
-  #   - TEST=test2
-
-anchors:
-  homebrew: &homebrew
-    addons:
-      homebrew:
-        brewfile: Brewfile.travis
-        update: true
-
-  caches: &cache
-    cache:
-      directories:
-        - /usr/local/Homebrew/Library/Homebrew/vendor/
-        - /usr/local/Homebrew/Library/Taps/
-        - ${TRAVIS_BUILD_DIR}/build
-
-    # before_cache: &before_cache
-    #   - brew cleanup
-    #   - |
-    #     : $(
-    #     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
-    #       if [[ -e ${repo}/.git ]]; then
-    #         (
-    #         cd ${repo}
-    #         git gc --aggressive --prune=now
-    #         ) &
-    #       fi
-    #     done)
-
-  envs:
-    - &myfoo
-      MYFOO=myfoo
-    - &mybar
-      MYBAR=mybar
-
 script:
-  - set -e
-  - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
-  - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
-  - set +e
-  # - |
-  #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
-  #     brew reinstall --build-from-source ruby
-  #   fi
-  - rm -fr build
-  - mkdir -p build
-  - cc -o build/test main.c
-  - ./build/test "hello world"
-
-jobs:
-  include:
-    - stage: test
-      name: Test on El Capitan
-      osx_image: xcode7.3
-      env:
-        - *myfoo
-        - *mybar
-      after_script:
-        - echo "after_script done"
-    - stage: test
-      name: Test on Sierra
-      osx_image: xcode8.3
-      after_script:
-        - false
-    - stage: test
-      name: Test on High Sierra
-      osx_image: xcode9.4
-    - stage: test
-      name: Test on Mojave
-      osx_image: xcode10.2
-      # <<: *homebrew
-      <<: *cache
-    - stage: deploy
-      name: Deployment
-      osx_image: xcode10.2
-      script: skip
-      <<: *cache
-      before_deploy:
-        - ls -al *
-      deploy:
-        # provider: releases
-        # api_key:
-        #   secure: f96CLQZZCYIJ5TY2os6IHHbL2U2Jzx+tgh8+8m3Xsf65WeFNHreLKMYjyVhz70KSx4DrUxs6XpOoBdgmeue/5c+1IvXZkUFt6OL32a8MU07y2dPKAi69RMa/BA4i0wTtDmFKAKGxgT5klM2XOiCjchsiKuji7yDk3zX0RpbKP8cwnpZK+OH2TcOT3P1L+zaGZtlTmgmni3QSZieLQlAoUelYsy3KJmNKM2DF+n9iiOoFeY3OCMizFNKe0XjRkc90xDNcQdHnuzxAb4lPrQK1dy+w7niguiyUHwzu99vHc/ltm/mU/YQi3ZRma7gklj8/xSWArNqd0WfcAZZ+n5f4J5bnBY6gwinVCRYuTETlt+E6xcArUBl0ylRw8ee7JxIn60m2zIxl7LOgZEgijD4VvrFoExN36BE4KkccBqzjr3CFyAQzD0D326cLzmHTbp00IoVZgi8C40BakkQAAw22vI0PKc6jbfo/HIznQhCk9NnByiNtTnjb+UAB6wxxjiEI1DNj1XPEHQtOBvWMthEL3RD5SVbHIm7MiDEcB7U8c6dLZdUC7jYFUKVHJbd43MPgoOU49aMVeZqYX0nlX86lQoh24TY8yR7NPxt9LtuMwQZSNO8++lMW2F0APDwjIa1wXxmLTG4Pan/oQ7VLtffPGm9oi53nZBszpOeubdzDRnU=
-        # file: 'test'
-        provider: script
-        script:
-          - echo finish
-        skip_cleanup: true
-        on:
-          # condition: $TRAVIS_OSX_IMAGE = xcode10.2
-          all_branches: true
-          # tags: true
-          repo: ichizok/travis-playground
+  - curl --version
+  - curl --unix-socket
+# env:
+#   global:
+#     - FOO=foo BAR=bar
+#   # matrix:
+#   #   - TEST=test1
+#   #   - TEST=test2
+#
+# anchors:
+#   homebrew: &homebrew
+#     addons:
+#       homebrew:
+#         brewfile: Brewfile.travis
+#         update: true
+#
+#   caches: &cache
+#     cache:
+#       directories:
+#         - /usr/local/Homebrew/Library/Homebrew/vendor/
+#         - /usr/local/Homebrew/Library/Taps/
+#         - ${TRAVIS_BUILD_DIR}/build
+#
+#     # before_cache: &before_cache
+#     #   - brew cleanup
+#     #   - |
+#     #     : $(
+#     #     for repo in /usr/local/Homebrew/Library/Taps/*/*; do
+#     #       if [[ -e ${repo}/.git ]]; then
+#     #         (
+#     #         cd ${repo}
+#     #         git gc --aggressive --prune=now
+#     #         ) &
+#     #       fi
+#     #     done)
+#
+#   envs:
+#     - &myfoo
+#       MYFOO=myfoo
+#     - &mybar
+#       MYBAR=mybar
+#
+# script:
+#   - set -e
+#   - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
+#   - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
+#   - set +e
+#   # - |
+#   #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
+#   #     brew reinstall --build-from-source ruby
+#   #   fi
+#   - rm -fr build
+#   - mkdir -p build
+#   - cc -o build/test main.c
+#   - ./build/test "hello world"
+#
+# jobs:
+#   include:
+#     - stage: test
+#       name: Test on El Capitan
+#       osx_image: xcode7.3
+#       env:
+#         - *myfoo
+#         - *mybar
+#       after_script:
+#         - echo "after_script done"
+#     - stage: test
+#       name: Test on Sierra
+#       osx_image: xcode8.3
+#       after_script:
+#         - false
+#     - stage: test
+#       name: Test on High Sierra
+#       osx_image: xcode9.4
+#     - stage: test
+#       name: Test on Mojave
+#       osx_image: xcode10.2
+#       # <<: *homebrew
+#       <<: *cache
+#     - stage: deploy
+#       name: Deployment
+#       osx_image: xcode10.2
+#       script: skip
+#       <<: *cache
+#       before_deploy:
+#         - ls -al *
+#       deploy:
+#         # provider: releases
+#         # api_key:
+#         #   secure: f96CLQZZCYIJ5TY2os6IHHbL2U2Jzx+tgh8+8m3Xsf65WeFNHreLKMYjyVhz70KSx4DrUxs6XpOoBdgmeue/5c+1IvXZkUFt6OL32a8MU07y2dPKAi69RMa/BA4i0wTtDmFKAKGxgT5klM2XOiCjchsiKuji7yDk3zX0RpbKP8cwnpZK+OH2TcOT3P1L+zaGZtlTmgmni3QSZieLQlAoUelYsy3KJmNKM2DF+n9iiOoFeY3OCMizFNKe0XjRkc90xDNcQdHnuzxAb4lPrQK1dy+w7niguiyUHwzu99vHc/ltm/mU/YQi3ZRma7gklj8/xSWArNqd0WfcAZZ+n5f4J5bnBY6gwinVCRYuTETlt+E6xcArUBl0ylRw8ee7JxIn60m2zIxl7LOgZEgijD4VvrFoExN36BE4KkccBqzjr3CFyAQzD0D326cLzmHTbp00IoVZgi8C40BakkQAAw22vI0PKc6jbfo/HIznQhCk9NnByiNtTnjb+UAB6wxxjiEI1DNj1XPEHQtOBvWMthEL3RD5SVbHIm7MiDEcB7U8c6dLZdUC7jYFUKVHJbd43MPgoOU49aMVeZqYX0nlX86lQoh24TY8yR7NPxt9LtuMwQZSNO8++lMW2F0APDwjIa1wXxmLTG4Pan/oQ7VLtffPGm9oi53nZBszpOeubdzDRnU=
+#         # file: 'test'
+#         provider: script
+#         script:
+#           - echo finish
+#         skip_cleanup: true
+#         on:
+#           # condition: $TRAVIS_OSX_IMAGE = xcode10.2
+#           all_branches: true
+#           # tags: true
+#           repo: ichizok/travis-playground
 
 # vim:set sts=2 sw=2 tw=0 et:
