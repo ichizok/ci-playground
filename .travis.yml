@@ -1,7 +1,5 @@
 language: c
 
-os: osx
-
 compiler:
   - clang
 
@@ -64,7 +62,14 @@ script:
 jobs:
   include:
     - stage: test
+      name: Test on Linux
+      os: linux
+      script:
+        - curl --version
+        - curl --unix-socket || true
+    - stage: test
       name: Test on El Capitan
+      os: osx
       osx_image: xcode7.3
       env:
         - *myfoo
@@ -73,19 +78,23 @@ jobs:
         - echo "after_script done"
     - stage: test
       name: Test on Sierra
+      os: osx
       osx_image: xcode8.3
       after_script:
         - false
     - stage: test
       name: Test on High Sierra
+      os: osx
       osx_image: xcode9.4
     - stage: test
       name: Test on Mojave
+      os: osx
       osx_image: xcode10.2
       # <<: *homebrew
       <<: *cache
     - stage: deploy
       name: Deployment
+      os: osx
       osx_image: xcode10.2
       script: skip
       <<: *cache
