@@ -68,7 +68,7 @@ jobs:
       os: linux
       dist: bionic
       script:
-        - lsb-release
+        - cat /etc/lsb_release
         - curl --version
         - curl --unix-socket || true
     - stage: test
