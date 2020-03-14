@@ -23,7 +23,7 @@ anchors:
     cache:
       directories:
         - /usr/local/Homebrew/Library/Homebrew/vendor/
-        - /usr/local/Homebrew/Library/Taps/
+        - /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/
         - ${TRAVIS_BUILD_DIR}/build
 
     # before_cache: &before_cache
