@@ -92,7 +92,7 @@ jobs:
       name: Test on Mojave
       os: osx
       osx_image: xcode11.4
-      # <<: *homebrew
+      <<: *homebrew
       <<: *cache
     - stage: deploy
       name: Deployment
