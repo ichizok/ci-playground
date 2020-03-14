@@ -48,7 +48,9 @@ anchors:
 script:
   - set -e
   - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
+  - du -hd1 /usr/local/Homebrew/Library/Homebrew/vendor
   - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
+  - du -hd1 /usr/local/Homebrew/Library/Taps/homebrew
   - set +e
   # - |
   #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
@@ -89,13 +91,13 @@ jobs:
     - stage: test
       name: Test on Mojave
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11.4
       # <<: *homebrew
       <<: *cache
     - stage: deploy
       name: Deployment
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11.4
       script: skip
       <<: *cache
       before_deploy:
