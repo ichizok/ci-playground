@@ -91,13 +91,13 @@ jobs:
     - stage: test
       name: Test on Mojave
       os: osx
-      osx_image: xcode11.4
+      osx_image: xcode11.3
       <<: *homebrew
       <<: *cache
     - stage: deploy
       name: Deployment
       os: osx
-      osx_image: xcode11.4
+      osx_image: xcode11.3
       script: skip
       <<: *cache
       before_deploy:
