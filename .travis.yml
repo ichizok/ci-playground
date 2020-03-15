@@ -25,7 +25,6 @@ _anchors:
         - ${TRAVIS_BUILD_DIR}/build
     before_cache: &before_cache
       # - brew cleanup
-      - brew untap homebrew/cask
       # - |
       #   : $(
       #   for repo in /usr/local/Homebrew/Library/Taps/*/*; do
