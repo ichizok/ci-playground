@@ -42,6 +42,13 @@ _anchors:
     - &mybar
       MYBAR=mybar
 
+  linux_scripts: &linux-scripts
+    - |
+      if [[ ${TRAVIS_DIST} = bionic ]]; then
+        sudo apt install -y "linux-modules-extra-$(uname -r)"
+      fi
+    - find /lib/modules -name snd-dummy.ko || true
+
 script:
   - set -e
   - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
@@ -64,43 +71,43 @@ jobs:
       name: Test on Linux
       os: linux
       dist: xenial
-      script: find /lib/modules -name snd-dummy.ko
+      script: *linux-scripts
     - stage: test
       name: Test on Linux (ppc64le)
       os: linux
       dist: xenial
       arch: ppc64le
-      script: find /lib/modules -name snd-dummy.ko
+      script: *linux-scripts
     - stage: test
       name: Test on Linux - bionic (ppc64le)
       os: linux
       dist: bionic
       arch: ppc64le
-      script: find /lib/modules -name snd-dummy.ko
+      script: *linux-scripts
     - stage: test
       name: Test on Linux (s390x)
       os: linux
       dist: xenial
       arch: s390x
-      script: find /lib/modules -name snd-dummy.ko
+      script: *linux-scripts
     - stage: test
       name: Test on Linux - bionic (s390x)
       os: linux
       dist: bionic
       arch: s390x
-      script: find /lib/modules -name snd-dummy.ko
+      script: *linux-scripts
     - stage: test
       name: Test on Linux (arm64)
       os: linux
       dist: xenial
       arch: arm64
-      script: find /lib/modules -name snd-dummy.ko
+      script: *linux-scripts
     - stage: test
       name: Test on Linux - bionic (arm64)
       os: linux
       dist: bionic
       arch: arm64
-      script: find /lib/modules -name snd-dummy.ko
+      script: *linux-scripts
     - stage: test
       name: Test on El Capitan
       os: osx
@@ -114,8 +121,7 @@ jobs:
       name: Test on Sierra
       os: osx
       osx_image: xcode8.3
-      after_script:
-        - false
+      after_script: false
     - stage: test
       name: Test on High Sierra
       os: osx
@@ -132,8 +138,7 @@ jobs:
       osx_image: xcode11.3
       script: skip
       <<: *cache
-      before_deploy:
-        - ls -al *
+      before_deploy: ls -al *
       deploy:
         # provider: releases
         # api_key:
