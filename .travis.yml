@@ -43,11 +43,12 @@ _anchors:
       MYBAR=mybar
 
   linux_scripts: &linux-scripts
+    - cat /etc/apt/sources.list
     - |
       if [[ ${TRAVIS_DIST} = bionic ]]; then
         sudo apt install -y "linux-modules-extra-$(uname -r)"
       fi
-    - find /lib/modules -name snd-dummy.ko || true
+    - find /lib/modules -name snd-dummy.ko
 
 script:
   - set -e
