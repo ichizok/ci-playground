@@ -63,11 +63,44 @@ jobs:
     - stage: test
       name: Test on Linux
       os: linux
+      dist: xenial
+      script: find /lib/modules -name snd-dummy.ko
+    - stage: test
+      name: Test on Linux (ppc64le)
+      os: linux
+      dist: xenial
+      arch: ppc64le
+      script: find /lib/modules -name snd-dummy.ko
+    - stage: test
+      name: Test on Linux - bionic (ppc64le)
+      os: linux
       dist: bionic
-      script:
-        - cat /etc/lsb-release
-        - curl --version
-        - curl --unix-socket || true
+      arch: ppc64le
+      script: find /lib/modules -name snd-dummy.ko
+    - stage: test
+      name: Test on Linux (s390x)
+      os: linux
+      dist: xenial
+      arch: s390x
+      script: find /lib/modules -name snd-dummy.ko
+    - stage: test
+      name: Test on Linux - bionic (s390x)
+      os: linux
+      dist: bionic
+      arch: s390x
+      script: find /lib/modules -name snd-dummy.ko
+    - stage: test
+      name: Test on Linux (arm64)
+      os: linux
+      dist: xenial
+      arch: arm64
+      script: find /lib/modules -name snd-dummy.ko
+    - stage: test
+      name: Test on Linux - bionic (arm64)
+      os: linux
+      dist: bionic
+      arch: arm64
+      script: find /lib/modules -name snd-dummy.ko
     - stage: test
       name: Test on El Capitan
       os: osx
