@@ -46,6 +46,7 @@ _anchors:
     - cat /etc/apt/sources.list
     - |
       if [[ ${TRAVIS_DIST} = bionic ]]; then
+        sudo apt update -y
         sudo apt install -y "linux-modules-extra-$(uname -r)"
       fi
     - find /lib/modules -name snd-dummy.ko
