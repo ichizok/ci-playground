@@ -43,12 +43,13 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
+    - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     - cat /etc/apt/sources.list
-    - find /lib/modules -name snd-dummy.ko || true
+    - find_module snd-dummy
     - sudo apt update -y >/dev/null 2>&1
-    - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
+    - sudo apt install -y "linux-modules-extra-$(uname -r)"
     # Check snd-dummy.ko exists ultimately.
-    - find /lib/modules -name snd-dummy.ko | grep -s .
+    - find_module snd-dummy
 
   osx_script: &osx-script
     - set -e
