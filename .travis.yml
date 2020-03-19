@@ -44,38 +44,52 @@ _anchors:
 
   linux_scripts: &linux-scripts
     - cat /etc/apt/sources.list
-    - |
-      if [[ ${TRAVIS_DIST} = bionic ]]; then
-        sudo apt update -y
-        sudo apt install -y "linux-modules-extra-$(uname -r)"
-      fi
+    - find /lib/modules -name snd-dummy.ko || echo "not found snd-dummy.ko"
+    - sudo apt update -y
+    - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
     - find /lib/modules -name snd-dummy.ko
 
-script:
-  - set -e
-  - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
-  - du -hd1 /usr/local/Homebrew/Library/Homebrew/vendor
-  - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
-  - du -hd1 /usr/local/Homebrew/Library/Taps/homebrew
-  - set +e
-  # - |
-  #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
-  #     brew reinstall --build-from-source ruby
-  #   fi
-  - rm -fr build
-  - mkdir -p build
-  - cc -o build/test main.c
-  - ./build/test "hello world"
+  osx_script: &osx-scripts
+    - set -e
+    - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
+    - du -hd1 /usr/local/Homebrew/Library/Homebrew/vendor
+    - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
+    - du -hd1 /usr/local/Homebrew/Library/Taps/homebrew
+    - set +e
+    # - |
+    #   if [[ "$TRAVIS_OSX_IMAGE" = "xcode8.3" ]]; then
+    #     brew reinstall --build-from-source ruby
+    #   fi
+    - rm -fr build
+    - mkdir -p build
+    - cc -o build/test main.c
+    - ./build/test "hello world"
 
 jobs:
   include:
     - stage: test
-      name: Test on Linux
+      name: Test on Linux - trusty (amd64)
+      os: linux
+      dist: trusty
+      script: *linux-scripts
+    - stage: test
+      name: Test on Linux - xenial (amd64)
       os: linux
       dist: xenial
       script: *linux-scripts
     - stage: test
-      name: Test on Linux (ppc64le)
+      name: Test on Linux - bionic (amd64)
+      os: linux
+      dist: bionic
+      script: *linux-scripts
+    - stage: test
+      name: Test on Linux - trusty (ppc64le)
+      os: linux
+      dist: xenial
+      arch: ppc64le
+      script: *linux-scripts
+    - stage: test
+      name: Test on Linux - xenial (ppc64le)
       os: linux
       dist: xenial
       arch: ppc64le
@@ -87,7 +101,13 @@ jobs:
       arch: ppc64le
       script: *linux-scripts
     - stage: test
-      name: Test on Linux (s390x)
+      name: Test on Linux - trusty (s390x)
+      os: linux
+      dist: trusty
+      arch: s390x
+      script: *linux-scripts
+    - stage: test
+      name: Test on Linux - xenial (s390x)
       os: linux
       dist: xenial
       arch: s390x
@@ -99,7 +119,13 @@ jobs:
       arch: s390x
       script: *linux-scripts
     - stage: test
-      name: Test on Linux (arm64)
+      name: Test on Linux - trusty (arm64)
+      os: linux
+      dist: trusty
+      arch: arm64
+      script: *linux-scripts
+    - stage: test
+      name: Test on Linux - xenial (arm64)
       os: linux
       dist: xenial
       arch: arm64
@@ -117,23 +143,27 @@ jobs:
       env:
         - *myfoo
         - *mybar
+      script: *osx-scripts
       after_script:
         - echo "after_script done"
     - stage: test
       name: Test on Sierra
       os: osx
       osx_image: xcode8.3
+      script: *osx-scripts
       after_script: false
     - stage: test
       name: Test on High Sierra
       os: osx
       osx_image: xcode9.4
+      script: *osx-scripts
     - stage: test
       name: Test on Mojave
       os: osx
       osx_image: xcode11.3
       <<: *homebrew
       <<: *cache
+      script: *osx-scripts
     - stage: deploy
       name: Deployment
       os: osx
