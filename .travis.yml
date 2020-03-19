@@ -44,10 +44,11 @@ _anchors:
 
   linux_script: &linux-script
     - cat /etc/apt/sources.list
-    - find /lib/modules -name snd-dummy.ko || echo "not found snd-dummy.ko"
-    - sudo apt update -y
+    - find /lib/modules -name snd-dummy.ko || true
+    - sudo apt update -y >/dev/null 2>&1
     - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
-    - find /lib/modules -name snd-dummy.ko
+    # Check snd-dummy.ko exists ultimately.
+    - find /lib/modules -name snd-dummy.ko | grep -qs .
 
   osx_script: &osx-script
     - set -e
