@@ -48,7 +48,7 @@ _anchors:
     - sudo apt update -y >/dev/null 2>&1
     - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
     # Check snd-dummy.ko exists ultimately.
-    - find /lib/modules -name snd-dummy.ko | grep -qs .
+    - find /lib/modules -name snd-dummy.ko | grep -s .
 
   osx_script: &osx-script
     - set -e
