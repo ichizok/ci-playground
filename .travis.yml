@@ -45,9 +45,9 @@ _anchors:
   linux_script: &linux-script
     - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     - cat /etc/apt/sources.list
-    - find_module snd-dummy
+    - find_module snd-dummy || true
     - sudo apt update -y >/dev/null 2>&1
-    - sudo apt install -y "linux-modules-extra-$(uname -r)"
+    - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
     # Check snd-dummy.ko exists ultimately.
     - find_module snd-dummy
 
