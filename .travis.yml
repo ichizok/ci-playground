@@ -37,7 +37,7 @@ _anchors:
     - sudo apt update -y >/dev/null 2>&1
     - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
     # Check snd-dummy.ko exists ultimately.
-    - find_module snd-dummy
+    - find_module snd-dummy || true
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
@@ -54,8 +54,15 @@ _anchors:
     - hdiutil attach -quiet -mountpoint /Volumes/MacVim MacVim.dmg
     - cp -a /Volumes/MacVim/MacVim.app .
     - hdiutil detach /Volumes/MacVim
-    - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &luadll | echo &pythondll | echo &pythonthreedll | echo &rubydll | q!'
-    - find /usr/local/Frameworks -name Python
+    - |
+      ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 \
+        +'echo &luadll .. ":" .. has("lua")' \
+        +'echo &pythondll .. ":" .. has("python")' \
+        +'echo &pythonthreedll .. ":" .. has("python3")' \
+        +'echo &rubydll .. ":" .. has("ruby")' \
+        +'qall!'
+    - find /System/Library/Frameworks/Python.framework -name Python
+    - find /usr/local/Frameworks/Python.framework -name Python
     - find /usr/local/opt -name libruby.dylib
 
 jobs:
@@ -144,7 +151,6 @@ jobs:
       os: osx
       osx_image: xcode8.3
       script: *osx-script
-      after_script: false
     - stage: test
       name: Test on High Sierra
       os: osx
