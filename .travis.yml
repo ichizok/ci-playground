@@ -62,7 +62,7 @@ _anchors:
         +'echo &rubydll .. ":" .. has("ruby")' \
         +'qall!'
     - find /System/Library/Frameworks/Python.framework -name Python
-    - find /usr/local/Frameworks/Python.framework -name Python
+    - readlink find /usr/local/Frameworks/Python.framework/Python
     - find /usr/local/opt -name libruby.dylib
 
 jobs:
