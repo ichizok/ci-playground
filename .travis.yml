@@ -44,6 +44,7 @@ _anchors:
     - du -hd1 /usr/local/Homebrew/Library/Homebrew/vendor
     - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
     - du -hd1 /usr/local/Homebrew/Library/Taps/homebrew
+    - ls /usr/local/opt
     - rm -fr build
     - mkdir -p build
     - cc -o build/test main.c
@@ -62,7 +63,7 @@ _anchors:
         +'echo &rubydll .. ":" .. has("ruby")' \
         +'qall!'
     - find /System/Library/Frameworks/Python.framework -name Python
-    - readlink find /usr/local/Frameworks/Python.framework/Python
+    - readlink /usr/local/Frameworks/Python.framework/Python
     - find /usr/local/opt -name libruby.dylib
 
 jobs:
