@@ -70,8 +70,7 @@ jobs:
       dist: bionic
       script:
         - python --version
-        - python test_channel.py &
-        - sleep 10
+        - python test_channel.py
     # - stage: test
     #   name: Test on Linux - trusty (amd64)
     #   os: linux
