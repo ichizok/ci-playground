@@ -70,7 +70,10 @@ jobs:
       dist: bionic
       script:
         - python --version
-        - python test_channel.py
+        - python test_channel.py >log &
+        - sleep 3
+        - cat log
+        - netstat -antp
     # - stage: test
     #   name: Test on Linux - trusty (amd64)
     #   os: linux
