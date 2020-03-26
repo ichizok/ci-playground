@@ -73,6 +73,25 @@ jobs:
         - python -mSimpleHTTPServer 10080 &
         - sleep 1; netstat -antp
         - curl -v http://localhost:10080/
+    - stage: test
+      name: Test on Linux - xenial (amd64)
+      os: linux
+      dist: xenial
+      script:
+        - cpp -g -O1 -fsanitize=address -dM /dev/null
+        - cat <<EOT | tee test.c
+          int main() {
+            "ASan: "
+          #ifdef __SANITIZE_ADDRESS__
+            "Enabled"
+          #else
+            "Disabled"
+          #endif
+            ;
+            return 0;
+          }
+          EOT
+        - gcc -g -O1 -fsanitize=address -E test.c
     # - stage: test
     #   name: Test on Linux - trusty (amd64)
     #   os: linux
