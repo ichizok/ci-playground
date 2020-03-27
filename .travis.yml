@@ -91,9 +91,9 @@ jobs:
       dist: bionic
       script:
         - python --version
-        - python -mSimpleHTTPServer 10080 &
+        - python -mSimpleHTTPServer 43210 &
         - sleep 1; netstat -antp
-        - curl -v http://localhost:10080/
+        - curl -v http://localhost:43210/
     - stage: test
       name: Test GCC
       os: linux
