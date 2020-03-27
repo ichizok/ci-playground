@@ -79,7 +79,8 @@ jobs:
       dist: xenial
       script:
         - cpp -g -O1 -fsanitize=address -dM /dev/null
-        - cat <<EOT | tee test.c
+        - |
+          cat <<EOT | tee test.c
           int main() {
             "ASan: "
           #ifdef __SANITIZE_ADDRESS__
