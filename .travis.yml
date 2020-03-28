@@ -31,6 +31,7 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
+    - cat /etc/hosts
     - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     - cat /etc/apt/sources.list
     - find_module snd-dummy || true
@@ -68,77 +69,71 @@ jobs:
       name: Test on Linux - trusty (amd64)
       os: linux
       dist: trusty
-      script:
-        - cat /etc/hosts
-        - *linux-script
+      script: *linux-script
     - stage: test
       name: Test on Linux - xenial (amd64)
       os: linux
       dist: xenial
-      script:
-        - cat /etc/hosts
-        - *linux-script
+      script: *linux-script
     - stage: test
       name: Test on Linux - bionic (amd64)
       os: linux
       dist: bionic
-      script:
-        - cat /etc/hosts
-        - *linux-script
-    # - stage: test
-    #   name: Test on Linux - trusty (ppc64le)
-    #   os: linux
-    #   dist: xenial
-    #   arch: ppc64le
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - xenial (ppc64le)
-    #   os: linux
-    #   dist: xenial
-    #   arch: ppc64le
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (ppc64le)
-    #   os: linux
-    #   dist: bionic
-    #   arch: ppc64le
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - trusty (s390x)
-    #   os: linux
-    #   dist: trusty
-    #   arch: s390x
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - xenial (s390x)
-    #   os: linux
-    #   dist: xenial
-    #   arch: s390x
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (s390x)
-    #   os: linux
-    #   dist: bionic
-    #   arch: s390x
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - trusty (arm64)
-    #   os: linux
-    #   dist: trusty
-    #   arch: arm64
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - xenial (arm64)
-    #   os: linux
-    #   dist: xenial
-    #   arch: arm64
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (arm64)
-    #   os: linux
-    #   dist: bionic
-    #   arch: arm64
-    #   script: *linux-script
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - trusty (ppc64le)
+      os: linux
+      dist: xenial
+      arch: ppc64le
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - xenial (ppc64le)
+      os: linux
+      dist: xenial
+      arch: ppc64le
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (ppc64le)
+      os: linux
+      dist: bionic
+      arch: ppc64le
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - trusty (s390x)
+      os: linux
+      dist: trusty
+      arch: s390x
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - xenial (s390x)
+      os: linux
+      dist: xenial
+      arch: s390x
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (s390x)
+      os: linux
+      dist: bionic
+      arch: s390x
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - trusty (arm64)
+      os: linux
+      dist: trusty
+      arch: arm64
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - xenial (arm64)
+      os: linux
+      dist: xenial
+      arch: arm64
+      script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (arm64)
+      os: linux
+      dist: bionic
+      arch: arm64
+      script: *linux-script
     # - stage: test
     #   name: Test on El Capitan
     #   os: osx
