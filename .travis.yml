@@ -65,26 +65,26 @@ _anchors:
 jobs:
   include:
     - stage: test
+      name: Test on Linux - trusty (amd64)
+      os: linux
+      dist: trusty
+      script:
+        - cat /etc/hosts
+        - *linux-script
+    - stage: test
+      name: Test on Linux - xenial (amd64)
+      os: linux
+      dist: xenial
+      script:
+        - cat /etc/hosts
+        - *linux-script
+    - stage: test
       name: Test on Linux - bionic (amd64)
       os: linux
       dist: bionic
       script:
-        - dpkg -l
-    # - stage: test
-    #   name: Test on Linux - trusty (amd64)
-    #   os: linux
-    #   dist: trusty
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - xenial (amd64)
-    #   os: linux
-    #   dist: xenial
-    #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (amd64)
-    #   os: linux
-    #   dist: bionic
-    #   script: *linux-script
+        - cat /etc/hosts
+        - *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (ppc64le)
     #   os: linux
