@@ -62,27 +62,6 @@ _anchors:
     - find -L /System/Library/Frameworks/Python.framework -name Python
     - find -L /usr/local/Frameworks/Python.framework -name Python
 
-  asan_script: &asan-script
-    - cpp -g -O1 -fsanitize=address -dM /dev/null
-    - |
-      cat <<EOT | tee test.c
-      int main() {
-        "ASan: "
-      #ifdef __has_feature // clang
-      # if __has_feature(address_sanitizer)
-        "Enabled"
-      # endif
-      #elif defined(__SANITIZE_ADDRESS__) // gcc
-        "Enabled"
-      #else
-        "Disabled"
-      #endif
-        ;
-        return 0;
-      }
-      EOT
-    - ${CC} -g -O1 -fsanitize=address -E test.c
-
 jobs:
   include:
     - stage: test
@@ -90,26 +69,7 @@ jobs:
       os: linux
       dist: bionic
       script:
-        - python --version
-        - python -mSimpleHTTPServer 43210 &
-        - sleep 1; netstat -antp
-        - curl -v http://localhost:43210/
-    - stage: test
-      name: Test GCC
-      os: linux
-      dist: xenial
-      compiler: gcc
-      env:
-        - CC=gcc
-      script: *asan-script
-    - stage: test
-      name: Test Clang
-      os: linux
-      dist: xenial
-      compiler: clang
-      env:
-        - CC=clang
-      script: *asan-script
+        - dpkg -l
     # - stage: test
     #   name: Test on Linux - trusty (amd64)
     #   os: linux
