@@ -63,6 +63,9 @@ _anchors:
     - find -L /System/Library/Frameworks/Python.framework -name Python
     - find -L /usr/local/Frameworks/Python.framework -name Python
 
+before_script:
+  - sudo sed -i '/^127\.0\.1\.1\s/s/localhost//g' /etc/hosts
+
 jobs:
   include:
     - stage: test
