@@ -31,11 +31,13 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - command -v python3
+    - which -a python3
+    - pyenv versions
     - pyenv global system
-    - command -v python3
+    - pyenv versions
+    - which -a python3
     - (cd "${PYENV_ROOT}" && git fetch -p origin && git checkout "$(git rev-list --tags -n1)") &>/dev/null || true
-    - command -v python3
+    - which -a python3
     # - cat /etc/hosts
     # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     # - cat /etc/apt/sources.list
@@ -100,12 +102,12 @@ jobs:
     #   dist: xenial
     #   arch: ppc64le
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (ppc64le)
-      os: linux
-      dist: bionic
-      arch: ppc64le
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (ppc64le)
+    #   os: linux
+    #   dist: bionic
+    #   arch: ppc64le
+    #   script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (s390x)
     #   os: linux
@@ -118,12 +120,12 @@ jobs:
     #   dist: xenial
     #   arch: s390x
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (s390x)
-      os: linux
-      dist: bionic
-      arch: s390x
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (s390x)
+    #   os: linux
+    #   dist: bionic
+    #   arch: s390x
+    #   script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (arm64)
     #   os: linux
@@ -136,12 +138,12 @@ jobs:
     #   dist: xenial
     #   arch: arm64
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (arm64)
-      os: linux
-      dist: bionic
-      arch: arm64
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (arm64)
+    #   os: linux
+    #   dist: bionic
+    #   arch: arm64
+    #   script: *linux-script
     # - stage: test
     #   name: Test on El Capitan
     #   os: osx
