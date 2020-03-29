@@ -32,11 +32,11 @@ _anchors:
 
   linux_script: &linux-script
     - cat /etc/hosts
+    - echo $PATH
     - which -a python3
     - ls /opt
-    - python3 -u -mhttp.server --bind localhost 8000 >/tmp/pythonlog 2>&1 &
-    - sleep 1; cat /tmp/pythonlog
-    - curl -vI http://localhost:8000/
+    - gcc -o test main.c
+    - ./test localhost
     # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     # - cat /etc/apt/sources.list
     # - find_module snd-dummy || true
@@ -100,12 +100,12 @@ jobs:
     #   dist: xenial
     #   arch: ppc64le
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (ppc64le)
-    #   os: linux
-    #   dist: bionic
-    #   arch: ppc64le
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (ppc64le)
+      os: linux
+      dist: bionic
+      arch: ppc64le
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (s390x)
     #   os: linux
@@ -118,12 +118,12 @@ jobs:
     #   dist: xenial
     #   arch: s390x
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (s390x)
-    #   os: linux
-    #   dist: bionic
-    #   arch: s390x
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (s390x)
+      os: linux
+      dist: bionic
+      arch: s390x
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (arm64)
     #   os: linux
@@ -136,12 +136,12 @@ jobs:
     #   dist: xenial
     #   arch: arm64
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (arm64)
-    #   os: linux
-    #   dist: bionic
-    #   arch: arm64
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (arm64)
+      os: linux
+      dist: bionic
+      arch: arm64
+      script: *linux-script
     # - stage: test
     #   name: Test on El Capitan
     #   os: osx
