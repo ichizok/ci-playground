@@ -32,12 +32,10 @@ _anchors:
 
   linux_script: &linux-script
     - which -a python3
-    - pyenv versions
-    - pyenv global system
-    - pyenv versions
-    - which -a python3
-    - (cd "${PYENV_ROOT}" && git fetch -p origin && git checkout "$(git rev-list --tags -n1)") &>/dev/null || true
-    - which -a python3
+    - ls /opt
+    - python3 -u -mhttp.server --bind localhost 8000 >/tmp/pythonlog 2>&1 &
+    - sleep 1; cat /tmp/pythonlog
+    - curl -I http://localhost:8000/
     # - cat /etc/hosts
     # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     # - cat /etc/apt/sources.list
@@ -70,8 +68,8 @@ _anchors:
     - find -L /System/Library/Frameworks/Python.framework -name Python
     - find -L /usr/local/Frameworks/Python.framework -name Python
 
-before_script:
-  - sudo sed -i '/^127\.0\.1\.1\s/s/localhost//g' /etc/hosts
+# before_script:
+#   - sudo sed -i '/^127\.0\.1\.1\s/s/localhost//g' /etc/hosts
 
 jobs:
   include:
