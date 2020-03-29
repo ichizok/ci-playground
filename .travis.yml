@@ -31,14 +31,19 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - cat /etc/hosts
-    - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
-    - cat /etc/apt/sources.list
-    - find_module snd-dummy || true
-    - sudo apt update -y >/dev/null 2>&1 || true
-    - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
-    # Check snd-dummy.ko exists ultimately.
-    - find_module snd-dummy || true
+    - command -v python3
+    - pyenv global system
+    - command -v python3
+    - (cd "${PYENV_ROOT}" && git fetch -p origin && git checkout "$(git rev-list --tags -n1)") &>/dev/null || true
+    - command -v python3
+    # - cat /etc/hosts
+    # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
+    # - cat /etc/apt/sources.list
+    # - find_module snd-dummy || true
+    # - sudo apt update -y >/dev/null 2>&1 || true
+    # - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
+    # # Check snd-dummy.ko exists ultimately.
+    # - find_module snd-dummy || true
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
@@ -83,54 +88,54 @@ jobs:
       os: linux
       dist: bionic
       script: *linux-script
-    - stage: test
-      name: Test on Linux - trusty (ppc64le)
-      os: linux
-      dist: xenial
-      arch: ppc64le
-      script: *linux-script
-    - stage: test
-      name: Test on Linux - xenial (ppc64le)
-      os: linux
-      dist: xenial
-      arch: ppc64le
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - trusty (ppc64le)
+    #   os: linux
+    #   dist: xenial
+    #   arch: ppc64le
+    #   script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - xenial (ppc64le)
+    #   os: linux
+    #   dist: xenial
+    #   arch: ppc64le
+    #   script: *linux-script
     - stage: test
       name: Test on Linux - bionic (ppc64le)
       os: linux
       dist: bionic
       arch: ppc64le
       script: *linux-script
-    - stage: test
-      name: Test on Linux - trusty (s390x)
-      os: linux
-      dist: trusty
-      arch: s390x
-      script: *linux-script
-    - stage: test
-      name: Test on Linux - xenial (s390x)
-      os: linux
-      dist: xenial
-      arch: s390x
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - trusty (s390x)
+    #   os: linux
+    #   dist: trusty
+    #   arch: s390x
+    #   script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - xenial (s390x)
+    #   os: linux
+    #   dist: xenial
+    #   arch: s390x
+    #   script: *linux-script
     - stage: test
       name: Test on Linux - bionic (s390x)
       os: linux
       dist: bionic
       arch: s390x
       script: *linux-script
-    - stage: test
-      name: Test on Linux - trusty (arm64)
-      os: linux
-      dist: trusty
-      arch: arm64
-      script: *linux-script
-    - stage: test
-      name: Test on Linux - xenial (arm64)
-      os: linux
-      dist: xenial
-      arch: arm64
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - trusty (arm64)
+    #   os: linux
+    #   dist: trusty
+    #   arch: arm64
+    #   script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - xenial (arm64)
+    #   os: linux
+    #   dist: xenial
+    #   arch: arm64
+    #   script: *linux-script
     - stage: test
       name: Test on Linux - bionic (arm64)
       os: linux
