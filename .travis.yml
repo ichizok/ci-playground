@@ -31,12 +31,12 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
+    - cat /etc/hosts
     - which -a python3
     - ls /opt
     - python3 -u -mhttp.server --bind localhost 8000 >/tmp/pythonlog 2>&1 &
     - sleep 1; cat /tmp/pythonlog
-    - curl -I http://localhost:8000/
-    # - cat /etc/hosts
+    - curl -vI http://localhost:8000/
     # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     # - cat /etc/apt/sources.list
     # - find_module snd-dummy || true
