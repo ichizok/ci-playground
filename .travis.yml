@@ -32,6 +32,7 @@ _anchors:
 
   linux_script: &linux-script
     - echo $PATH
+    - cat /etc/nsswitch.conf || true
     - gcc -o test main.c
     - cat /etc/hosts
     - ./test localhost
