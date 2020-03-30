@@ -35,7 +35,7 @@ _anchors:
     - gcc -o test main.c
     - cat /etc/hosts
     - ./test localhost
-    - sudo sort -r -o /etc/hosts /etc/hosts
+    - sudo sort -o /etc/hosts /etc/hosts
     - cat /etc/hosts
     - ./test localhost
     # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
