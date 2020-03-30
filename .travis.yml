@@ -31,11 +31,12 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - cat /etc/hosts
     - echo $PATH
-    - which -a python3
-    - ls /opt
     - gcc -o test main.c
+    - cat /etc/hosts
+    - ./test localhost
+    - sort -r -o /etc/hosts /etc/hosts
+    - cat /etc/hosts
     - ./test localhost
     # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     # - cat /etc/apt/sources.list
