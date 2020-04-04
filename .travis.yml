@@ -33,14 +33,18 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - echo $PATH
-    - cat /etc/nsswitch.conf || true
-    - gcc -o test main.c
-    - cat /etc/hosts
-    - ./test localhost
-    - sudo sort -o /etc/hosts /etc/hosts
-    - cat /etc/hosts
-    - ./test localhost
+    - ip a
+    - sysctl -a | grep ipv6
+    - sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=0
+    - ip a
+    # - echo $PATH
+    # - cat /etc/nsswitch.conf || true
+    # - gcc -o test main.c
+    # - cat /etc/hosts
+    # - ./test localhost
+    # - sudo sort -o /etc/hosts /etc/hosts
+    # - cat /etc/hosts
+    # - ./test localhost
     # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
     # - cat /etc/apt/sources.list
     # - find_module snd-dummy || true
@@ -87,11 +91,11 @@ jobs:
     #   os: linux
     #   dist: xenial
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (amd64)
-    #   os: linux
-    #   dist: bionic
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (amd64)
+      os: linux
+      dist: bionic
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (ppc64le)
     #   os: linux
@@ -104,12 +108,12 @@ jobs:
     #   dist: xenial
     #   arch: ppc64le
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (ppc64le)
-    #   os: linux
-    #   dist: bionic
-    #   arch: ppc64le
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (ppc64le)
+      os: linux
+      dist: bionic
+      arch: ppc64le
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (s390x)
     #   os: linux
@@ -122,12 +126,12 @@ jobs:
     #   dist: xenial
     #   arch: s390x
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (s390x)
-    #   os: linux
-    #   dist: bionic
-    #   arch: s390x
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (s390x)
+      os: linux
+      dist: bionic
+      arch: s390x
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (arm64)
     #   os: linux
@@ -140,12 +144,12 @@ jobs:
     #   dist: xenial
     #   arch: arm64
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (arm64)
-    #   os: linux
-    #   dist: bionic
-    #   arch: arm64
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (arm64)
+      os: linux
+      dist: bionic
+      arch: arm64
+      script: *linux-script
     # - stage: test
     #   name: Test on El Capitan
     #   os: osx
@@ -166,14 +170,14 @@ jobs:
     #   os: osx
     #   osx_image: xcode9.4
     #   script: *osx-script
-    - stage: test
-      name: Test on Mojave
-      os: osx
-      osx_image: xcode11.3
-      <<: *homebrew
-      # <<: *cache
-      # script: *osx-script
-      script: echo hello
+    # - stage: test
+    #   name: Test on Mojave
+    #   os: osx
+    #   osx_image: xcode11.3
+    #   <<: *homebrew
+    #   # <<: *cache
+    #   # script: *osx-script
+    #   script: echo hello
     # - stage: deploy
     #   name: Deployment
     #   os: osx
