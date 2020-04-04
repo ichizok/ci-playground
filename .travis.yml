@@ -33,8 +33,8 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
+    - ls -l /proc/net/
     - ip a
-    - sysctl -a | grep ipv6
     - sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=0
     - ip a
     # - echo $PATH
