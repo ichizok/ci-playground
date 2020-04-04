@@ -40,7 +40,7 @@ _anchors:
     # - echo $PATH
     # - cat /etc/nsswitch.conf || true
     # - gcc -o test main.c
-    # - cat /etc/hosts
+    - cat /etc/hosts
     # - ./test localhost
     # - sudo sort -o /etc/hosts /etc/hosts
     # - cat /etc/hosts
