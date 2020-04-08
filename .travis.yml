@@ -33,25 +33,16 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - ls -l /proc/net/
-    - ip a
-    - sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=0
-    - ip a
-    # - echo $PATH
-    # - cat /etc/nsswitch.conf || true
-    # - gcc -o test main.c
-    - cat /etc/hosts
-    # - ./test localhost
-    # - sudo sort -o /etc/hosts /etc/hosts
-    # - cat /etc/hosts
-    # - ./test localhost
-    # - find_module() { find "/lib/modules/$(uname -r)" -name "$1.ko" | grep -s .;  }
-    # - cat /etc/apt/sources.list
-    # - find_module snd-dummy || true
-    # - sudo apt update -y >/dev/null 2>&1 || true
-    # - sudo apt install -y "linux-modules-extra-$(uname -r)" || true
-    # # Check snd-dummy.ko exists ultimately.
-    # - find_module snd-dummy || true
+    - ulimit -c
+    - ulimit -a -S
+    - ulimit -a -H
+    - cat /proc/sys/kernel/core_pattern
+    - sudo ulimit -c unlimited -S
+    - echo 'core.%p' | sudo tee /proc/sys/kernel/core_pattern
+    - gcc -g3 -o crash crash.c
+    - ./crash
+    - ls -l
+    - gdb -batch -c core.* -e crash -x bt
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
