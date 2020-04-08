@@ -59,7 +59,7 @@ _anchors:
     - mkdir -p /tmp/crash
     - find /var/crash -type f -name '*.crash' | xargs -I{} -n1 -t apport-unpack {} /tmp/crash
     - ls -l /tmp/crash
-    # - gdb -batch -c /tmp/crash/* -e crash -ex bt
+    - gdb -batch -c /tmp/crash/CoreDump -e crash -ex bt
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
