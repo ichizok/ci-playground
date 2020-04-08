@@ -51,11 +51,13 @@ _anchors:
       [main]
       unpackaged=true
       EOT
+    - sudo systemctl status apport
+    - sudo systemctl restart apport
     - gcc -g3 -o crash crash.c
-    - ./crash
+    - ./crash || true
     - ls -l /var/crash
-    - find /var/crash -t f | xargs -I{} -n1 apport-unpack {} core
-    - gdb -batch -c core -e crash -x bt
+    - find /var/crash -t f | xargs -I{} -n1 -t apport-unpack {} core
+    - [[ -e core ]] && gdb -batch -c core -e crash -ex bt
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
