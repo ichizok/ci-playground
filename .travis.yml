@@ -43,6 +43,7 @@ _anchors:
     - ulimit -a -S
     - ulimit -a -H
     - cat /proc/sys/kernel/core_pattern
+    - sudo bash -c 'ulimit -c unlimited -H'
     - ulimit -c unlimited -S
     - ulimit -c
     - mkdir -p ${HOME}/.config/apport
