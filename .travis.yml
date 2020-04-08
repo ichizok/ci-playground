@@ -11,6 +11,13 @@ env:
   #   - TEST=test2
 
 _anchors:
+  apt: &apt
+    addons:
+      apt:
+        packages:
+          - gdb
+          - apport
+
   homebrew: &homebrew
     addons:
       homebrew:
@@ -33,16 +40,22 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - ulimit -c
     - ulimit -a -S
     - ulimit -a -H
     - cat /proc/sys/kernel/core_pattern
-    - sudo ulimit -c unlimited -S
-    - echo 'core.%p' | sudo tee /proc/sys/kernel/core_pattern
+    - ulimit -c unlimited -S
+    - ulimit -c
+    - mkdir -p ~/.config/apport
+    - |
+      cat <<EOT > ~/.config/apport/settings
+      [main]
+      unpacked=true
+      EOT
     - gcc -g3 -o crash crash.c
     - ./crash
-    - ls -l
-    - gdb -batch -c core.* -e crash -x bt
+    - ls -l /var/crash
+    - find /var/crash -t f | xargs -I{} -n1 apport-unpack {} core
+    - gdb -batch -c core -e crash -x bt
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
@@ -86,6 +99,7 @@ jobs:
       name: Test on Linux - bionic (amd64)
       os: linux
       dist: bionic
+      <<: *apt
       script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (ppc64le)
@@ -104,6 +118,7 @@ jobs:
       os: linux
       dist: bionic
       arch: ppc64le
+      <<: *apt
       script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (s390x)
@@ -122,6 +137,7 @@ jobs:
       os: linux
       dist: bionic
       arch: s390x
+      <<: *apt
       script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (arm64)
@@ -140,6 +156,7 @@ jobs:
       os: linux
       dist: bionic
       arch: arm64
+      <<: *apt
       script: *linux-script
     # - stage: test
     #   name: Test on El Capitan
