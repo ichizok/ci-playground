@@ -53,7 +53,7 @@ _anchors:
       EOT
     - sudo systemctl status apport
     - sudo systemctl restart apport
-    - pgrep -fl apport
+    - sudo systemctl status apport
     - gcc -g3 -O0 -o crash crash.c
     - ./crash || true
     - ls -l /var/crash
