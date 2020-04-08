@@ -49,7 +49,7 @@ _anchors:
     - |
       cat <<EOT > ~/.config/apport/settings
       [main]
-      unpacked=true
+      unpackaged=true
       EOT
     - gcc -g3 -o crash crash.c
     - ./crash
