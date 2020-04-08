@@ -45,12 +45,11 @@ _anchors:
     - cat /proc/sys/kernel/core_pattern
     - ulimit -c unlimited -S
     - ulimit -c
-    - mkdir -p ~/.config/apport
+    - mkdir -p ${HOME}/.config/apport
     - |
-      cat <<EOT > ~/.config/apport/settings
-      [main]
-      unpackaged=true
-      EOT
+      echo '[main]' >${HOME}/.config/apport/settings
+      echo 'unpackaged=true' >>${HOME}/.config/apport/settings
+    - cat ${HOME}/.config/apport/settings
     - sudo systemctl status apport
     - sudo systemctl restart apport
     - sudo systemctl status apport
