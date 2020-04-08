@@ -53,12 +53,12 @@ _anchors:
       EOT
     - sudo systemctl status apport
     - sudo systemctl restart apport
-    - gcc -g3 -o crash crash.c
+    - gcc -g3 -O0 -o crash crash.c
     - ./crash || true
     - ls -l /var/crash
     - mkdir -p /tmp/crash
-    - find /var/crash -t f -name '*.crash' | xargs -I{} -n1 -t apport-unpack {} /tmp/crash
-    - gdb -batch -c core -e crash -ex bt
+    - find /var/crash -type f -name '*.crash' | xargs -I{} -n1 -t apport-unpack {} /tmp/crash
+    - gdb -batch -c /tmp/crash/* -e crash -ex bt
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
