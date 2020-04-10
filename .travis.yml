@@ -16,7 +16,6 @@ _anchors:
       apt:
         packages:
           - gdb
-          - apport
 
   homebrew: &homebrew
     addons:
@@ -40,27 +39,9 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - ulimit -a -S
-    - ulimit -a -H
-    - cat /proc/sys/kernel/core_pattern
-    - sudo bash -c 'ulimit -c unlimited -H'
-    - ulimit -c unlimited -S
-    - ulimit -c
-    - mkdir -p ${HOME}/.config/apport
-    - |
-      echo '[main]' >${HOME}/.config/apport/settings
-      echo 'unpackaged=true' >>${HOME}/.config/apport/settings
-    - cat ${HOME}/.config/apport/settings
-    - sudo systemctl status apport
-    - sudo systemctl restart apport
-    - sudo systemctl status apport
     - gcc -g3 -O0 -o crash crash.c
     - ./crash || true
-    - ls -l /var/crash
-    - mkdir -p /tmp/crash
-    - find /var/crash -type f -name '*.crash' | xargs -I{} -n1 -t apport-unpack {} /tmp/crash
-    - ls -l /tmp/crash
-    - gdb -batch -c /tmp/crash/CoreDump -e crash -ex bt
+    - gdb -batch -e crash -ex c -ex bt
 
   osx_script: &osx-script
     - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
@@ -195,6 +176,7 @@ jobs:
       name: Deployment
       os: linux
       dist: bionic
+      arch: amd64
       # os: osx
       # osx_image: xcode11.3
       script: skip
