@@ -20,8 +20,8 @@ _anchors:
   homebrew: &homebrew
     addons:
       homebrew:
-        packages:
-          - python
+        # packages:
+        #   - python
         # brewfile: Brewfile.travis
         update: true
 
@@ -48,22 +48,22 @@ _anchors:
     - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
     - du -hd1 /usr/local/Homebrew/Library/Taps/homebrew
     - ls /usr/local/opt
-    - rm -fr build
-    - mkdir -p build
-    - cc -o build/test main.c
-    - ./build/test "hello world"
-    - set -e
-    - vim_url=$(curl -Ls https://vim-jp.org/redirects/macvim-dev/macvim/latest.json | python -c 'import json,sys; print(json.load(sys.stdin)["redirect_url"])')
-    - curl -L -o MacVim.dmg "${vim_url}"
-    - hdiutil attach -quiet -mountpoint /Volumes/MacVim MacVim.dmg
-    - cp -a /Volumes/MacVim/MacVim.app .
-    - hdiutil detach /Volumes/MacVim
-    - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &luadll .. ":" .. has("lua")' +q
-    - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &pythondll .. ":" .. has("python")' +q
-    - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &pythonthreedll .. ":" .. has("python3")' +q
-    - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &rubydll .. ":" .. has("ruby")' +q
-    - find -L /System/Library/Frameworks/Python.framework -name Python
-    - find -L /usr/local/Frameworks/Python.framework -name Python
+    # - rm -fr build
+    # - mkdir -p build
+    # - cc -o build/test main.c
+    # - ./build/test "hello world"
+    # - set -e
+    # - vim_url=$(curl -Ls https://vim-jp.org/redirects/macvim-dev/macvim/latest.json | python -c 'import json,sys; print(json.load(sys.stdin)["redirect_url"])')
+    # - curl -L -o MacVim.dmg "${vim_url}"
+    # - hdiutil attach -quiet -mountpoint /Volumes/MacVim MacVim.dmg
+    # - cp -a /Volumes/MacVim/MacVim.app .
+    # - hdiutil detach /Volumes/MacVim
+    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &luadll .. ":" .. has("lua")' +q
+    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &pythondll .. ":" .. has("python")' +q
+    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &pythonthreedll .. ":" .. has("python3")' +q
+    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &rubydll .. ":" .. has("ruby")' +q
+    # - find -L /System/Library/Frameworks/Python.framework -name Python
+    # - find -L /usr/local/Frameworks/Python.framework -name Python
 
 # before_script:
 #   - sudo sed -i '/^127\.0\.1\.1\s/s/localhost//g' /etc/hosts
@@ -80,11 +80,11 @@ jobs:
     #   os: linux
     #   dist: xenial
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (amd64)
-      os: linux
-      dist: bionic
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (amd64)
+    #   os: linux
+    #   dist: bionic
+    #   script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (ppc64le)
     #   os: linux
@@ -159,14 +159,13 @@ jobs:
     #   os: osx
     #   osx_image: xcode9.4
     #   script: *osx-script
-    # - stage: test
-    #   name: Test on Mojave
-    #   os: osx
-    #   osx_image: xcode11.3
-    #   <<: *homebrew
-    #   # <<: *cache
-    #   # script: *osx-script
-    #   script: echo hello
+    - stage: test
+      name: Test on Mojave
+      os: osx
+      osx_image: xcode11.3
+      <<: *homebrew
+      # <<: *cache
+      script: *osx-script
     # - stage: deploy
     #   name: Deployment
     #   os: linux
