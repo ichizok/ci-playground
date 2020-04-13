@@ -25,14 +25,21 @@ void use_getaddrinfo(const char *name)
     struct addrinfo hints = {0};
     struct addrinfo *res = NULL;
     struct addrinfo *r = NULL;
-    hints.ai_family = AF_INET;
+    hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_ADDRCONFIG;
     if ((err = getaddrinfo(name, NULL, &hints, &res)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(err));
         return;
     }
     for (r = res; r != NULL; r = r->ai_next) {
-        printf("getaddrinfo:\n %s is %s\n", name, inet_ntoa(((struct sockaddr_in *)r->ai_addr)->sin_addr));
+        char p[64] = {0};
+        if (r->ai_family == AF_INET6) {
+            inet_ntop(AF_INET6, &((struct sockaddr_in6 *)r->ai_addr)->sin6_addr, p, sizeof(p));
+        } else {
+            inet_ntop(AF_INET, &((struct sockaddr_in *)r->ai_addr)->sin_addr, p, sizeof(p));
+        }
+        printf("getaddrinfo:\n %s is %s\n", name, p);
     }
     freeaddrinfo(res);
 }
