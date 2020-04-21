@@ -52,8 +52,8 @@ _anchors:
     - cd -
     - git clone --depth 1 https://github.com/vim/vim /tmp/vim
     - cd /tmp/vim
-    - ./configure --with-features=huge
-    - sed -i.bak '/^CPPFLAGS/s/$/ -DWE_ARE_PROFILING;/^CFLAGS/s/$/ -g -O0' src/auto/config.mk
+    - ./configure --with-features=huge --disable-nls --enable-fail-if-missing
+    - sed -i.bak '/^CPPFLAGS/s/$/ -DWE_ARE_PROFILING/;/^CFLAGS/s/$/ -g -O0/' src/auto/config.mk
     - make -j$(getconf _NPROCESSORS_ONLN 2>/dev/null)
     - cd -
     - cp /tmp/vim/src/vim .
