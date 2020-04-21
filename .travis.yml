@@ -61,7 +61,7 @@ _anchors:
     - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(300, '10m')" +"qall!"
     - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(30, '100m')" +"qall!"
     - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(3, '1000m')" +"qall!"
-    - (for f in *.out; do pprof --dot src/vim $f > ${f%.out}.dot; done)
+    - (for f in *.out; do pprof --dot vim $f > ${f%.out}.dot; done)
     - (for f in *.dot; dot -Tsvg $f > ${f%.dot}.svg; done)
     - tar -czf vim-prof.tgz vim *.out *.dot *.svg
 
