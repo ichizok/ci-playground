@@ -60,7 +60,7 @@ _anchors:
     - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(300, '10m')" +"qall!"
     - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(30, '100m')" +"qall!"
     - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(3, '1000m')" +"qall!"
-    - ./vim -u NONE -i NONE --not-a-term -N -V1 +"call writefile(systemlist('vimmap '..getpid()), 'vim.map')" +"q"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 +"call writefile(systemlist('vmmap '..getpid()), 'vim.map')" +"q"
     - tar -czf vim-prof.tgz vim *.out vim.map
 
 jobs:
