@@ -23,7 +23,6 @@ _anchors:
       homebrew:
         packages:
           - google-perftools
-          - graphviz
         #   - python
         # brewfile: Brewfile.travis
         # update: true
@@ -59,17 +58,13 @@ _anchors:
     - cp /tmp/vim/src/vim .
     - |
       do_prof() {
-        ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate($1, '$2')" +"call VMMap('$3')" +"qall!"
+        ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call VMMap('vm_$2')" +"call Estimate($1, '$2')" +"qall!" || true
       }
-    - do_prof 3000 1m vm_1m
-    - do_prof 300 10m vm_10m
-    - do_prof 30 100m vm_100m
-    - do_prof 3 1000m vm_1000m
-    - which -a pprof
-    - (for f in *.out; do /usr/local/bin/pprof --dot vim $f > ${f%.out}.dot; done)
-    - which -a dot
-    - (for f in *.dot; /usr/local/bin/dot -Tsvg $f > ${f%.dot}.svg; done)
-    - tar -czf vim-prof.tgz vim *.out *.dot *.svg *.map
+    - do_prof 3000 1m
+    - do_prof 300 10m
+    - do_prof 30 100m
+    - do_prof 3 1000m
+    - tar -czf vim-prof.tgz vim *.out *.map
 
 jobs:
   include:
