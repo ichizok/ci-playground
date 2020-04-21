@@ -6,6 +6,7 @@ compiler:
 env:
   global:
     - FOO=foo BAR=bar
+    - HOMEBREW_NO_AUTO_UPDATE=1
   # matrix:
   #   - TEST=test1
   #   - TEST=test2
@@ -20,10 +21,12 @@ _anchors:
   homebrew: &homebrew
     addons:
       homebrew:
-        # packages:
+        packages:
+          - google-perftools
+          - graphviz
         #   - python
         # brewfile: Brewfile.travis
-        update: true
+        # update: true
 
   caches: &cache
     cache:
@@ -43,30 +46,24 @@ _anchors:
     - ./main localhost
 
   osx_script: &osx-script
-    - find /usr/local/Homebrew/Library/Homebrew/vendor -maxdepth 3
-    - du -hd1 /usr/local/Homebrew/Library/Homebrew/vendor
-    - find /usr/local/Homebrew/Library/Taps -mindepth 2 -maxdepth 2
-    - du -hd1 /usr/local/Homebrew/Library/Taps/homebrew
-    - ls /usr/local/opt
-    # - rm -fr build
-    # - mkdir -p build
-    # - cc -o build/test main.c
-    # - ./build/test "hello world"
-    # - set -e
-    # - vim_url=$(curl -Ls https://vim-jp.org/redirects/macvim-dev/macvim/latest.json | python -c 'import json,sys; print(json.load(sys.stdin)["redirect_url"])')
-    # - curl -L -o MacVim.dmg "${vim_url}"
-    # - hdiutil attach -quiet -mountpoint /Volumes/MacVim MacVim.dmg
-    # - cp -a /Volumes/MacVim/MacVim.app .
-    # - hdiutil detach /Volumes/MacVim
-    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &luadll .. ":" .. has("lua")' +q
-    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &pythondll .. ":" .. has("python")' +q
-    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &pythonthreedll .. ":" .. has("python3")' +q
-    # - ./MacVim.app/Contents/MacOS/Vim -u NONE -i NONE -esNX -V1 +'echo &rubydll .. ":" .. has("ruby")' +q
-    # - find -L /System/Library/Frameworks/Python.framework -name Python
-    # - find -L /usr/local/Frameworks/Python.framework -name Python
-
-# before_script:
-#   - sudo sed -i '/^127\.0\.1\.1\s/s/localhost//g' /etc/hosts
+    - git clone --depth 1 https://github.com/ichizok/vim-perf /tmp/vim-perf
+    - cd /tmp/vim-perf
+    - make
+    - cd -
+    - git clone --depth 1 https://github.com/vim/vim /tmp/vim
+    - cd /tmp/vim
+    - ./configure --with-features=huge
+    - sed -i.bak '/^CPPFLAGS/s/$/ -DWE_ARE_PROFILING;/^CFLAGS/s/$/ -g -O0' src/auto/config.mk
+    - make -j$(getconf _NPROCESSORS_ONLN 2>/dev/null)
+    - cd -
+    - cp /tmp/vim/src/vim .
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(3000, '1m')" +"qall!"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(300, '10m')" +"qall!"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(30, '100m')" +"qall!"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(3, '1000m')" +"qall!"
+    - (for f in *.out; do pprof --dot src/vim $f > ${f%.out}.dot; done)
+    - (for f in *.dot; dot -Tsvg $f > ${f%.dot}.svg; done)
+    - tar -czf vim-prof.tgz vim *.out *.dot *.svg
 
 jobs:
   include:
@@ -166,6 +163,12 @@ jobs:
       <<: *homebrew
       # <<: *cache
       script: *osx-script
+      deploy:
+        provider: releases
+        token:
+          secure: f96CLQZZCYIJ5TY2os6IHHbL2U2Jzx+tgh8+8m3Xsf65WeFNHreLKMYjyVhz70KSx4DrUxs6XpOoBdgmeue/5c+1IvXZkUFt6OL32a8MU07y2dPKAi69RMa/BA4i0wTtDmFKAKGxgT5klM2XOiCjchsiKuji7yDk3zX0RpbKP8cwnpZK+OH2TcOT3P1L+zaGZtlTmgmni3QSZieLQlAoUelYsy3KJmNKM2DF+n9iiOoFeY3OCMizFNKe0XjRkc90xDNcQdHnuzxAb4lPrQK1dy+w7niguiyUHwzu99vHc/ltm/mU/YQi3ZRma7gklj8/xSWArNqd0WfcAZZ+n5f4J5bnBY6gwinVCRYuTETlt+E6xcArUBl0ylRw8ee7JxIn60m2zIxl7LOgZEgijD4VvrFoExN36BE4KkccBqzjr3CFyAQzD0D326cLzmHTbp00IoVZgi8C40BakkQAAw22vI0PKc6jbfo/HIznQhCk9NnByiNtTnjb+UAB6wxxjiEI1DNj1XPEHQtOBvWMthEL3RD5SVbHIm7MiDEcB7U8c6dLZdUC7jYFUKVHJbd43MPgoOU49aMVeZqYX0nlX86lQoh24TY8yR7NPxt9LtuMwQZSNO8++lMW2F0APDwjIa1wXxmLTG4Pan/oQ7VLtffPGm9oi53nZBszpOeubdzDRnU=
+        file: vim-prof.tgz
+        skip_cleanup: true
     # - stage: deploy
     #   name: Deployment
     #   os: linux
