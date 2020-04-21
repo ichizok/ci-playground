@@ -56,15 +56,12 @@ _anchors:
     - make -j$(getconf _NPROCESSORS_ONLN 2>/dev/null)
     - cd -
     - cp /tmp/vim/src/vim .
-    - |
-      do_prof() {
-        ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call VMMap('vm_$2')" +"call Estimate($1, '$2')" +"qall!" || true
-      }
-    - do_prof 3000 1m
-    - do_prof 300 10m
-    - do_prof 30 100m
-    - do_prof 3 1000m
-    - tar -czf vim-prof.tgz vim *.out *.map
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(3000, '1m')" +"qall!"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(300, '10m')" +"qall!"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(30, '100m')" +"qall!"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(3, '1000m')" +"qall!"
+    - ./vim -u NONE -i NONE --not-a-term -N -V1 +"call writefile(systemlist('vimmap '..getpid()), 'vim.map')" +"q"
+    - tar -czf vim-prof.tgz vim *.out vim.map
 
 jobs:
   include:

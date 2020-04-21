@@ -14,9 +14,6 @@ function Estimate(n, t)
   echo printf('Calibration = %f', calibrator)
   echo ''
 endfunction
-function VMMap(fname)
-  call writefile(systemlist('vmmap '..getpid()), a:fname)
-endfunction
 " sleep 1
 " call Estimate(1000, '1m')
 " call Estimate(100, '10m')
