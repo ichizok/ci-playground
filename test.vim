@@ -1,4 +1,4 @@
-set rtp^=$TRAVIS_BUILD_DIR/vim-perf
+set rtp^=/tmp/vim-perf
 call vimperf#setup()
 function Estimate(n, t)
   call vimperf#start('prof_'..a:t..'.out')
