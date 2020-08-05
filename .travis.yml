@@ -42,8 +42,9 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - gcc -g3 -O0 -o main main.c
-    - ./main localhost
+    - cat /proc/cpuinfo
+    # - gcc -g3 -O0 -o main main.c
+    # - ./main localhost
 
   osx_script: &osx-script
     - git clone --depth 1 https://github.com/ichizok/vim-perf /tmp/vim-perf
@@ -80,11 +81,11 @@ jobs:
     #   os: linux
     #   dist: xenial
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (amd64)
-    #   os: linux
-    #   dist: bionic
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (amd64)
+      os: linux
+      dist: bionic
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (ppc64le)
     #   os: linux
@@ -97,12 +98,12 @@ jobs:
     #   dist: xenial
     #   arch: ppc64le
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (ppc64le)
-    #   os: linux
-    #   dist: bionic
-    #   arch: ppc64le
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (ppc64le)
+      os: linux
+      dist: bionic
+      arch: ppc64le
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (s390x)
     #   os: linux
@@ -115,12 +116,12 @@ jobs:
     #   dist: xenial
     #   arch: s390x
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (s390x)
-    #   os: linux
-    #   dist: bionic
-    #   arch: s390x
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (s390x)
+      os: linux
+      dist: bionic
+      arch: s390x
+      script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (arm64)
     #   os: linux
@@ -133,12 +134,12 @@ jobs:
     #   dist: xenial
     #   arch: arm64
     #   script: *linux-script
-    # - stage: test
-    #   name: Test on Linux - bionic (arm64)
-    #   os: linux
-    #   dist: bionic
-    #   arch: arm64
-    #   script: *linux-script
+    - stage: test
+      name: Test on Linux - bionic (arm64)
+      os: linux
+      dist: bionic
+      arch: arm64
+      script: *linux-script
     # - stage: test
     #   name: Test on El Capitan
     #   os: osx
@@ -159,19 +160,19 @@ jobs:
     #   os: osx
     #   osx_image: xcode9.4
     #   script: *osx-script
-    - stage: test
-      name: Test on Mojave
-      os: osx
-      osx_image: xcode11.3
-      <<: *homebrew
-      # <<: *cache
-      script: *osx-script
-      deploy:
-        provider: releases
-        token:
-          secure: f96CLQZZCYIJ5TY2os6IHHbL2U2Jzx+tgh8+8m3Xsf65WeFNHreLKMYjyVhz70KSx4DrUxs6XpOoBdgmeue/5c+1IvXZkUFt6OL32a8MU07y2dPKAi69RMa/BA4i0wTtDmFKAKGxgT5klM2XOiCjchsiKuji7yDk3zX0RpbKP8cwnpZK+OH2TcOT3P1L+zaGZtlTmgmni3QSZieLQlAoUelYsy3KJmNKM2DF+n9iiOoFeY3OCMizFNKe0XjRkc90xDNcQdHnuzxAb4lPrQK1dy+w7niguiyUHwzu99vHc/ltm/mU/YQi3ZRma7gklj8/xSWArNqd0WfcAZZ+n5f4J5bnBY6gwinVCRYuTETlt+E6xcArUBl0ylRw8ee7JxIn60m2zIxl7LOgZEgijD4VvrFoExN36BE4KkccBqzjr3CFyAQzD0D326cLzmHTbp00IoVZgi8C40BakkQAAw22vI0PKc6jbfo/HIznQhCk9NnByiNtTnjb+UAB6wxxjiEI1DNj1XPEHQtOBvWMthEL3RD5SVbHIm7MiDEcB7U8c6dLZdUC7jYFUKVHJbd43MPgoOU49aMVeZqYX0nlX86lQoh24TY8yR7NPxt9LtuMwQZSNO8++lMW2F0APDwjIa1wXxmLTG4Pan/oQ7VLtffPGm9oi53nZBszpOeubdzDRnU=
-        file: vim-prof.tgz
-        skip_cleanup: true
+    # - stage: test
+    #   name: Test on Mojave
+    #   os: osx
+    #   osx_image: xcode11.3
+    #   <<: *homebrew
+    #   # <<: *cache
+    #   script: *osx-script
+    #   deploy:
+    #     provider: releases
+    #     token:
+    #       secure: f96CLQZZCYIJ5TY2os6IHHbL2U2Jzx+tgh8+8m3Xsf65WeFNHreLKMYjyVhz70KSx4DrUxs6XpOoBdgmeue/5c+1IvXZkUFt6OL32a8MU07y2dPKAi69RMa/BA4i0wTtDmFKAKGxgT5klM2XOiCjchsiKuji7yDk3zX0RpbKP8cwnpZK+OH2TcOT3P1L+zaGZtlTmgmni3QSZieLQlAoUelYsy3KJmNKM2DF+n9iiOoFeY3OCMizFNKe0XjRkc90xDNcQdHnuzxAb4lPrQK1dy+w7niguiyUHwzu99vHc/ltm/mU/YQi3ZRma7gklj8/xSWArNqd0WfcAZZ+n5f4J5bnBY6gwinVCRYuTETlt+E6xcArUBl0ylRw8ee7JxIn60m2zIxl7LOgZEgijD4VvrFoExN36BE4KkccBqzjr3CFyAQzD0D326cLzmHTbp00IoVZgi8C40BakkQAAw22vI0PKc6jbfo/HIznQhCk9NnByiNtTnjb+UAB6wxxjiEI1DNj1XPEHQtOBvWMthEL3RD5SVbHIm7MiDEcB7U8c6dLZdUC7jYFUKVHJbd43MPgoOU49aMVeZqYX0nlX86lQoh24TY8yR7NPxt9LtuMwQZSNO8++lMW2F0APDwjIa1wXxmLTG4Pan/oQ7VLtffPGm9oi53nZBszpOeubdzDRnU=
+    #     file: vim-prof.tgz
+    #     skip_cleanup: true
     # - stage: deploy
     #   name: Deployment
     #   os: linux
