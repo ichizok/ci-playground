@@ -42,7 +42,10 @@ _anchors:
       MYBAR=mybar
 
   linux_script: &linux-script
-    - cat /proc/cpuinfo
+    - sudo apt-get install -yq --no-install-suggests --no-install-recommends linux-modules-extra-$(uname -r)
+    - find /lib/modules/$(uname -r) -name snd-dummy.ko
+    - sudo modprobe snd-dummy
+    # - cat /proc/cpuinfo
     # - gcc -g3 -O0 -o main main.c
     # - ./main localhost
 
