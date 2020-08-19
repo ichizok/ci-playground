@@ -43,6 +43,7 @@ _anchors:
 
   linux_script: &linux-script
     - sudo apt-get install -yq --no-install-suggests --no-install-recommends linux-modules-extra-$(uname -r)
+    - ls /lib/modules
     - find /lib/modules/$(uname -r) -name snd-dummy.ko
     - sudo modprobe snd-dummy
     # - cat /proc/cpuinfo
