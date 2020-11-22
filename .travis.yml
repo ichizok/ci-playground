@@ -72,8 +72,10 @@ _anchors:
     # - nm /usr/lib/system/libsystem_kernel.dylib > libsystem_kernel.dylib.symbol.txt
     # - nm /usr/lib/system/libsystem_platform.dylib > libsystem_platform.dylib.symbol.txt
     # - tar -czf vim-prof.tgz vim *.out *.dot *.svg vim.map *.symbol.txt
-    - ls /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
-    - cc -arch x86_64 -arch arm64e -o test.out main.c
+    - xcodebuild -showsdks
+    - xcrun --show-sdk-platform-path
+    - xcrun --show-sdk-platform-version
+    - xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
     - file test.out
     - otool -L test.out
 
