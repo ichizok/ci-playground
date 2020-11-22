@@ -51,27 +51,30 @@ _anchors:
     # - ./main localhost
 
   osx_script: &osx-script
-    - git clone --depth 1 https://github.com/ichizok/vim-perf /tmp/vim-perf
-    - cd /tmp/vim-perf
-    - make
-    - cd -
-    - git clone --depth 1 https://github.com/vim/vim /tmp/vim
-    - cd /tmp/vim
-    - ./configure --with-features=huge --disable-nls --enable-fail-if-missing
-    - sed -i.bak '/^CPPFLAGS/s/$/ -DWE_ARE_PROFILING/;/^CFLAGS/s/$/ -glldb -O0/;/^LDFLAGS/s/$/ -Wl,-no_pie/' src/auto/config.mk
-    - make -j$(getconf _NPROCESSORS_ONLN 2>/dev/null)
-    - cd -
-    - cp /tmp/vim/src/vim .
-    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(5000, '1m')" +"qall!"
-    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(500, '10m')" +"qall!"
-    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(50, '100m')" +"qall!"
-    - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(5, '1000m')" +"qall!"
-    - ./vim -u NONE -i NONE --not-a-term -N -V1 +"call writefile(systemlist('vmmap '..getpid()), 'vim.map')" +"q"
-    - ( for f in *.out; do pprof --dot vim $f > ${f%.out}.dot; done; )
-    - ( for f in *.dot; do dot -Tsvg $f > ${f%.dot}.svg; done; )
-    - nm /usr/lib/system/libsystem_kernel.dylib > libsystem_kernel.dylib.symbol.txt
-    - nm /usr/lib/system/libsystem_platform.dylib > libsystem_platform.dylib.symbol.txt
-    - tar -czf vim-prof.tgz vim *.out *.dot *.svg vim.map *.symbol.txt
+    # - git clone --depth 1 https://github.com/ichizok/vim-perf /tmp/vim-perf
+    # - cd /tmp/vim-perf
+    # - make
+    # - cd -
+    # - git clone --depth 1 https://github.com/vim/vim /tmp/vim
+    # - cd /tmp/vim
+    # - ./configure --with-features=huge --disable-nls --enable-fail-if-missing
+    # - sed -i.bak '/^CPPFLAGS/s/$/ -DWE_ARE_PROFILING/;/^CFLAGS/s/$/ -glldb -O0/;/^LDFLAGS/s/$/ -Wl,-no_pie/' src/auto/config.mk
+    # - make -j$(getconf _NPROCESSORS_ONLN 2>/dev/null)
+    # - cd -
+    # - cp /tmp/vim/src/vim .
+    # - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(5000, '1m')" +"qall!"
+    # - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(500, '10m')" +"qall!"
+    # - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(50, '100m')" +"qall!"
+    # - ./vim -u NONE -i NONE --not-a-term -N -V1 -S test.vim +"sleep 1" +"call Estimate(5, '1000m')" +"qall!"
+    # - ./vim -u NONE -i NONE --not-a-term -N -V1 +"call writefile(systemlist('vmmap '..getpid()), 'vim.map')" +"q"
+    # - ( for f in *.out; do pprof --dot vim $f > ${f%.out}.dot; done; )
+    # - ( for f in *.dot; do dot -Tsvg $f > ${f%.dot}.svg; done; )
+    # - nm /usr/lib/system/libsystem_kernel.dylib > libsystem_kernel.dylib.symbol.txt
+    # - nm /usr/lib/system/libsystem_platform.dylib > libsystem_platform.dylib.symbol.txt
+    # - tar -czf vim-prof.tgz vim *.out *.dot *.svg vim.map *.symbol.txt
+    - cc -arch x86_64 -arch arm64e -o test.out main.c
+    - file test.out
+    - otool -L test.out
 
 jobs:
   include:
@@ -85,11 +88,11 @@ jobs:
     #   os: linux
     #   dist: xenial
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (amd64)
-      os: linux
-      dist: bionic
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (amd64)
+    #   os: linux
+    #   dist: bionic
+    #   script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (ppc64le)
     #   os: linux
@@ -102,12 +105,12 @@ jobs:
     #   dist: xenial
     #   arch: ppc64le
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (ppc64le)
-      os: linux
-      dist: bionic
-      arch: ppc64le
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (ppc64le)
+    #   os: linux
+    #   dist: bionic
+    #   arch: ppc64le
+    #   script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (s390x)
     #   os: linux
@@ -120,12 +123,12 @@ jobs:
     #   dist: xenial
     #   arch: s390x
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (s390x)
-      os: linux
-      dist: bionic
-      arch: s390x
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (s390x)
+    #   os: linux
+    #   dist: bionic
+    #   arch: s390x
+    #   script: *linux-script
     # - stage: test
     #   name: Test on Linux - trusty (arm64)
     #   os: linux
@@ -138,12 +141,12 @@ jobs:
     #   dist: xenial
     #   arch: arm64
     #   script: *linux-script
-    - stage: test
-      name: Test on Linux - bionic (arm64)
-      os: linux
-      dist: bionic
-      arch: arm64
-      script: *linux-script
+    # - stage: test
+    #   name: Test on Linux - bionic (arm64)
+    #   os: linux
+    #   dist: bionic
+    #   arch: arm64
+    #   script: *linux-script
     # - stage: test
     #   name: Test on El Capitan
     #   os: osx
@@ -171,6 +174,13 @@ jobs:
     #   <<: *homebrew
     #   # <<: *cache
     #   script: *osx-script
+    - stage: test
+      name: Test on Catalina
+      os: osx
+      osx_image: xcode12.2
+      # <<: *homebrew
+      # <<: *cache
+      script: *osx-script
     #   deploy:
     #     provider: releases
     #     token:
