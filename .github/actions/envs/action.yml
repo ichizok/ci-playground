@@ -1,0 +1,25 @@
+name: Envs
+
+description: Set up environment variables
+
+inputs:
+  os:
+    required: true
+  features:
+    required: true
+  compiler:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        case "${{ inputs.features }}"; in
+        tiny)
+          ;;
+        normal)
+          ;;
+        huge)
+          ;;
+        esac

@@ -15,31 +15,35 @@ jobs:
         os: [ubuntu-18.04, macos-10.15]
         features: [tiny, normal, huge]
         compiler: [gcc, clang]
+        extra: [none]
         include:
-          - features: tiny
-            test: testtiny
-            nogui: true
           - os: ubuntu-18.04
             features: tiny
-            test: testtiny
-            nogui: false
+            extra: nogui
           - os: ubuntu-18.04
             features: huge
+            compiler: clang
+            test: scripttests
+            coverage: true
+          - os: ubuntu-18.04
+            features: huge
+            compiler: gcc
             test: scripttests test_libvterm
             coverage: true
           - os: ubuntu-18.04
             features: huge
             compiler: gcc
-            test: testgui
+            test: -C testgui
             coverage: true
+            extra: testgui
           - os: ubuntu-18.04
             features: huge
             compiler: gcc
-            test: unittests
+            extra: unittests
           - os: ubuntu-18.04
             features: huge
             compiler: clang-11
-            asan: true
+            extra: asan
         exclude:
           - os: macos-10.15
             features: tiny
@@ -84,8 +88,8 @@ jobs:
         run: |
           sudo xcode-select -s /Applications/Xcode_12.2.app
           xcodebuild -showsdks || true
-          xcrun --show-sdk-platform-path || true
-          xcrun --show-sdk-platform-version || true
+          # xcrun --show-sdk-platform-path || true
+          # xcrun --show-sdk-platform-version || true
           xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
           file test.out
           otool -L test.out
