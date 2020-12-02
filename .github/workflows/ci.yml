@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-18.04, macos-10.15]
         features: [tiny, normal, huge]
         compiler: [gcc, clang]
         include:
@@ -83,9 +83,9 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           sudo xcode-select -s /Applications/Xcode_12.2.app
-          xcodebuild -showsdks
-          xcrun --show-sdk-platform-path
-          xcrun --show-sdk-platform-version
+          xcodebuild -showsdks || true
+          xcrun --show-sdk-platform-path || true
+          xcrun --show-sdk-platform-version || true
           xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
           file test.out
           otool -L test.out
