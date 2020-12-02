@@ -88,12 +88,13 @@ jobs:
       - name: Run Ubuntu
         if: matrix.os == 'ubuntu-18.04'
         run: |
+          check_args() { echo "Linux"; "$@" }
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
-          check_args { echo "Linux"; "$@" }
 
       - name: Run macOS
         if: matrix.os == 'macos-10.15'
         run: |
+          check_args() { echo "macOS"; "$@" }
           sudo xcode-select -s /Applications/Xcode_12.2.app
           xcodebuild -showsdks || true
           # xcrun --show-sdk-platform-path || true
@@ -101,7 +102,6 @@ jobs:
           xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
           file test.out
           otool -L test.out
-          check_args { echo "macOS"; "$@" }
 
       - name: Function
         run: |
