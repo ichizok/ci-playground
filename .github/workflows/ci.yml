@@ -18,7 +18,11 @@ jobs:
         include:
           - features: tiny
             test: testtiny
-            nogui: [true, false]
+            nogui: true
+          - os: ubuntu-latest
+            features: tiny
+            test: testtiny
+            nogui: false
           - os: ubuntu-latest
             features: huge
             test: scripttests test_libvterm
@@ -53,6 +57,16 @@ jobs:
         uses: ./.github/actions/test
         with:
           nice-input: 'Nice!!'
+
+      - name: Check variables
+        run: |
+          echo "os       = ${{ matrix.os }}"
+          echo "features = ${{ matrix.features }}"
+          echo "compiler = ${{ matrix.compiler }}"
+          echo "test     = ${{ matrix.test }}"
+          echo "nogui    = ${{ matrix.nogui }}"
+          echo "coverage = ${{ matrix.coverage }}"
+          echo "asan     = ${{ matrix.asan }}"
 
       - name: Run Ubuntu
         if: matrix.os == 'ubuntu-latest'
