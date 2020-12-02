@@ -60,13 +60,16 @@ jobs:
 
       - name: Check variables
         run: |
-          echo "os       = ${{ matrix.os }}"
-          echo "features = ${{ matrix.features }}"
-          echo "compiler = ${{ matrix.compiler }}"
-          echo "test     = ${{ matrix.test }}"
-          echo "nogui    = ${{ matrix.nogui }}"
-          echo "coverage = ${{ matrix.coverage }}"
-          echo "asan     = ${{ matrix.asan }}"
+          echo "matrix:"
+          echo "  os       = ${{ matrix.os }}"
+          echo "  features = ${{ matrix.features }}"
+          echo "  compiler = ${{ matrix.compiler }}"
+          echo "  test     = ${{ matrix.test }}"
+          echo "  nogui    = ${{ matrix.nogui }}"
+          echo "  coverage = ${{ matrix.coverage }}"
+          echo "  asan     = ${{ matrix.asan }}"
+          echo "extra:"
+          echo "  NICE_INPUT=${NICE_INPUT}"
 
       - name: Run Ubuntu
         if: matrix.os == 'ubuntu-latest'
@@ -74,7 +77,7 @@ jobs:
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
 
       - name: Run macOS
-        if: matrix.os == 'macOS-latest'
+        if: matrix.os == 'macos-latest'
         run: |
           xcodebuild -showsdks
           xcrun --show-sdk-platform-path

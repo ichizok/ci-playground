@@ -18,6 +18,7 @@ runs:
       run: |
         echo "CC=${CC}"
         echo "nice-input=${{ inputs.nice-input }}"
+        echo "NICE_INPUT=${{ inputs.nice-input }}" >> $GITHUB_ENV
     - id: work
       shell: bash
       run: |
