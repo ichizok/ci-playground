@@ -1,0 +1,22 @@
+name: Hello World
+
+description: Greeting
+
+inputs:
+  nice-input:
+    required: false
+    default: 'Yes!'
+
+outputs:
+  reply:
+    value: ${{ steps.work.outputs.reply-msg }}
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        echo "CC=${CC}"
+        echo "nice-input=${{ inputs.nice-input }}"
+    - id: work
+      run: |
+        echo "::set-output name=reply-msg::OK!!"

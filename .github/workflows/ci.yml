@@ -1,0 +1,68 @@
+name: GitHub CI
+
+on: [ push, workflow_dispatch ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CC: ${{ matrix.compiler }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        features: [tiny, small, normal, huge]
+        compiler: [gcc, clang]
+        include:
+          - features: tiny
+            test: testtiny
+            nogui: [true, false]
+          - os: ubuntu-latest
+            features: huge
+            test: scripttests test_libvterm
+            coverage: true
+          - os: ubuntu-latest
+            features: huge
+            compiler: gcc
+            test: testgui
+            coverage: true
+          - os: ubuntu-latest
+            features: huge
+            compiler: gcc
+            test: unittests
+          - os: ubuntu-latest
+            features: huge
+            compiler: clang-11
+            asan: true
+        exclude:
+          - os: macos-latest
+            features: [small, normal]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Test 1
+        uses: .github/actions/test
+
+      - name: Test 2
+        uses: .github/actions/test
+        with:
+          nice-input: 'Nice!!'
+
+      - name: Run Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
+
+      - name: Run macOS
+        if: matrix.os == 'macOS-latest'
+        run: |
+          xcodebuild -showsdks
+          xcrun --show-sdk-platform-path
+          xcrun --show-sdk-platform-version
+          xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
+          file test.out
+          otool -L test.out
