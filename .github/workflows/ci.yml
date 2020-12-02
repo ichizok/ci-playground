@@ -3,7 +3,7 @@ name: GitHub CI
 on: [ push, workflow_dispatch ]
 
 jobs:
-  test:
+  trial:
     runs-on: ${{ matrix.os }}
 
     env:
@@ -17,11 +17,13 @@ jobs:
         compiler: [gcc, clang]
         extra: [none]
         include:
-          - features: tiny
+          - os: ubuntu-18.04
+            features: tiny
             compiler: gcc
             test: testtiny
             extra: nogui
-          - features: tiny
+          - os: ubuntu-18.04
+            features: tiny
             compiler: clang
             test: testtiny
             extra: nogui
