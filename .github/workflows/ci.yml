@@ -17,8 +17,13 @@ jobs:
         compiler: [gcc, clang]
         extra: [none]
         include:
-          - os: ubuntu-18.04
-            features: tiny
+          - features: tiny
+            compiler: gcc
+            test: testtiny
+            extra: nogui
+          - features: tiny
+            compiler: clang
+            test: testtiny
             extra: nogui
           - os: ubuntu-18.04
             features: huge
