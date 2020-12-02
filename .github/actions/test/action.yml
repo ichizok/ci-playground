@@ -14,9 +14,11 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: |
+    - shell: bash
+      run: |
         echo "CC=${CC}"
         echo "nice-input=${{ inputs.nice-input }}"
     - id: work
+      shell: bash
       run: |
         echo "::set-output name=reply-msg::OK!!"

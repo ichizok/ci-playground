@@ -10,10 +10,10 @@ jobs:
       CC: ${{ matrix.compiler }}
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: [ubuntu-latest, macos-latest]
-        features: [tiny, small, normal, huge]
+        features: [tiny, normal, huge]
         compiler: [gcc, clang]
         include:
           - features: tiny
@@ -38,7 +38,9 @@ jobs:
             asan: true
         exclude:
           - os: macos-latest
-            features: [small, normal]
+            features: tiny
+          - os: macos-latest
+            features: normal
 
     steps:
       - name: Checkout
