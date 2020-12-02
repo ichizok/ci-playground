@@ -45,6 +45,9 @@ jobs:
             features: tiny
           - os: macos-latest
             features: normal
+          - os: macos-latest
+            features: huge
+            compiler: gcc
 
     steps:
       - name: Checkout
@@ -79,6 +82,7 @@ jobs:
       - name: Run macOS
         if: matrix.os == 'macos-latest'
         run: |
+          sudo xcode-select -s /Applications/Xcode_12.2.app
           xcodebuild -showsdks
           xcrun --show-sdk-platform-path
           xcrun --show-sdk-platform-version
