@@ -88,13 +88,13 @@ jobs:
       - name: Run Ubuntu
         if: matrix.os == 'ubuntu-18.04'
         run: |
-          check_args() { echo "Linux"; "$@" }
+          check_args() { echo "Linux"; eval "$@"; }
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
 
       - name: Run macOS
         if: matrix.os == 'macos-10.15'
         run: |
-          check_args() { echo "macOS"; "$@" }
+          check_args() { echo "macOS"; eval "$@"; }
           sudo xcode-select -s /Applications/Xcode_12.2.app
           xcodebuild -showsdks || true
           # xcrun --show-sdk-platform-path || true
