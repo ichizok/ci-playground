@@ -19,33 +19,33 @@ jobs:
           - features: tiny
             test: testtiny
             nogui: true
-          - os: ubuntu-latest
+          - os: ubuntu-18.04
             features: tiny
             test: testtiny
             nogui: false
-          - os: ubuntu-latest
+          - os: ubuntu-18.04
             features: huge
             test: scripttests test_libvterm
             coverage: true
-          - os: ubuntu-latest
+          - os: ubuntu-18.04
             features: huge
             compiler: gcc
             test: testgui
             coverage: true
-          - os: ubuntu-latest
+          - os: ubuntu-18.04
             features: huge
             compiler: gcc
             test: unittests
-          - os: ubuntu-latest
+          - os: ubuntu-18.04
             features: huge
             compiler: clang-11
             asan: true
         exclude:
-          - os: macos-latest
+          - os: macos-10.15
             features: tiny
-          - os: macos-latest
+          - os: macos-10.15
             features: normal
-          - os: macos-latest
+          - os: macos-10.15
             features: huge
             compiler: gcc
 
@@ -75,12 +75,12 @@ jobs:
           echo "  NICE_INPUT=${NICE_INPUT}"
 
       - name: Run Ubuntu
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-18.04'
         run: |
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
 
       - name: Run macOS
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-10.15'
         run: |
           sudo xcode-select -s /Applications/Xcode_12.2.app
           xcodebuild -showsdks || true
