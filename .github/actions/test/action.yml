@@ -6,6 +6,9 @@ inputs:
   nice-input:
     required: false
     default: 'Yes!'
+  example:
+    required: false
+    default: 'Example'
 
 outputs:
   reply:
@@ -23,3 +26,13 @@ runs:
       shell: bash
       run: |
         echo "::set-output name=reply-msg::OK!!"
+    - id: heredoc
+      shell: bash
+      run: |
+        cat <<EOT >heredoc.txt
+        nice-input=${{ inputs.nice-input }}
+        example=${{ inputs.example }}
+        EOT
+        echo "############"
+        cat heredoc.txt
+        echo "############"
