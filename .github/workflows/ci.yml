@@ -85,6 +85,18 @@ jobs:
           echo "extra:"
           echo "  NICE_INPUT=${NICE_INPUT}"
 
+      - name: Function
+        run: |
+          echo "1: ################"
+          if ${{ startsWith(matrix.os, 'ubuntu-') }}; then
+            echo "Ubuntu!!"
+          fi
+          echo "2: ################"
+          if ${{ startsWith(matrix.os, 'macos-') }}; then
+            echo "macOS!!"
+          fi
+          echo "3: ################"
+
       - name: Run Ubuntu
         if: matrix.os == 'ubuntu-18.04'
         run: |
