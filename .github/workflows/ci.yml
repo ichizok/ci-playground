@@ -72,6 +72,13 @@ jobs:
         with:
           nice-input: 'Nice!!'
 
+      - name: Test 3
+        run: |
+          (
+          echo "FOO=123"
+          echo "BAR=456"
+          ) >> $GITHUB_ENV
+
       - name: Check variables
         run: |
           echo "matrix:"
@@ -84,6 +91,8 @@ jobs:
           echo "  asan     = ${{ matrix.asan }}"
           echo "extra:"
           echo "  NICE_INPUT=${NICE_INPUT}"
+          echo "  FOO=${FOO}"
+          echo "  BAR=${BAR}"
 
       - name: Function
         run: |
