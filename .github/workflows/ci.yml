@@ -105,7 +105,7 @@ jobs:
             echo "macOS!!"
           fi
           echo "3: ################"
-          if ${{ matrix.coverage }}; then
+          if ${{ matrix.coverage == true }}; then
             echo "coverage"
           else
             echo "w/o coverage"
