@@ -75,8 +75,8 @@ jobs:
       - name: Test 3
         run: |
           (
-          echo "FOO=123"
-          echo "BAR=456"
+          echo "FOO=123 456"
+          echo "BAR=999 999"
           ) >> $GITHUB_ENV
 
       - name: Check variables
@@ -105,6 +105,11 @@ jobs:
             echo "macOS!!"
           fi
           echo "3: ################"
+          if ${{ matrix.coverage }}; then
+            echo "coverage"
+          else
+            echo "w/o coverage"
+          fi
 
       - name: Run Ubuntu
         if: matrix.os == 'ubuntu-18.04'
