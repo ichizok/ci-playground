@@ -93,6 +93,7 @@ jobs:
           echo "action:"
           echo "  reply=${{ steps.test-1.outputs.reply }}"
           echo "extra:"
+          echo "  PATH=${PATH}"
           echo "  HOME=${HOME}"
           echo "  NICE_INPUT=${NICE_INPUT}"
           echo "  FOO=${FOO}"
