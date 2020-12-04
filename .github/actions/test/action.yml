@@ -19,13 +19,15 @@ runs:
   steps:
     - shell: bash
       run: |
+        echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}"
         echo "CC=${CC}"
         echo "nice-input=${{ inputs.nice-input }}"
         echo "NICE_INPUT=${{ inputs.nice-input }} CC=$CC" >> $GITHUB_ENV
+        echo "Check: NICE_INPUT=${NICE_INPUT}"
     - id: work
       shell: bash
       run: |
-        echo "::set-output name=reply-msg::OK!!"
+        echo "::set-output name=reply-msg::${NICE_INPUT} .. OK!!"
     - id: heredoc
       shell: bash
       run: |

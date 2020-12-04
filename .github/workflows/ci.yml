@@ -64,7 +64,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Test 1
+      - id: test-1
+        name: Test 1
         uses: ./.github/actions/test
 
       - name: Test 2
@@ -89,7 +90,10 @@ jobs:
           echo "  nogui    = ${{ matrix.nogui }}"
           echo "  coverage = ${{ matrix.coverage }}"
           echo "  asan     = ${{ matrix.asan }}"
+          echo "action:"
+          echo "  reply=${{ steps.test-1.outputs.reply }}"
           echo "extra:"
+          echo "  HOME=${HOME}"
           echo "  NICE_INPUT=${NICE_INPUT}"
           echo "  FOO=${FOO}"
           echo "  BAR=${BAR}"
