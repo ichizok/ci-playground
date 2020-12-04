@@ -82,7 +82,9 @@ jobs:
 
       - name: Test 4
         run: |
-          < env.list >> $GITHUB_ENV
+          cat env.list >> $GITHUB_ENV
+          echo $GITHUB_ENV
+          cat $GITHUB_ENV
 
       - name: Set up PATH
         run: |
