@@ -125,7 +125,12 @@ jobs:
         if: matrix.os == 'ubuntu-18.04'
         run: |
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
-          find /usr/bin -name 'llvm-cov*'
+          if ${{ matrix.compiler == 'clang' }}; then
+            clang --version
+            ls -l "$(command -v clang)"
+            find /usr/bin -name 'clang*'
+            find /usr/bin -name 'llvm-cov*'
+          fi
 
       - name: Run macOS
         if: matrix.os == 'macos-10.15'
