@@ -80,6 +80,10 @@ jobs:
           echo "BAR=999 999"
           ) >> $GITHUB_ENV
 
+      - name: Test 4
+        run: |
+          < env.list >> $GITHUB_ENV
+
       - name: Set up PATH
         run: |
           mkdir -p "${HOME}/bin"
@@ -103,6 +107,7 @@ jobs:
           echo "  NICE_INPUT=${NICE_INPUT}"
           echo "  FOO=${FOO}"
           echo "  BAR=${BAR}"
+          echo "  SAMPLE=${SAMPLE}"
 
       - name: Function
         run: |
