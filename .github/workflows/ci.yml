@@ -134,7 +134,8 @@ jobs:
             clang --version
             ls -l "$(command -v clang)"
             update-alternatives --display clang
-            dpkg -S "$(command -v clang)"
+            ls -l /etc/alternatives
+            # dpkg -S "$(command -v clang)"
             find /usr/bin -name 'llvm-cov*'
           fi
 
