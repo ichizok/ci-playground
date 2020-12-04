@@ -65,8 +65,8 @@ jobs:
 
       - name: Set up Xvfb
         run: |
-          sudo apt-get install xvfb
-          cat <<EOT >/etc/systemd/system/xvfb.service
+          ls /etc/systemd/system
+          cat <<EOT | sudo tee /etc/systemd/system/xvfb.service
           [Unit]
           Description=X Virtual Frame Buffer Service
           After=network.target
