@@ -64,6 +64,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up PATH
+        run: |
+          mkdir -p "${HOME}/bin"
+          echo "${HOME}/bin" >> $GITHUB_PATH
+
       - id: test-1
         name: Test 1
         uses: ./.github/actions/test
@@ -75,21 +80,19 @@ jobs:
 
       - name: Test 3
         run: |
+          echo $GITHUB_ENV
+          cat $GITHUB_ENV
+          echo "################"
           (
           echo "FOO=123 456"
           echo "BAR=999 999"
           ) >> $GITHUB_ENV
+          echo "################"
+          cat $GITHUB_ENV
 
       - name: Test 4
         run: |
           cat env.list >> $GITHUB_ENV
-          echo $GITHUB_ENV
-          cat $GITHUB_ENV
-
-      - name: Set up PATH
-        run: |
-          mkdir -p "${HOME}/bin"
-          echo "${HOME}/bin" >> $GITHUB_PATH
 
       - name: Check variables
         run: |
