@@ -80,6 +80,11 @@ jobs:
           echo "BAR=999 999"
           ) >> $GITHUB_ENV
 
+      - name: Set up PATH
+        run: |
+          mkdir -p "${HOME}/bin"
+          echo "${HOME}/bin" >> $GITHUB_PATH
+
       - name: Check variables
         run: |
           echo "matrix:"
@@ -120,10 +125,7 @@ jobs:
         if: matrix.os == 'ubuntu-18.04'
         run: |
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
-          which -a clang || true
-          which -a gcc || true
-          which -a llvm-cov || true
-          which -a gcov || true
+          find /usr/bin -name 'llvm-cov*'
 
       - name: Run macOS
         if: matrix.os == 'macos-10.15'
