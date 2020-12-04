@@ -138,9 +138,8 @@ jobs:
           if ${{ matrix.compiler == 'clang' }}; then
             clang --version
             ls -l "$(command -v clang)"
-            update-alternatives --display clang
-            ls -l /etc/alternatives
-            # dpkg -S "$(command -v clang)"
+            update-alternatives --list clang
+            update-alternatives --query clang
             find /usr/bin -name 'llvm-cov*'
           fi
 
