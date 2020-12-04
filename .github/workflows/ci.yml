@@ -120,8 +120,10 @@ jobs:
         if: matrix.os == 'ubuntu-18.04'
         run: |
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
-          which -a llvm-cov
-          which -a gcov
+          which -a clang || true
+          which -a gcc || true
+          which -a llvm-cov || true
+          which -a gcov || true
 
       - name: Run macOS
         if: matrix.os == 'macos-10.15'
