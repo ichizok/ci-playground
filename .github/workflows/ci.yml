@@ -53,11 +53,11 @@ jobs:
         #     extra: asan
         exclude:
           - os: macos-10.15
-            features: tiny
-          - os: macos-10.15
-            features: normal
-          - os: macos-10.15
-            features: huge
+          #   features: tiny
+          # - os: macos-10.15
+          #   features: normal
+          # - os: macos-10.15
+          #   features: huge
 
     steps:
       - name: Checkout
