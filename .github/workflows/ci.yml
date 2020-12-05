@@ -53,6 +53,7 @@ jobs:
         #     extra: asan
         exclude:
           - os: macos-10.15
+            compiler: gcc
           #   features: tiny
           # - os: macos-10.15
           #   features: normal
@@ -109,7 +110,7 @@ jobs:
           cat env.list >> $GITHUB_ENV
 
       - name: Check terminfo
-        run: find /usr/share/terminfo -type f
+        run: find /usr/share/terminfo -type f | sort
 
       - name: Check variables
         run: |
