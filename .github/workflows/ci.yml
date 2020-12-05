@@ -133,6 +133,7 @@ jobs:
           echo "  BAR=${BAR}"
           echo "  SAMPLE=${SAMPLE}"
           echo "  TERM=${TERM}"
+          echo "  PYENV_ROOT=${PYENV_ROOT}"
 
       - name: Function
         run: |
@@ -162,6 +163,7 @@ jobs:
             update-alternatives --query clang
             find /usr/bin -name 'llvm-cov*'
           fi
+          which -a asan_symbolize || true
           pgrep -fl Xvfb || true
           sudo systemctl status xvfb.service
 
