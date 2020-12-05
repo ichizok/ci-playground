@@ -65,6 +65,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Xvfb
+        if: startsWith(matrix.os, 'ubuntu-')
         run: |
           ls /etc/systemd/system
           cat <<EOT | sudo tee /etc/systemd/system/xvfb.service
@@ -151,7 +152,7 @@ jobs:
           fi
 
       - name: Run Ubuntu
-        if: matrix.os == 'ubuntu-18.04'
+        if: startsWith(matrix.os, 'ubuntu-')
         run: |
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
           if ${{ matrix.compiler == 'clang' }}; then
@@ -165,7 +166,7 @@ jobs:
           sudo systemctl status xvfb.service
 
       - name: Run macOS
-        if: matrix.os == 'macos-10.15'
+        if: startsWith(matrix.os, 'macos-')
         run: |
           sudo xcode-select -s /Applications/Xcode_12.2.app
           xcodebuild -showsdks || true
