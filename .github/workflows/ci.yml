@@ -165,10 +165,10 @@ jobs:
         run: |
           if ! sudo modprobe snd-dummy; then
             sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
-            sudo modprobe snd-dummy
+            sudo modprobe snd-dummy || true
           fi
           echo '#######################'
-          find /lib/modules -name 'snd-dummy.ko'
+          find /lib/modules -name '*.ko'
           echo '#######################'
 
       - name: Install Clang
