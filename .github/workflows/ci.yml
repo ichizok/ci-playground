@@ -152,6 +152,11 @@ jobs:
             echo "w/o coverage"
           fi
 
+      - name: Install coveralls
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: |
+          CC=gcc pip install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
+
       - name: Run Ubuntu
         if: startsWith(matrix.os, 'ubuntu-') && !cancelled()
         run: |
