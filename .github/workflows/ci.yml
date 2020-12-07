@@ -161,12 +161,12 @@ jobs:
           clang --version
           update-alternatives --list clang
           echo '#######################'
-          sudo apt-get install clang
-          echo '#######################'
-          which -a clang || true
-          which -a llvm-cov || true
-          clang --version
-          update-alternatives --list clang
+          # sudo apt-get install clang
+          # echo '#######################'
+          # which -a clang || true
+          # which -a llvm-cov || true
+          # clang --version
+          # update-alternatives --list clang
 
       - name: Install Clang-11
         if: matrix.os == 'ubuntu-18.04'
@@ -174,9 +174,11 @@ jobs:
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main"
           sudo apt-get install -y clang-11
+          sudo update-alternatives --set clang /usr/bin/clang-11
           echo '#######################'
           update-alternatives --display clang
           which -a clang || true
+          which -a llvm-cov-11 || true
           clang --version
           update-alternatives --list clang
 
