@@ -152,8 +152,19 @@ jobs:
             echo "w/o coverage"
           fi
 
-      - name: Install coveralls
+      - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
+        run: |
+          which -a clang || true
+          clang --version
+          echo '#######################'
+          sudo apt-get install clang
+          echo '#######################'
+          which -a clang || true
+          clang --version
+
+      - name: Install coveralls
+        if: false # startsWith(matrix.os, 'ubuntu-')
         run: |
           dpkg -l 'python-*'
           dpkg -l 'python3-*'
