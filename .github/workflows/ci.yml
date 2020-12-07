@@ -157,9 +157,15 @@ jobs:
         run: |
           dpkg -l 'python-*'
           dpkg -l 'python3-*'
+          echo '#######################'
           python --version
           pip --version
-          CC=gcc pip install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
+          python --version
+          pip --version
+          echo '#######################'
+          sudo apt-get install python3-wheel
+          CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
+          ls ~/.local/bin
 
       - name: Run Ubuntu
         if: startsWith(matrix.os, 'ubuntu-') && !cancelled()
