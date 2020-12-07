@@ -155,6 +155,8 @@ jobs:
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
+          update-alternatives --display clang
+          echo '#######################'
           which -a clang || true
           clang --version
           echo '#######################'
@@ -162,21 +164,30 @@ jobs:
           echo '#######################'
           which -a clang || true
           clang --version
+          echo '#######################'
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main"
+          sudo apt-get install -y clang-11
+          echo '#######################'
+          update-alternatives --display clang
+          which -a clang || true
+          clang --version
 
-      - name: Install coveralls
-        if: false # startsWith(matrix.os, 'ubuntu-')
-        run: |
-          dpkg -l 'python-*'
-          dpkg -l 'python3-*'
-          echo '#######################'
-          python --version
-          pip --version
-          python3 --version
-          pip3 --version
-          echo '#######################'
-          sudo apt-get install python3-setuptools python3-wheel
-          CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
-          ls ~/.local/bin
+
+      # - name: Install coveralls
+      #   if: startsWith(matrix.os, 'ubuntu-')
+      #   run: |
+      #     dpkg -l 'python-*'
+      #     dpkg -l 'python3-*'
+      #     echo '#######################'
+      #     python --version
+      #     pip --version
+      #     python3 --version
+      #     pip3 --version
+      #     echo '#######################'
+      #     sudo apt-get install python3-setuptools python3-wheel
+      #     CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
+      #     ls ~/.local/bin
 
       - name: Run Ubuntu
         if: startsWith(matrix.os, 'ubuntu-') && !cancelled()
