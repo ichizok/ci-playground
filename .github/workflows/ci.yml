@@ -164,7 +164,10 @@ jobs:
           echo '#######################'
           which -a clang || true
           clang --version
-          echo '#######################'
+
+      - name: Install Clang-11
+        if: matrix.os == 'ubuntu-18.04'
+        run: |
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main"
           sudo apt-get install -y clang-11
