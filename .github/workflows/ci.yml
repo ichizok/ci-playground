@@ -112,6 +112,9 @@ jobs:
       - name: Check terminfo
         run: find /usr/share/terminfo -type f | sort
 
+      - name: Check lcov
+        run: which -a lcov || true
+
       - name: Check variables
         run: |
           echo "matrix:"
@@ -204,20 +207,20 @@ jobs:
           update-alternatives --list clang
 
 
-      # - name: Install coveralls
-      #   if: startsWith(matrix.os, 'ubuntu-')
-      #   run: |
-      #     dpkg -l 'python-*'
-      #     dpkg -l 'python3-*'
-      #     echo '#######################'
-      #     python --version
-      #     pip --version
-      #     python3 --version
-      #     pip3 --version
-      #     echo '#######################'
-      #     sudo apt-get install python3-setuptools python3-wheel
-      #     CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
-      #     ls ~/.local/bin
+      #- name: Install coveralls
+      #  if: startsWith(matrix.os, 'ubuntu-')
+      #  run: |
+      #    dpkg -l 'python-*'
+      #    dpkg -l 'python3-*'
+      #    echo '#######################'
+      #    python --version
+      #    pip --version
+      #    python3 --version
+      #    pip3 --version
+      #    echo '#######################'
+      #    sudo apt-get install python3-setuptools python3-wheel
+      #    CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
+      #    ls ~/.local/bin
 
       - name: Run Ubuntu
         if: startsWith(matrix.os, 'ubuntu-') && !cancelled()
