@@ -155,6 +155,10 @@ jobs:
       - name: Install coveralls
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
+          dpkg -l 'python-*'
+          dpkg -l 'python3-*'
+          python --version
+          pip --version
           CC=gcc pip install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
 
       - name: Run Ubuntu
