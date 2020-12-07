@@ -163,7 +163,7 @@ jobs:
           python --version
           pip --version
           echo '#######################'
-          sudo apt-get install python3-wheel
+          sudo apt-get install python3-pip
           CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
           ls ~/.local/bin
 
