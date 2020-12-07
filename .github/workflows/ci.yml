@@ -53,7 +53,6 @@ jobs:
         #     extra: asan
         exclude:
           - os: macos-10.15
-            compiler: gcc
           #   features: tiny
           # - os: macos-10.15
           #   features: normal
@@ -151,6 +150,17 @@ jobs:
           else
             echo "w/o coverage"
           fi
+
+      - name: Enable snd-dummy
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: |
+          if ! sudo modprobe snd-dummy; then
+            sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
+            sudo modprobe snd-dummy
+          fi
+          echo '#######################'
+          find /lib/modules -name 'snd-dummy.ko'
+          echo '#######################'
 
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
