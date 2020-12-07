@@ -133,7 +133,7 @@ jobs:
           echo "  SAMPLE=${SAMPLE}"
           echo "  TERM=${TERM}"
           echo "  PYENV_ROOT=${PYENV_ROOT}"
-          echo "  CC=${{ jobs.trial.env.CC }}"
+          echo "  CC=${{ env.CC }}"
 
       - name: Function
         run: |
