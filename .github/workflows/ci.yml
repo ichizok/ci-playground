@@ -159,11 +159,14 @@ jobs:
           echo '#######################'
           which -a clang || true
           clang --version
+          update-alternatives --list clang
           echo '#######################'
           sudo apt-get install clang
           echo '#######################'
           which -a clang || true
+          which -a llvm-cov || true
           clang --version
+          update-alternatives --list clang
 
       - name: Install Clang-11
         if: matrix.os == 'ubuntu-18.04'
@@ -175,6 +178,7 @@ jobs:
           update-alternatives --display clang
           which -a clang || true
           clang --version
+          update-alternatives --list clang
 
 
       # - name: Install coveralls
