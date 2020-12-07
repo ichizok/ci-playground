@@ -151,6 +151,15 @@ jobs:
             echo "w/o coverage"
           fi
 
+      - name: Check users and groups
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: |
+          echo 'Users:'
+          getent passwd
+          echo
+          echo 'Groups:'
+          getent group
+
       - name: Enable snd-dummy
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
