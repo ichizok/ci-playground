@@ -174,9 +174,10 @@ jobs:
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main"
           sudo apt-get install -y clang-11
-          sudo update-alternatives --set clang /usr/bin/clang-11
           echo '#######################'
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-11 10
           update-alternatives --display clang
+          sudo update-alternatives --set clang /usr/bin/clang-11
           which -a clang || true
           which -a llvm-cov-11 || true
           clang --version
