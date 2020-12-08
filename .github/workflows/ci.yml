@@ -155,12 +155,13 @@ jobs:
             echo "w/o coverage"
           fi
 
-      - name: Check linux kernel config
+      - name: Check kernel modules
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
-          sudo apt-get install -y linux-headers-$(uname -r)
-          find /usr/src/linux-headers-$(uname -r) -type d -o -name Makefile || true
-          cat /usr/src/linux-headers-$(uname -r)/sound/drivers/Makefile || true
+          #sudo apt-get install -y linux-headers-$(uname -r)
+          #find /usr/src/linux-headers-$(uname -r) -type d -o -name Makefile || true
+          #cat /usr/src/linux-headers-$(uname -r)/sound/drivers/Makefile || true
+          sudo lsmod
 
       - name: Check users and groups
         if: startsWith(matrix.os, 'ubuntu-')
