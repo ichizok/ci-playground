@@ -161,7 +161,8 @@ jobs:
           #sudo apt-get install -y linux-headers-$(uname -r)
           #find /usr/src/linux-headers-$(uname -r) -type d -o -name Makefile || true
           #cat /usr/src/linux-headers-$(uname -r)/sound/drivers/Makefile || true
-          sudo lsmod
+          sudo lsmod | sort
+          dpkg -l 'linux-*'
 
       - name: Check users and groups
         if: startsWith(matrix.os, 'ubuntu-')
