@@ -169,10 +169,11 @@ jobs:
         run: |
           echo 'Clang:'
           clang --version
-          ls -l /usr/bin/clang
+          ls -l /usr/bin/clang*
+          echo
           echo 'GCC:'
           gcc --version
-          ls -l /usr/bin/gcc
+          ls -l /usr/bin/gcc*
 
       - name: Check kernel modules
         if: startsWith(matrix.os, 'ubuntu-')
