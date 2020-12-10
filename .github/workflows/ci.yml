@@ -8,6 +8,7 @@ jobs:
 
     env:
       CC: ${{ matrix.compiler }}
+      SND_DUMMY_DIR: ${{ env.HOME }}/snd-dummy
 
     strategy:
       fail-fast: true
@@ -160,13 +161,18 @@ jobs:
             echo "w/o coverage"
           fi
 
+      - name: Check linux version
+        id: linux
+        run: |
+          echo "::set-output name=version::linux-$(uname -r | cut -d. -f1-2)"
+
       - name: Check kernel modules
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
           #sudo apt-get install -y linux-headers-$(uname -r)
           #find /usr/src/linux-headers-$(uname -r) -type d -o -name Makefile || true
           #cat /usr/src/linux-headers-$(uname -r)/sound/drivers/Makefile || true
-          sudo lsmod | sort
+          #lsmod | sort
           dpkg -l 'linux-*'
 
       - name: Check users and groups
@@ -181,25 +187,28 @@ jobs:
       - name: Cache snd-dummy
         uses: actions/cache@v2
         with:
-          path: ${{ env.HOME }}/work/snd-dummy
-          key: ${{ jobs.trial.runs-on }}-snd-dummy
+          path: ${{ env.SND_DUMMY_DIR }}
+          key: ${{ steps.linux.outputs.version }}-snd-dummy
 
       - name: Enable snd-dummy
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
-          # if ! sudo modprobe snd-dummy; then
-          #   sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
-          #   sudo modprobe snd-dummy || true
-          # fi
-          # cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
-          WORK_DIR=${HOME}/work/snd-dummy
-          mkdir -p "${WORK_DIR}"
-          cd "${WORK_DIR}"
-          LINUX_VERSION=$(uname -r | cut -d. -f1-2)
-          wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
-          tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
-          cd "linux-${LINUX_VERSION}/sound"
-          CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
+          #if ! sudo modprobe snd-dummy; then
+          #  sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
+          #  sudo modprobe snd-dummy || true
+          #fi
+          #cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
+          if ! cd "${SND_DUMMY_DIR}" 2>/dev/null; then
+            mkdir -p "${SND_DUMMY_DIR}"
+            cd "${SND_DUMMY_DIR}"
+            LINUX_VERSION=$(uname -r | cut -d. -f1-2)
+            wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
+            tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
+            cd "linux-${LINUX_VERSION}/sound"
+            CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
+          else
+            echo "cache exists"
+          fi
           find . -name '*.ko'
           echo '#######################'
           sudo insmod soundcore.ko
