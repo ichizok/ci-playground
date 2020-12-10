@@ -130,6 +130,7 @@ jobs:
           echo "extra:"
           echo "  PATH=${PATH}"
           echo "  HOME=${HOME}"
+          echo "  USER=${USER}"
           echo "  NICE_INPUT=${NICE_INPUT}"
           echo "  FOO=${FOO}"
           echo "  BAR=${BAR}"
@@ -138,6 +139,8 @@ jobs:
           echo "  TMPDIR=${TMPDIR}"
           echo "  PYENV_ROOT=${PYENV_ROOT}"
           echo "  CC=${{ env.CC }}"
+          echo "  github.actor=${{ gitub.actor }}"
+          echo "  runner.temp=${{ runner.temp }}"
 
       - name: Function
         run: |
@@ -181,7 +184,16 @@ jobs:
           #   sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
           #   sudo modprobe snd-dummy || true
           # fi
-          cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
+          # cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
+          WORK_DIR=${HOME}/tmp
+          mkdir -p "${WORK_DIR}"
+          cd "${WORK_DIR}"
+          LINUX_SOURCE=linux-source-$(uname -r | cut -d- -f1)
+          sudo apt install -y "${LINUX_SOURCE}"
+          tar -xvf /usr/src/${LINUX_SOURCE}.tar.bz2 ${LINUX_SOURCE}/sound
+          cd ${LINUX_SOURCE}/sound
+          make -C /lib/modules/$(shell uname -r)/build M=$(PWD) CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_DUMMY=m modules
+          ls
 
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
