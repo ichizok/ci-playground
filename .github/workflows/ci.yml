@@ -193,9 +193,10 @@ jobs:
           wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
           tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
           cd "linux-${LINUX_VERSION}/sound"
-          CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
+          CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
           find . -name '*.ko'
           echo '#######################'
+          sudo insmod soundcore.ko
           sudo insmod core/snd.ko
           sudo insmod core/snd-pcm.ko
           sudo insmod drivers/snd-dummy.ko
