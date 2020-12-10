@@ -187,6 +187,7 @@ jobs:
           echo '#######################'
           find /lib/modules -name '*.ko'
           echo '#######################'
+          find /usr/src -type f
 
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
