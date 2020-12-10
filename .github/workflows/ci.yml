@@ -144,6 +144,7 @@ jobs:
           echo "  github.actor=${{ github.actor }}"
           echo "  github.workspace=${{ github.workspace }}"
           echo "  runner.temp=${{ runner.temp }}"
+          echo "  runs-on=${{ runs-on }}"
 
       - name: Function
         run: |
