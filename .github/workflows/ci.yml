@@ -190,11 +190,11 @@ jobs:
           mkdir -p "${WORK_DIR}"
           cd "${WORK_DIR}"
           LINUX_VERSION=$(uname -r | cut -d. -f1-2)
-          wget "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
-          tar -xvf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
+          wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
+          tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
           cd "linux-${LINUX_VERSION}/sound"
-          make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
-          ls
+          CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
+          find . -name '*.ko'
 
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
