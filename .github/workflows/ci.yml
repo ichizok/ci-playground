@@ -193,7 +193,7 @@ jobs:
           wget "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
           tar -xvf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
           cd "linux-${LINUX_VERSION}/sound"
-          make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_DUMMY=m modules
+          make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
           ls
 
       - name: Install Clang
