@@ -181,6 +181,10 @@ jobs:
             sudo modprobe snd-dummy || true
           fi
           echo '#######################'
+          dpkg -L "linux-modules-$(uname -r)"
+          echo '#######################'
+          dpkg -L "linux-modules-extra-$(uname -r)"
+          echo '#######################'
           find /lib/modules -name '*.ko'
           echo '#######################'
 
