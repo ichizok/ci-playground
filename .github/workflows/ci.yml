@@ -135,6 +135,7 @@ jobs:
           echo "  BAR=${BAR}"
           echo "  SAMPLE=${SAMPLE}"
           echo "  TERM=${TERM}"
+          echo "  TMPDIR=${TMPDIR}"
           echo "  PYENV_ROOT=${PYENV_ROOT}"
           echo "  CC=${{ env.CC }}"
 
@@ -176,18 +177,23 @@ jobs:
       - name: Enable snd-dummy
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
-          if ! sudo modprobe snd-dummy; then
-            sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
-            sudo modprobe snd-dummy || true
-          fi
+          # if ! sudo modprobe snd-dummy; then
+          #   sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
+          #   sudo modprobe snd-dummy || true
+          # fi
+          WORK_DIR=${TMPDIR:-/tmp}/snd-dummy
+          mkdir -p "${WORK_DIR}"
+          cd "${WORK_DIR}"
+          wget "https://github.com/torvalds/linux/raw/v$(uname -r | cut -d. -f1-2)/sound/drivers/dummy.c"
+          cat <<'EOT' > Makefile
+          obj-m := dummy.o
+          all:
+          	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+          EOT
+          make
+          sudo insmod dummy.ko
           echo '#######################'
-          dpkg -L "linux-modules-$(uname -r)"
-          echo '#######################'
-          dpkg -L "linux-modules-extra-$(uname -r)"
-          echo '#######################'
-          find /lib/modules -name '*.ko'
-          echo '#######################'
-          find /usr/src -type f
+          lsmod
 
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
