@@ -181,7 +181,7 @@ jobs:
           #   sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
           #   sudo modprobe snd-dummy || true
           # fi
-          cat /lib/modules/$(uname -r)/include/config/auto.conf
+          cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
 
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
