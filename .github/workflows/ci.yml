@@ -8,7 +8,7 @@ jobs:
 
     env:
       CC: ${{ matrix.compiler }}
-      SND_DUMMY_DIR: ${{ env.HOME }}/snd-dummy
+      SND_DUMMY_DIR: ~/snd-dummy
 
     strategy:
       fail-fast: true
