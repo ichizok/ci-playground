@@ -140,6 +140,7 @@ jobs:
           echo "  PYENV_ROOT=${PYENV_ROOT}"
           echo "  CC=${{ env.CC }}"
           echo "  github.actor=${{ github.actor }}"
+          echo "  github.workspace=${{ github.workspace }}"
           echo "  runner.temp=${{ runner.temp }}"
 
       - name: Function
@@ -185,14 +186,13 @@ jobs:
           #   sudo modprobe snd-dummy || true
           # fi
           # cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
-          WORK_DIR=${HOME}/tmp
+          WORK_DIR=${{ runner.temp }}/snd-dummy
           mkdir -p "${WORK_DIR}"
           cd "${WORK_DIR}"
-          LINUX_SOURCE=linux-source-$(uname -r | cut -d- -f1)
-          sudo apt install -y linux-source
-          ls /usr/src
-          tar -xvf /usr/src/${LINUX_SOURCE}.tar.bz2 ${LINUX_SOURCE}/sound
-          cd ${LINUX_SOURCE}/sound
+          LINUX_VERSION=$(uname -r | cut -d. -f1-2)
+          wget "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
+          tar -xvf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
+          cd "linux-${LINUX_VERSION}/sound"
           make -C /lib/modules/$(shell uname -r)/build M=$(PWD) CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_DUMMY=m modules
           ls
 
