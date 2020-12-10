@@ -178,6 +178,12 @@ jobs:
           echo 'Groups:'
           getent group
 
+      - name: Cache snd-dummy
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.HOME }}/work/snd-dummy
+          key: ${{ jobs.trial.runs-on }}-snd-dummy
+
       - name: Enable snd-dummy
         if: startsWith(matrix.os, 'ubuntu-')
         run: |
@@ -186,7 +192,7 @@ jobs:
           #   sudo modprobe snd-dummy || true
           # fi
           # cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
-          WORK_DIR=${{ runner.temp }}/snd-dummy
+          WORK_DIR=${HOME}/work/snd-dummy
           mkdir -p "${WORK_DIR}"
           cd "${WORK_DIR}"
           LINUX_VERSION=$(uname -r | cut -d. -f1-2)
@@ -200,6 +206,7 @@ jobs:
           sudo insmod core/snd.ko
           sudo insmod core/snd-pcm.ko
           sudo insmod drivers/snd-dummy.ko
+          lsmod
 
       - name: Install Clang
         if: startsWith(matrix.os, 'ubuntu-')
