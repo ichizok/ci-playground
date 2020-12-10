@@ -139,7 +139,7 @@ jobs:
           echo "  TMPDIR=${TMPDIR}"
           echo "  PYENV_ROOT=${PYENV_ROOT}"
           echo "  CC=${{ env.CC }}"
-          echo "  github.actor=${{ gitub.actor }}"
+          echo "  github.actor=${{ github.actor }}"
           echo "  runner.temp=${{ runner.temp }}"
 
       - name: Function
