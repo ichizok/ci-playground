@@ -315,7 +315,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: trial
-    if: needs.trial.result != 'skipped'
+    if: always()
 
     steps:
       - name: done
