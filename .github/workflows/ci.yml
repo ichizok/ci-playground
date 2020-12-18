@@ -280,8 +280,13 @@ jobs:
       #    CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
       #    ls ~/.local/bin
 
+      - name: Test fail
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: |
+          false
+
       - name: Run Ubuntu
-        if: startsWith(matrix.os, 'ubuntu-') && !cancelled()
+        if: startsWith(matrix.os, 'ubuntu-')
         run: |
           echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
           if ${{ matrix.compiler == 'clang' }}; then
