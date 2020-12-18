@@ -5,6 +5,7 @@ on: [ push, workflow_dispatch ]
 jobs:
   trial:
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
 
     env:
       CC: ${{ matrix.compiler }}
@@ -315,7 +316,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: trial
-    if: always()
+    if: needs.trial.result != 'skipped'
 
     steps:
       - name: done
