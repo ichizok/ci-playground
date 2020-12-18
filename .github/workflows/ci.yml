@@ -310,3 +310,15 @@ jobs:
           xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
           file test.out
           otool -L test.out
+
+  postproc:
+    runs-on: ubuntu-latest
+
+    needs: trial
+    if: needs.trial.result != 'skipped'
+
+    steps:
+      - name: done
+        run: |
+          echo "END"
+
