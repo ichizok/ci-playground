@@ -104,26 +104,29 @@ jobs:
         run: |
           cat env.list >> $GITHUB_ENV
 
-      - name: Test fail
-        run: |
-          set -o verbose
-          echo "line 1"
-          if false; then
-            echo "line 2"; false
-          fi
-          echo "line 3"
-          if true; then
-            echo "line 4"; false
-          fi
-          echo "line 5"
-          echo "line 6"; false
-          echo "line 7"
+      # - name: Test fail
+      #   run: |
+      #     set -o verbose
+      #     echo "line 1"
+      #     if false; then
+      #       echo "line 2"; false
+      #     fi
+      #     echo "line 3"
+      #     if true; then
+      #       echo "line 4"; false
+      #     fi
+      #     echo "line 5"
+      #     echo "line 6"; false
+      #     echo "line 7"
 
       #- name: Check terminfo
       #  run: find /usr/share/terminfo -type f | sort
 
       #- name: Check lcov
       #  run: which -a lcov || true
+
+      - name: Check locale
+        run: locale
 
       - name: Check variables
         run: |
@@ -313,32 +316,35 @@ jobs:
   #     - name: done
   #       run: |
   #         echo "END"
-  # 
-  # trial-on-macos:
-  #   runs-on: ${{ matrix.os }}
-  # 
-  #   env:
-  #     CC: ${{ matrix.compiler }}
-  # 
-  #   strategy:
-  #     fail-fast: true
-  #     matrix:
-  #       os: [macos-10.14, macos-10.15, macos-11.0]
-  #       compiler: [gcc, clang]
-  # 
-  #   steps:
-  #     - name: Show environment
-  #       run: |
-  #         uname -a
-  #         sw_vers
-  # 
-  #     - name: Run macOS
-  #       if: matrix.os == 'macos-10.15'
-  #       run: |
-  #         sudo xcode-select -s /Applications/Xcode_12.2.app
-  #         xcodebuild -showsdks || true
-  #         # xcrun --show-sdk-platform-path || true
-  #         # xcrun --show-sdk-platform-version || true
-  #         xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
+
+  trial-on-macos:
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CC: ${{ matrix.compiler }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [macos-10.15, macos-11.0]
+        compiler: [clang]
+
+    steps:
+      - name: Show environment
+        run: |
+          uname -a
+          sw_vers
+
+      - name: Check locale
+        run: locale
+
+      # - name: Run macOS
+      #   if: matrix.os == 'macos-10.15'
+      #   run: |
+      #     sudo xcode-select -s /Applications/Xcode_12.2.app
+      #     xcodebuild -showsdks || true
+      #     # xcrun --show-sdk-platform-path || true
+      #     # xcrun --show-sdk-platform-version || true
+      #     xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
   #         file test.out
   #         otool -L test.out
