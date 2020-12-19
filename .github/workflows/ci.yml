@@ -5,7 +5,7 @@ on: [ push, workflow_dispatch ]
 jobs:
   trial-on-linux:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
+    # continue-on-error: true
 
     env:
       CC: ${{ matrix.compiler }}
@@ -108,10 +108,16 @@ jobs:
         run: |
           set -o verbose
           echo "line 1"
-          echo "line 2"; false
+          if false; then
+            echo "line 2"; false
+          fi
           echo "line 3"
-          echo "line 4"; false
+          if true; then
+            echo "line 4"; false
+          fi
           echo "line 5"
+          echo "line 6"; false
+          echo "line 7"
 
       #- name: Check terminfo
       #  run: find /usr/share/terminfo -type f | sort
