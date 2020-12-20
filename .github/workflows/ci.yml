@@ -133,6 +133,9 @@ jobs:
       - name: Check locale
         run: locale
 
+      - name: Check mounted
+        run: mount
+
       - name: Check variables
         run: |
           echo "matrix:"
@@ -368,6 +371,11 @@ jobs:
 
       - name: Check locale
         run: locale
+
+      - name: Check mounted
+        run: |
+          mount
+          diskutil list
 
       - name: Run macOS
         run: |
