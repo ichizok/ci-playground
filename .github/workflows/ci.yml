@@ -384,6 +384,7 @@ jobs:
           xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
           file test.out
           otool -L test.out
+          ls -l
 
       - name: Cache build
         uses: actions/cache@v2
@@ -401,18 +402,21 @@ jobs:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     steps:
-      - name: Calculate cache key
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: cache-key
         if: matrix.post
         run: |
           CACHE_KEY=$(echo "${{ toJson(matrix) }}" | md5)
-          echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
+          echo "::set-output name=value::${CACHE_KEY}"
 
       - name: Restore build
         if: matrix.post
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}
-          key: cache-${{ env.CACHE_KEY }}-${{ github.sha }}
+          key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
 
       - name: Check
         if: matrix.post
