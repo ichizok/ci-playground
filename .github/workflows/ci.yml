@@ -58,8 +58,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Show matrix
+      - name: Show parameters
         run: |
+          echo "${{ toJson(strategy) }}"
           echo "${{ toJson(matrix) }}"
 
       - name: Set up Xvfb
@@ -321,6 +322,34 @@ jobs:
   #       run: |
   #         echo "END"
 
+  generate-matrix:
+    runs-on: ubuntu-latest
+
+    needs: generate-matrix
+
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - id: set-matrix
+        run: |
+          JSON=$(cat <<'EOT'
+          {
+            "include": [
+              {
+                "os": "macos-10.15",
+                "compiler": "clang"
+              },
+              {
+                "os": "macos-11.0",
+                "compiler": "clang",
+                "post": true
+              }
+            ]
+          }
+          EOT)
+          echo "::set-output name=matrix::${JSON}"
+
   trial-on-macos:
     runs-on: ${{ matrix.os }}
 
@@ -329,23 +358,16 @@ jobs:
 
     strategy:
       fail-fast: true
-      matrix:
-        os: [macos-10.15, macos-11.0]
-        compiler: [clang]
-
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     steps:
-      - id: set-matrix
-        run: echo "::set-output name=matrix::${{ toJson(matrix) }}"
-
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Show matrix
         run: |
           echo "${{ toJson(matrix) }}"
+          echo "CACHE_KEY=$(echo \"${{ toJson(matrix) }}\" | md5)" >> $GITHUB_ENV
 
       - name: Show environment
         run: |
@@ -369,23 +391,28 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}
-          key: ${{ toJson(matrix) }}-${{ github.sha }}
+          key: cache-${{ env.CACHE_KEY }}-${{ github.sha }}
 
   trial-post:
+    if: matrix.post
+
     runs-on: ${{ matrix.os }}
 
-    needs: trial-on-macos
+    needs: [generate-matrix, trial-on-macos]
 
     strategy:
       fail-fast: true
-      matrix: ${{ fromJson(needs.trial-on-macos.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     steps:
+      - name: Calculate cache key
+        run: echo "CACHE_KEY=$(echo \"${{ toJson(matrix) }}\" | md5)" >> $GITHUB_ENV
+
       - name: Restore build
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}
-          key: ${{ toJson(matrix) }}-${{ github.sha }}
+          key: cache-${{ env.CACHE_KEY }}-${{ github.sha }}
 
       - name: Check
         run: |
