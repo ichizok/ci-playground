@@ -339,6 +339,8 @@ jobs:
           post_matrix = matrix.to_h do |k, v|
             [k, v.select { |x| x.fetch("post", false) }]
           end
+          puts "matrix=#{matrix}"
+          puts "post-matrix=#{post_matrix}"
           puts "::set-output name=matrix::#{JSON.generate matrix}"
           puts "::set-output name=post-matrix::#{JSON.generate post_matrix}"
           __END__
@@ -349,11 +351,6 @@ jobs:
               compiler: clang
               post: true
           EOT
-
-      - name: Show matrixes
-        run: |
-          : ${{ toJson(fromJson(steps.set-matrix.outputs.matrix)) }}
-          : ${{ toJson(fromJson(steps.set-matrix.outputs.post-matrix)) }}
 
   trial-on-macos:
     runs-on: ${{ matrix.os }}
