@@ -422,4 +422,4 @@ jobs:
       - name: Check
         run: |
           pwd
-          ls -l
+          ls -al
