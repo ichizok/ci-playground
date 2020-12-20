@@ -330,6 +330,7 @@ jobs:
       post-matrix: ${{ steps.set-matrix.outputs.post-matrix }}
 
     steps:
+      - uses: actions/checkout@v2
       - id: set-matrix
         uses: ./.github/actions/generate-matrix
         with:
