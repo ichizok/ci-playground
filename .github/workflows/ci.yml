@@ -350,6 +350,11 @@ jobs:
               post: true
           EOT
 
+      - name: Show matrixes
+        run: |
+          echo ${{ steps.set-matrix.outputs.matrix }}
+          echo ${{ steps.set-matrix.outputs.post-matrix }}
+
   trial-on-macos:
     runs-on: ${{ matrix.os }}
 
