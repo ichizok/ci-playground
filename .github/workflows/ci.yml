@@ -336,9 +336,9 @@ jobs:
           require 'json'
           require 'yaml'
           matrix = YAML.load DATA.read
-          post_matrix = matrix.to_h do |k, v|
+          post_matrix = matrix.map do |k, v|
             [k, v.select { |x| x.fetch("post", false) }]
-          end
+          end.to_h
           puts "matrix=#{matrix}"
           puts "post-matrix=#{post_matrix}"
           puts "::set-output name=matrix::#{JSON.generate matrix}"
