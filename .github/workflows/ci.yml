@@ -352,8 +352,8 @@ jobs:
 
       - name: Show matrixes
         run: |
-          echo ${{ steps.set-matrix.outputs.matrix }}
-          echo ${{ steps.set-matrix.outputs.post-matrix }}
+          : ${{ toJson(fromJson(steps.set-matrix.outputs.matrix)) }}
+          : ${{ toJson(fromJson(steps.set-matrix.outputs.post-matrix)) }}
 
   trial-on-macos:
     runs-on: ${{ matrix.os }}
@@ -399,7 +399,9 @@ jobs:
       - name: Cache build
         uses: actions/cache@v2
         with:
-          path: ${{ github.workspace }}/*
+          path: |
+            ${{ github.workspace }}/dir
+            ${{ github.workspace }}/test*
           key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
 
   trial-post:
@@ -412,8 +414,8 @@ jobs:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.post-matrix) }}
 
     steps:
-      # - name: Checkout
-      #   uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - id: cache-key
         run: echo "::set-output name=value::"$(md5 <<< "${{ toJson(matrix) }}")
@@ -421,7 +423,9 @@ jobs:
       - name: Restore build
         uses: actions/cache@v2
         with:
-          path: ${{ github.workspace }}/*
+          path: |
+            ${{ github.workspace }}/dir
+            ${{ github.workspace }}/test*
           key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
 
       - name: Check
