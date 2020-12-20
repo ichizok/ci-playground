@@ -331,22 +331,19 @@ jobs:
     steps:
       - id: set-matrix
         run: |
-          JSON=$(cat <<'EOT'
-          {
-            "include": [
-              {
-                "os": "macos-10.15",
-                "compiler": "clang"
-              },
-              {
-                "os": "macos-11.0",
-                "compiler": "clang",
-                "post": true
-              }
-            ]
-          }
-          EOT)
-          echo "::set-output name=matrix::${JSON}"
+          cat <<'EOT' | ruby
+          require 'json'
+          require 'yaml'
+          matrix = JSON.generate YAML.load <<EOS
+          include:
+            - os: macos-10.15
+              compiler: clang
+            - os: macos-11.0
+              compiler: clang
+              post: true
+          EOS
+          puts "::set-output name=matrix::#{matrix}"
+          EOT
 
   trial-on-macos:
     runs-on: ${{ matrix.os }}
