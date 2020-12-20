@@ -340,6 +340,9 @@ jobs:
       - id: set-matrix
         run: echo "::set-output name=matrix::${{ toJson(matrix) }}"
 
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Show matrix
         run: |
           echo "${{ toJson(matrix) }}"
