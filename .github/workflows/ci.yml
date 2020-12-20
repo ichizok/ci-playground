@@ -337,7 +337,7 @@ jobs:
           require 'yaml'
           matrix = YAML.load DATA.read
           post_matrix = matrix.to_h do |k, v|
-            [k, v.select { |x| x.fetch "post" }]
+            [k, v.select { |x| x.fetch("post", false) }]
           end
           puts "::set-output name=matrix::#{JSON.generate matrix}"
           puts "::set-output name=post-matrix::#{JSON.generate post_matrix}"
@@ -394,7 +394,7 @@ jobs:
       - name: Cache build
         uses: actions/cache@v2
         with:
-          path: ${{ github.workspace }}/test.out
+          path: ${{ github.workspace }}/*
           key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
 
   trial-post:
@@ -407,8 +407,8 @@ jobs:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.post-matrix) }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      # - name: Checkout
+      #   uses: actions/checkout@v2
 
       - id: cache-key
         run: echo "::set-output name=value::"$(md5 <<< "${{ toJson(matrix) }}")
@@ -416,7 +416,7 @@ jobs:
       - name: Restore build
         uses: actions/cache@v2
         with:
-          path: ${{ github.workspace }}/test.out
+          path: ${{ github.workspace }}/*
           key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
 
       - name: Check
