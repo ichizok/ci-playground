@@ -348,6 +348,8 @@ jobs:
   trial-on-macos:
     runs-on: ${{ matrix.os }}
 
+    needs: generate-matrix
+
     env:
       CC: ${{ matrix.compiler }}
 
