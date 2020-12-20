@@ -334,7 +334,7 @@ jobs:
           cat <<'EOT' | ruby
           require 'json'
           require 'yaml'
-          matrix = JSON.generate YAML.load <<EOS
+          matrix = YAML.load <<EOS
           include:
             - os: macos-10.15
               compiler: clang
@@ -345,8 +345,8 @@ jobs:
           post_matrix = matrix.to_h do |k, v|
             [k, v.select { |x| x.key? "post" && x["post"] }]
           end
-          puts "::set-output name=matrix::#{matrix}"
-          puts "::set-output name=post-matrix::#{post_matrix}"
+          puts "::set-output name=matrix::#{JSON.generate matrix}"
+          puts "::set-output name=post-matrix::#{JSON.generate post_matrix}"
           EOT
 
   trial-on-macos:
