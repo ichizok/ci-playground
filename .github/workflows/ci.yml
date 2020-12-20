@@ -364,7 +364,8 @@ jobs:
       - name: Show matrix
         run: |
           echo "${{ toJson(matrix) }}"
-          echo "CACHE_KEY=$(echo \"${{ toJson(matrix) }}\" | md5)" >> $GITHUB_ENV
+          CACHE_KEY=$(echo "${{ toJson(matrix) }}" | md5)
+          echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
 
       - name: Show environment
         run: |
@@ -402,7 +403,9 @@ jobs:
     steps:
       - name: Calculate cache key
         if: matrix.post
-        run: echo "CACHE_KEY=$(echo \"${{ toJson(matrix) }}\" | md5)" >> $GITHUB_ENV
+        run: |
+          CACHE_KEY=$(echo "${{ toJson(matrix) }}" | md5)
+          echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
 
       - name: Restore build
         if: matrix.post
