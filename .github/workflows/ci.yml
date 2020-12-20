@@ -331,26 +331,15 @@ jobs:
 
     steps:
       - id: set-matrix
-        run: |
-          cat <<'EOT' | ruby
-          require 'json'
-          require 'yaml'
-          matrix = YAML.load DATA.read
-          post_matrix = matrix.map do |k, v|
-            [k, v.select { |x| x.fetch("post", false) }]
-          end.to_h
-          puts "matrix=#{matrix}"
-          puts "post-matrix=#{post_matrix}"
-          puts "::set-output name=matrix::#{JSON.generate matrix}"
-          puts "::set-output name=post-matrix::#{JSON.generate post_matrix}"
-          __END__
-          include:
-            - os: macos-10.15
-              compiler: clang
-            - os: macos-11.0
-              compiler: clang
-              post: true
-          EOT
+        uses: ./.github/actions/generate-matrix
+        with:
+          matrix: |
+            include:
+              - os: macos-10.15
+                compiler: clang
+              - os: macos-11.0
+                compiler: clang
+                post: true
 
   trial-on-macos:
     runs-on: ${{ matrix.os }}
