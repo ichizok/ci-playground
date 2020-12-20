@@ -60,7 +60,7 @@ jobs:
 
       - name: Show matrix
         run: |
-          echo ${{ toJson(matrix) }}
+          echo "${{ toJson(matrix) }}"
 
       - name: Set up Xvfb
         if: startsWith(matrix.os, 'ubuntu-')
@@ -213,41 +213,41 @@ jobs:
           echo 'Groups:'
           getent group
 
-      - name: Cache snd-dummy
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.SND_DUMMY_DIR }}
-          key: linux-${{ steps.linux.outputs.version }}-snd-dummy
-
-      - name: Enable snd-dummy
-        if: startsWith(matrix.os, 'ubuntu-')
-        run: |
-          #if ! sudo modprobe snd-dummy; then
-          #  sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
-          #  sudo modprobe snd-dummy || true
-          #fi
-          #cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
-          if [[ ! -e ${SND_DUMMY_DIR}/snd-dummy.ko ]]; then
-            : ${TMPDIR:=/tmp}
-            mkdir -p "${TMPDIR}"
-            cd "${TMPDIR}"
-            wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
-            tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
-            cd "linux-${LINUX_VERSION}/sound"
-            CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
-            find . -name '*.ko'
-            mkdir -p "${SND_DUMMY_DIR}"
-            cp soundcore.ko core/snd.ko core/snd-pcm.ko drivers/snd-dummy.ko "${SND_DUMMY_DIR}"
-          else
-            echo "cache exists"
-          fi
-          echo '#######################'
-          cd "${SND_DUMMY_DIR}"
-          sudo insmod soundcore.ko
-          sudo insmod snd.ko
-          sudo insmod snd-pcm.ko
-          sudo insmod snd-dummy.ko
-          lsmod
+      #- name: Cache snd-dummy
+      #  uses: actions/cache@v2
+      #  with:
+      #    path: ${{ env.SND_DUMMY_DIR }}
+      #    key: linux-${{ steps.linux.outputs.version }}-snd-dummy
+      #
+      #- name: Enable snd-dummy
+      #  if: startsWith(matrix.os, 'ubuntu-')
+      #  run: |
+      #    #if ! sudo modprobe snd-dummy; then
+      #    #  sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
+      #    #  sudo modprobe snd-dummy || true
+      #    #fi
+      #    #cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
+      #    if [[ ! -e ${SND_DUMMY_DIR}/snd-dummy.ko ]]; then
+      #      : ${TMPDIR:=/tmp}
+      #      mkdir -p "${TMPDIR}"
+      #      cd "${TMPDIR}"
+      #      wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
+      #      tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
+      #      cd "linux-${LINUX_VERSION}/sound"
+      #      CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
+      #      find . -name '*.ko'
+      #      mkdir -p "${SND_DUMMY_DIR}"
+      #      cp soundcore.ko core/snd.ko core/snd-pcm.ko drivers/snd-dummy.ko "${SND_DUMMY_DIR}"
+      #    else
+      #      echo "cache exists"
+      #    fi
+      #    echo '#######################'
+      #    cd "${SND_DUMMY_DIR}"
+      #    sudo insmod soundcore.ko
+      #    sudo insmod snd.ko
+      #    sudo insmod snd-pcm.ko
+      #    sudo insmod snd-dummy.ko
+      #    lsmod
 
       #- name: Install Clang
       #  if: startsWith(matrix.os, 'ubuntu-')
@@ -333,10 +333,16 @@ jobs:
         os: [macos-10.15, macos-11.0]
         compiler: [clang]
 
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
     steps:
+      - id: set-matrix
+        run: echo "::set-output name=matrix::${{ toJson(matrix) }}"
+
       - name: Show matrix
         run: |
-          echo ${{ toJson(matrix) }}
+          echo "${{ toJson(matrix) }}"
 
       - name: Show environment
         run: |
@@ -346,13 +352,39 @@ jobs:
       - name: Check locale
         run: locale
 
-      # - name: Run macOS
-      #   if: matrix.os == 'macos-10.15'
-      #   run: |
-      #     sudo xcode-select -s /Applications/Xcode_12.2.app
-      #     xcodebuild -showsdks || true
-      #     # xcrun --show-sdk-platform-path || true
-      #     # xcrun --show-sdk-platform-version || true
-      #     xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
-  #         file test.out
-  #         otool -L test.out
+      - name: Run macOS
+        run: |
+          sudo xcode-select -s /Applications/Xcode_12.2.app
+          xcodebuild -showsdks || true
+          # xcrun --show-sdk-platform-path || true
+          # xcrun --show-sdk-platform-version || true
+          xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
+          file test.out
+          otool -L test.out
+
+      - name: Cache build
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ toJson(matrix) }}-${{ github.sha }}
+
+  trial-post:
+    runs-on: ${{ matrix.os }}
+
+    needs: trial-on-macos
+
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJson(needs.trial-on-macos.outputs.matrix) }}
+
+    steps:
+      - name: Restore build
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ toJson(matrix) }}-${{ github.sha }}
+
+      - name: Check
+        run: |
+          pwd
+          ls -l
