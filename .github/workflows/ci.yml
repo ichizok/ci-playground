@@ -372,6 +372,11 @@ jobs:
       - name: Check locale
         run: locale
 
+      - name: Check locale (C)
+        env:
+          LANG: C
+        run: locale
+
       - name: Check mounted
         run: |
           mount
