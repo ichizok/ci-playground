@@ -165,6 +165,8 @@ jobs:
           echo "  runner.temp=${{ runner.temp }}"
           echo "  strategy.job-index=${{ strategy.job-index }}"
           echo "  strategy.job-total=${{ strategy.job-total }}"
+          echo "  job.container.id=${{ job.container.id }}"
+          echo "  github.job=${{ github.job }}"
 
       - name: Function
         run: |
