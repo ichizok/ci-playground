@@ -163,6 +163,8 @@ jobs:
           echo "  github.actor=${{ github.actor }}"
           echo "  github.workspace=${{ github.workspace }}"
           echo "  runner.temp=${{ runner.temp }}"
+          echo "  strategy.job-index=${{ strategy.job-index }}"
+          echo "  strategy.job-total=${{ strategy.job-total }}"
 
       - name: Function
         run: |
@@ -325,110 +327,110 @@ jobs:
   #       run: |
   #         echo "END"
 
-  generate-matrix:
-    runs-on: ubuntu-latest
-
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-      post-matrix: ${{ steps.set-matrix.outputs.post-matrix }}
-
-    steps:
-      - uses: actions/checkout@v2
-      - id: set-matrix
-        uses: ./.github/actions/generate-matrix
-        with:
-          matrix: |
-            include:
-              - os: macos-10.15
-                compiler: clang
-              - os: macos-11.0
-                compiler: clang
-                post: true
-
-  trial-on-macos:
-    runs-on: ${{ matrix.os }}
-
-    needs: generate-matrix
-
-    env:
-      CC: ${{ matrix.compiler }}
-
-    strategy:
-      fail-fast: true
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Show matrix
-        run: echo "${{ toJson(matrix) }}"
-
-      - name: Show environment
-        run: |
-          uname -a
-          sw_vers
-
-      - name: Check locale
-        run: locale
-
-      - name: Check locale (C)
-        env:
-          LANG: C
-        run: locale
-
-      - name: Check mounted
-        run: |
-          mount
-          diskutil list
-
-      - name: Run macOS
-        run: |
-          sudo xcode-select -s /Applications/Xcode_12.2.app
-          xcodebuild -showsdks || true
-          # xcrun --show-sdk-platform-path || true
-          # xcrun --show-sdk-platform-version || true
-          xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
-          file test.out
-          otool -L test.out
-          ls -l
-
-      - id: cache-key
-        run: echo "::set-output name=value::"$(md5 <<< "${{ toJson(matrix) }}")
-
-      - name: Cache build
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ github.workspace }}/dir
-            ${{ github.workspace }}/test*
-          key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
-
-  trial-post:
-    runs-on: ${{ matrix.os }}
-
-    needs: [generate-matrix, trial-on-macos]
-
-    strategy:
-      fail-fast: true
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.post-matrix) }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - id: cache-key
-        run: echo "::set-output name=value::"$(md5 <<< "${{ toJson(matrix) }}")
-
-      - name: Restore build
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ github.workspace }}/dir
-            ${{ github.workspace }}/test*
-          key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
-
-      - name: Check
-        run: |
-          pwd
-          ls -al
+  # generate-matrix:
+  #   runs-on: ubuntu-latest
+  # 
+  #   outputs:
+  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
+  #     post-matrix: ${{ steps.set-matrix.outputs.post-matrix }}
+  # 
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - id: set-matrix
+  #       uses: ./.github/actions/generate-matrix
+  #       with:
+  #         matrix: |
+  #           include:
+  #             - os: macos-10.15
+  #               compiler: clang
+  #             - os: macos-11.0
+  #               compiler: clang
+  #               post: true
+  # 
+  # trial-on-macos:
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   needs: generate-matrix
+  # 
+  #   env:
+  #     CC: ${{ matrix.compiler }}
+  # 
+  #   strategy:
+  #     fail-fast: true
+  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+  # 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  # 
+  #     - name: Show matrix
+  #       run: echo "${{ toJson(matrix) }}"
+  # 
+  #     - name: Show environment
+  #       run: |
+  #         uname -a
+  #         sw_vers
+  # 
+  #     - name: Check locale
+  #       run: locale
+  # 
+  #     - name: Check locale (C)
+  #       env:
+  #         LANG: C
+  #       run: locale
+  # 
+  #     - name: Check mounted
+  #       run: |
+  #         mount
+  #         diskutil list
+  # 
+  #     - name: Run macOS
+  #       run: |
+  #         sudo xcode-select -s /Applications/Xcode_12.2.app
+  #         xcodebuild -showsdks || true
+  #         # xcrun --show-sdk-platform-path || true
+  #         # xcrun --show-sdk-platform-version || true
+  #         xcrun --sdk macosx11.0 cc -arch x86_64 -arch arm64e -o test.out main.c
+  #         file test.out
+  #         otool -L test.out
+  #         ls -l
+  # 
+  #     - id: cache-key
+  #       run: echo "::set-output name=value::"$(md5 <<< "${{ toJson(matrix) }}")
+  # 
+  #     - name: Cache build
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           ${{ github.workspace }}/dir
+  #           ${{ github.workspace }}/test*
+  #         key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
+  # 
+  # trial-post:
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   needs: [generate-matrix, trial-on-macos]
+  # 
+  #   strategy:
+  #     fail-fast: true
+  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.post-matrix) }}
+  # 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  # 
+  #     - id: cache-key
+  #       run: echo "::set-output name=value::"$(md5 <<< "${{ toJson(matrix) }}")
+  # 
+  #     - name: Restore build
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           ${{ github.workspace }}/dir
+  #           ${{ github.workspace }}/test*
+  #         key: cache-${{ steps.cache-key.outputs.value }}-${{ github.sha }}
+  # 
+  #     - name: Check
+  #       run: |
+  #         pwd
+  #         ls -al
