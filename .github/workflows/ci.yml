@@ -3,320 +3,320 @@ name: GitHub CI
 on: [ push, workflow_dispatch ]
 
 jobs:
-  trial-on-linux:
-    runs-on: ${{ matrix.os }}
-    # continue-on-error: true
-
-    env:
-      CC: ${{ matrix.compiler }}
-      SND_DUMMY_DIR: ~/snd-dummy
-
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
-        # features: [tiny, normal, huge]
-        compiler: [gcc, clang]
-        extra: [none]
-        # include:
-        #   - os: ubuntu-18.04
-        #     features: tiny
-        #     compiler: gcc
-        #     test: testtiny
-        #     extra: nogui
-        #   - os: ubuntu-18.04
-        #     features: tiny
-        #     compiler: clang
-        #     test: testtiny
-        #     extra: nogui
-        #   - os: ubuntu-18.04
-        #     features: huge
-        #     compiler: clang
-        #     test: scripttests
-        #     coverage: true
-        #   - os: ubuntu-18.04
-        #     features: huge
-        #     compiler: gcc
-        #     test: scripttests test_libvterm
-        #     coverage: true
-        #   - os: ubuntu-18.04
-        #     features: huge
-        #     compiler: gcc
-        #     test: -C testgui
-        #     coverage: true
-        #     extra: testgui
-        #   - os: ubuntu-18.04
-        #     features: huge
-        #     compiler: gcc
-        #     extra: unittests
-        #   - os: ubuntu-18.04
-        #     features: huge
-        #     compiler: clang-11
-        #     extra: asan
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Show parameters
-        run: |
-          echo "${{ toJson(strategy) }}"
-          echo "${{ toJson(matrix) }}"
-
-      - name: Set up Xvfb
-        if: startsWith(matrix.os, 'ubuntu-')
-        run: |
-          ls /etc/systemd/system
-          cat <<EOT | sudo tee /etc/systemd/system/xvfb.service
-          [Unit]
-          Description=X Virtual Frame Buffer Service
-          After=network.target
-          [Service]
-          ExecStart=/usr/bin/Xvfb :99 -screen 0 1024x768x24
-          [Install]
-          WantedBy=multi-user.target
-          EOT
-          sudo systemctl enable xvfb.service
-          sudo systemctl start xvfb.service
-
-      - name: Set up PATH
-        run: |
-          mkdir -p "${HOME}/bin"
-          echo "${HOME}/bin" >> $GITHUB_PATH
-
-      - id: test-1
-        name: Test 1
-        uses: ./.github/actions/test
-
-      - name: Test 2
-        uses: ./.github/actions/test
-        with:
-          nice-input: 'Nice!!'
-
-      - name: Test 3
-        run: |
-          echo $GITHUB_ENV
-          cat $GITHUB_ENV
-          echo "################"
-          (
-          echo "FOO=123 456"
-          echo "BAR=999 999"
-          ) >> $GITHUB_ENV
-          echo "################"
-          cat $GITHUB_ENV
-
-      - name: Test 4
-        run: |
-          cat env.list >> $GITHUB_ENV
-
-      # - name: Test fail
-      #   run: |
-      #     set -o verbose
-      #     echo "line 1"
-      #     if false; then
-      #       echo "line 2"; false
-      #     fi
-      #     echo "line 3"
-      #     if true; then
-      #       echo "line 4"; false
-      #     fi
-      #     echo "line 5"
-      #     echo "line 6"; false
-      #     echo "line 7"
-
-      #- name: Check terminfo
-      #  run: find /usr/share/terminfo -type f | sort
-
-      #- name: Check lcov
-      #  run: which -a lcov || true
-
-      - name: Check locale
-        run: locale
-
-      - name: Check mounted
-        run: mount
-
-      - name: Check variables
-        run: |
-          echo "matrix:"
-          echo "  os       = ${{ matrix.os }}"
-          echo "  features = ${{ matrix.features }}"
-          echo "  compiler = ${{ matrix.compiler }}"
-          echo "  test     = ${{ matrix.test }}"
-          echo "  nogui    = ${{ matrix.nogui }}"
-          echo "  coverage = ${{ matrix.coverage }}"
-          echo "  asan     = ${{ matrix.asan }}"
-          echo "action:"
-          echo "  reply=${{ steps.test-1.outputs.reply }}"
-          echo "extra:"
-          echo "  PATH=${PATH}"
-          echo "  HOME=${HOME}"
-          echo "  USER=${USER}"
-          echo "  NICE_INPUT=${NICE_INPUT}"
-          echo "  FOO=${FOO}"
-          echo "  BAR=${BAR}"
-          echo "  SAMPLE=${SAMPLE}"
-          echo "  TERM=${TERM}"
-          echo "  TMPDIR=${TMPDIR}"
-          echo "  PYENV_ROOT=${PYENV_ROOT}"
-          echo "  CC=${{ env.CC }}"
-          echo "  github.actor=${{ github.actor }}"
-          echo "  github.workspace=${{ github.workspace }}"
-          echo "  runner.temp=${{ runner.temp }}"
-          echo "  strategy.job-index=${{ strategy.job-index }}"
-          echo "  strategy.job-total=${{ strategy.job-total }}"
-          echo "  job.container.id=${{ job.container.id }}"
-          echo "  github.job=${{ github.job }}"
-
-      - name: Function
-        run: |
-          echo "1: ################"
-          if ${{ startsWith(matrix.os, 'ubuntu-') }}; then
-            echo "Ubuntu!!"
-          fi
-          echo "2: ################"
-          if ${{ startsWith(matrix.os, 'macos-') }}; then
-            echo "macOS!!"
-          fi
-          echo "3: ################"
-          if ${{ matrix.coverage == true }}; then
-            echo "coverage"
-          else
-            echo "w/o coverage"
-          fi
-
-      - name: Check linux version
-        run: |
-          echo "LINUX_VERSION=$(uname -r | cut -d. -f1-2)" >> $GITHUB_ENV
-
-      - name: Check compiler
-        run: |
-          echo 'Clang:'
-          clang --version
-          ls -l /usr/bin/clang*
-          echo
-          echo 'GCC:'
-          gcc --version
-          ls -l /usr/bin/gcc*
-          echo
-          echo 'Gcov:'
-          gcov --version
-          ls -l /usr/bin/gcov*
-
-      - name: Check kernel modules
-        if: startsWith(matrix.os, 'ubuntu-')
-        run: |
-          #sudo apt-get install -y linux-headers-$(uname -r)
-          #find /usr/src/linux-headers-$(uname -r) -type d -o -name Makefile || true
-          #cat /usr/src/linux-headers-$(uname -r)/sound/drivers/Makefile || true
-          #lsmod | sort
-          dpkg -l 'linux-*'
-
-      - name: Check users and groups
-        if: startsWith(matrix.os, 'ubuntu-')
-        run: |
-          echo 'Users:'
-          getent passwd
-          echo
-          echo 'Groups:'
-          getent group
-
-      #- name: Cache snd-dummy
-      #  uses: actions/cache@v2
-      #  with:
-      #    path: ${{ env.SND_DUMMY_DIR }}
-      #    key: linux-${{ steps.linux.outputs.version }}-snd-dummy
-      #
-      #- name: Enable snd-dummy
-      #  if: startsWith(matrix.os, 'ubuntu-')
-      #  run: |
-      #    #if ! sudo modprobe snd-dummy; then
-      #    #  sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
-      #    #  sudo modprobe snd-dummy || true
-      #    #fi
-      #    #cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
-      #    if [[ ! -e ${SND_DUMMY_DIR}/snd-dummy.ko ]]; then
-      #      : ${TMPDIR:=/tmp}
-      #      mkdir -p "${TMPDIR}"
-      #      cd "${TMPDIR}"
-      #      wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
-      #      tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
-      #      cd "linux-${LINUX_VERSION}/sound"
-      #      CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
-      #      find . -name '*.ko'
-      #      mkdir -p "${SND_DUMMY_DIR}"
-      #      cp soundcore.ko core/snd.ko core/snd-pcm.ko drivers/snd-dummy.ko "${SND_DUMMY_DIR}"
-      #    else
-      #      echo "cache exists"
-      #    fi
-      #    echo '#######################'
-      #    cd "${SND_DUMMY_DIR}"
-      #    sudo insmod soundcore.ko
-      #    sudo insmod snd.ko
-      #    sudo insmod snd-pcm.ko
-      #    sudo insmod snd-dummy.ko
-      #    lsmod
-
-      #- name: Install Clang
-      #  if: startsWith(matrix.os, 'ubuntu-')
-      #  run: |
-      #    update-alternatives --display clang
-      #    echo '#######################'
-      #    which -a clang || true
-      #    clang --version
-      #    update-alternatives --list clang
-      #    echo '#######################'
-      #    # sudo apt-get install clang
-      #    # echo '#######################'
-      #    # which -a clang || true
-      #    # which -a llvm-cov || true
-      #    # clang --version
-      #    # update-alternatives --list clang
-
-      #- name: Install Clang-11
-      #  if: matrix.os == 'ubuntu-18.04'
-      #  run: |
-      #    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-      #    sudo add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main"
-      #    sudo apt-get install -y clang-11
-      #    echo '#######################'
-      #    sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-11 10
-      #    update-alternatives --display clang
-      #    sudo update-alternatives --set clang /usr/bin/clang-11
-      #    which -a clang || true
-      #    which -a llvm-cov-11 || true
-      #    clang --version
-      #    update-alternatives --list clang
-
-
-      #- name: Install coveralls
-      #  if: startsWith(matrix.os, 'ubuntu-')
-      #  run: |
-      #    dpkg -l 'python-*'
-      #    dpkg -l 'python3-*'
-      #    echo '#######################'
-      #    python --version
-      #    pip --version
-      #    python3 --version
-      #    pip3 --version
-      #    echo '#######################'
-      #    sudo apt-get install python3-setuptools python3-wheel
-      #    CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
-      #    ls ~/.local/bin
-
-      - name: Run Ubuntu
-        run: |
-          echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
-          if ${{ matrix.compiler == 'clang' }}; then
-            clang --version
-            ls -l "$(command -v clang)"
-            update-alternatives --list clang
-            update-alternatives --query clang
-            find /usr/bin -name 'llvm-cov*'
-          fi
-          which -a asan_symbolize || true
-          pgrep -fl Xvfb || true
-          sudo systemctl status xvfb.service
+  # trial-on-linux:
+  #   runs-on: ${{ matrix.os }}
+  #   # continue-on-error: true
+  # 
+  #   env:
+  #     CC: ${{ matrix.compiler }}
+  #     SND_DUMMY_DIR: ~/snd-dummy
+  # 
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       os: [ubuntu-18.04, ubuntu-20.04]
+  #       # features: [tiny, normal, huge]
+  #       compiler: [gcc, clang]
+  #       extra: [none]
+  #       # include:
+  #       #   - os: ubuntu-18.04
+  #       #     features: tiny
+  #       #     compiler: gcc
+  #       #     test: testtiny
+  #       #     extra: nogui
+  #       #   - os: ubuntu-18.04
+  #       #     features: tiny
+  #       #     compiler: clang
+  #       #     test: testtiny
+  #       #     extra: nogui
+  #       #   - os: ubuntu-18.04
+  #       #     features: huge
+  #       #     compiler: clang
+  #       #     test: scripttests
+  #       #     coverage: true
+  #       #   - os: ubuntu-18.04
+  #       #     features: huge
+  #       #     compiler: gcc
+  #       #     test: scripttests test_libvterm
+  #       #     coverage: true
+  #       #   - os: ubuntu-18.04
+  #       #     features: huge
+  #       #     compiler: gcc
+  #       #     test: -C testgui
+  #       #     coverage: true
+  #       #     extra: testgui
+  #       #   - os: ubuntu-18.04
+  #       #     features: huge
+  #       #     compiler: gcc
+  #       #     extra: unittests
+  #       #   - os: ubuntu-18.04
+  #       #     features: huge
+  #       #     compiler: clang-11
+  #       #     extra: asan
+  # 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  # 
+  #     - name: Show parameters
+  #       run: |
+  #         echo "${{ toJson(strategy) }}"
+  #         echo "${{ toJson(matrix) }}"
+  # 
+  #     - name: Set up Xvfb
+  #       if: startsWith(matrix.os, 'ubuntu-')
+  #       run: |
+  #         ls /etc/systemd/system
+  #         cat <<EOT | sudo tee /etc/systemd/system/xvfb.service
+  #         [Unit]
+  #         Description=X Virtual Frame Buffer Service
+  #         After=network.target
+  #         [Service]
+  #         ExecStart=/usr/bin/Xvfb :99 -screen 0 1024x768x24
+  #         [Install]
+  #         WantedBy=multi-user.target
+  #         EOT
+  #         sudo systemctl enable xvfb.service
+  #         sudo systemctl start xvfb.service
+  # 
+  #     - name: Set up PATH
+  #       run: |
+  #         mkdir -p "${HOME}/bin"
+  #         echo "${HOME}/bin" >> $GITHUB_PATH
+  # 
+  #     - id: test-1
+  #       name: Test 1
+  #       uses: ./.github/actions/test
+  # 
+  #     - name: Test 2
+  #       uses: ./.github/actions/test
+  #       with:
+  #         nice-input: 'Nice!!'
+  # 
+  #     - name: Test 3
+  #       run: |
+  #         echo $GITHUB_ENV
+  #         cat $GITHUB_ENV
+  #         echo "################"
+  #         (
+  #         echo "FOO=123 456"
+  #         echo "BAR=999 999"
+  #         ) >> $GITHUB_ENV
+  #         echo "################"
+  #         cat $GITHUB_ENV
+  # 
+  #     - name: Test 4
+  #       run: |
+  #         cat env.list >> $GITHUB_ENV
+  # 
+  #     # - name: Test fail
+  #     #   run: |
+  #     #     set -o verbose
+  #     #     echo "line 1"
+  #     #     if false; then
+  #     #       echo "line 2"; false
+  #     #     fi
+  #     #     echo "line 3"
+  #     #     if true; then
+  #     #       echo "line 4"; false
+  #     #     fi
+  #     #     echo "line 5"
+  #     #     echo "line 6"; false
+  #     #     echo "line 7"
+  # 
+  #     #- name: Check terminfo
+  #     #  run: find /usr/share/terminfo -type f | sort
+  # 
+  #     #- name: Check lcov
+  #     #  run: which -a lcov || true
+  # 
+  #     - name: Check locale
+  #       run: locale
+  # 
+  #     - name: Check mounted
+  #       run: mount
+  # 
+  #     - name: Check variables
+  #       run: |
+  #         echo "matrix:"
+  #         echo "  os       = ${{ matrix.os }}"
+  #         echo "  features = ${{ matrix.features }}"
+  #         echo "  compiler = ${{ matrix.compiler }}"
+  #         echo "  test     = ${{ matrix.test }}"
+  #         echo "  nogui    = ${{ matrix.nogui }}"
+  #         echo "  coverage = ${{ matrix.coverage }}"
+  #         echo "  asan     = ${{ matrix.asan }}"
+  #         echo "action:"
+  #         echo "  reply=${{ steps.test-1.outputs.reply }}"
+  #         echo "extra:"
+  #         echo "  PATH=${PATH}"
+  #         echo "  HOME=${HOME}"
+  #         echo "  USER=${USER}"
+  #         echo "  NICE_INPUT=${NICE_INPUT}"
+  #         echo "  FOO=${FOO}"
+  #         echo "  BAR=${BAR}"
+  #         echo "  SAMPLE=${SAMPLE}"
+  #         echo "  TERM=${TERM}"
+  #         echo "  TMPDIR=${TMPDIR}"
+  #         echo "  PYENV_ROOT=${PYENV_ROOT}"
+  #         echo "  CC=${{ env.CC }}"
+  #         echo "  github.actor=${{ github.actor }}"
+  #         echo "  github.workspace=${{ github.workspace }}"
+  #         echo "  runner.temp=${{ runner.temp }}"
+  #         echo "  strategy.job-index=${{ strategy.job-index }}"
+  #         echo "  strategy.job-total=${{ strategy.job-total }}"
+  #         echo "  job.container.id=${{ job.container.id }}"
+  #         echo "  github.job=${{ github.job }}"
+  # 
+  #     - name: Function
+  #       run: |
+  #         echo "1: ################"
+  #         if ${{ startsWith(matrix.os, 'ubuntu-') }}; then
+  #           echo "Ubuntu!!"
+  #         fi
+  #         echo "2: ################"
+  #         if ${{ startsWith(matrix.os, 'macos-') }}; then
+  #           echo "macOS!!"
+  #         fi
+  #         echo "3: ################"
+  #         if ${{ matrix.coverage == true }}; then
+  #           echo "coverage"
+  #         else
+  #           echo "w/o coverage"
+  #         fi
+  # 
+  #     - name: Check linux version
+  #       run: |
+  #         echo "LINUX_VERSION=$(uname -r | cut -d. -f1-2)" >> $GITHUB_ENV
+  # 
+  #     - name: Check compiler
+  #       run: |
+  #         echo 'Clang:'
+  #         clang --version
+  #         ls -l /usr/bin/clang*
+  #         echo
+  #         echo 'GCC:'
+  #         gcc --version
+  #         ls -l /usr/bin/gcc*
+  #         echo
+  #         echo 'Gcov:'
+  #         gcov --version
+  #         ls -l /usr/bin/gcov*
+  # 
+  #     - name: Check kernel modules
+  #       if: startsWith(matrix.os, 'ubuntu-')
+  #       run: |
+  #         #sudo apt-get install -y linux-headers-$(uname -r)
+  #         #find /usr/src/linux-headers-$(uname -r) -type d -o -name Makefile || true
+  #         #cat /usr/src/linux-headers-$(uname -r)/sound/drivers/Makefile || true
+  #         #lsmod | sort
+  #         dpkg -l 'linux-*'
+  # 
+  #     - name: Check users and groups
+  #       if: startsWith(matrix.os, 'ubuntu-')
+  #       run: |
+  #         echo 'Users:'
+  #         getent passwd
+  #         echo
+  #         echo 'Groups:'
+  #         getent group
+  # 
+  #     #- name: Cache snd-dummy
+  #     #  uses: actions/cache@v2
+  #     #  with:
+  #     #    path: ${{ env.SND_DUMMY_DIR }}
+  #     #    key: linux-${{ steps.linux.outputs.version }}-snd-dummy
+  #     #
+  #     #- name: Enable snd-dummy
+  #     #  if: startsWith(matrix.os, 'ubuntu-')
+  #     #  run: |
+  #     #    #if ! sudo modprobe snd-dummy; then
+  #     #    #  sudo apt-get install -yq --no-install-suggests --no-install-recommends "linux-modules-extra-$(uname -r)"
+  #     #    #  sudo modprobe snd-dummy || true
+  #     #    #fi
+  #     #    #cat /usr/src/linux-headers-$(uname -r)/include/config/auto.conf
+  #     #    if [[ ! -e ${SND_DUMMY_DIR}/snd-dummy.ko ]]; then
+  #     #      : ${TMPDIR:=/tmp}
+  #     #      mkdir -p "${TMPDIR}"
+  #     #      cd "${TMPDIR}"
+  #     #      wget -q "https://github.com/torvalds/linux/archive/v${LINUX_VERSION}.tar.gz"
+  #     #      tar -xf "v${LINUX_VERSION}.tar.gz" "linux-${LINUX_VERSION}/sound"
+  #     #      cd "linux-${LINUX_VERSION}/sound"
+  #     #      CC=gcc make -C /lib/modules/$(uname -r)/build M=${PWD} CONFIG_SOUND=m CONFIG_SND=m CONFIG_SND_PCM=m CONFIG_SND_DUMMY=m modules
+  #     #      find . -name '*.ko'
+  #     #      mkdir -p "${SND_DUMMY_DIR}"
+  #     #      cp soundcore.ko core/snd.ko core/snd-pcm.ko drivers/snd-dummy.ko "${SND_DUMMY_DIR}"
+  #     #    else
+  #     #      echo "cache exists"
+  #     #    fi
+  #     #    echo '#######################'
+  #     #    cd "${SND_DUMMY_DIR}"
+  #     #    sudo insmod soundcore.ko
+  #     #    sudo insmod snd.ko
+  #     #    sudo insmod snd-pcm.ko
+  #     #    sudo insmod snd-dummy.ko
+  #     #    lsmod
+  # 
+  #     #- name: Install Clang
+  #     #  if: startsWith(matrix.os, 'ubuntu-')
+  #     #  run: |
+  #     #    update-alternatives --display clang
+  #     #    echo '#######################'
+  #     #    which -a clang || true
+  #     #    clang --version
+  #     #    update-alternatives --list clang
+  #     #    echo '#######################'
+  #     #    # sudo apt-get install clang
+  #     #    # echo '#######################'
+  #     #    # which -a clang || true
+  #     #    # which -a llvm-cov || true
+  #     #    # clang --version
+  #     #    # update-alternatives --list clang
+  # 
+  #     #- name: Install Clang-11
+  #     #  if: matrix.os == 'ubuntu-18.04'
+  #     #  run: |
+  #     #    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+  #     #    sudo add-apt-repository -y "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main"
+  #     #    sudo apt-get install -y clang-11
+  #     #    echo '#######################'
+  #     #    sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-11 10
+  #     #    update-alternatives --display clang
+  #     #    sudo update-alternatives --set clang /usr/bin/clang-11
+  #     #    which -a clang || true
+  #     #    which -a llvm-cov-11 || true
+  #     #    clang --version
+  #     #    update-alternatives --list clang
+  # 
+  # 
+  #     #- name: Install coveralls
+  #     #  if: startsWith(matrix.os, 'ubuntu-')
+  #     #  run: |
+  #     #    dpkg -l 'python-*'
+  #     #    dpkg -l 'python3-*'
+  #     #    echo '#######################'
+  #     #    python --version
+  #     #    pip --version
+  #     #    python3 --version
+  #     #    pip3 --version
+  #     #    echo '#######################'
+  #     #    sudo apt-get install python3-setuptools python3-wheel
+  #     #    CC=gcc pip3 install --user cpp-coveralls pyopenssl ndg-httpsclient pyasn1
+  #     #    ls ~/.local/bin
+  # 
+  #     - name: Run Ubuntu
+  #       run: |
+  #         echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
+  #         if ${{ matrix.compiler == 'clang' }}; then
+  #           clang --version
+  #           ls -l "$(command -v clang)"
+  #           update-alternatives --list clang
+  #           update-alternatives --query clang
+  #           find /usr/bin -name 'llvm-cov*'
+  #         fi
+  #         which -a asan_symbolize || true
+  #         pgrep -fl Xvfb || true
+  #         sudo systemctl status xvfb.service
 
   # postproc:
   #   runs-on: ubuntu-latest
@@ -348,8 +348,21 @@ jobs:
   #             - os: macos-11.0
   #               compiler: clang
   #               post: true
-  # 
-  # trial-on-macos:
+
+  trial-on-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: clang
+        run: |
+          command -v clang
+          clang -v
+
+      - name: gcc
+        run: |
+          command -v gcc
+          gcc -v
+
   #   runs-on: ${{ matrix.os }}
   # 
   #   needs: generate-matrix
