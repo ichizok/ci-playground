@@ -3,61 +3,61 @@ name: GitHub CI
 on: [ push, workflow_dispatch ]
 
 jobs:
-  # trial-on-linux:
-  #   runs-on: ${{ matrix.os }}
-  #   # continue-on-error: true
-  # 
-  #   env:
-  #     CC: ${{ matrix.compiler }}
-  #     SND_DUMMY_DIR: ~/snd-dummy
-  # 
-  #   strategy:
-  #     fail-fast: true
-  #     matrix:
-  #       os: [ubuntu-18.04, ubuntu-20.04]
-  #       # features: [tiny, normal, huge]
-  #       compiler: [gcc, clang]
-  #       extra: [none]
-  #       # include:
-  #       #   - os: ubuntu-18.04
-  #       #     features: tiny
-  #       #     compiler: gcc
-  #       #     test: testtiny
-  #       #     extra: nogui
-  #       #   - os: ubuntu-18.04
-  #       #     features: tiny
-  #       #     compiler: clang
-  #       #     test: testtiny
-  #       #     extra: nogui
-  #       #   - os: ubuntu-18.04
-  #       #     features: huge
-  #       #     compiler: clang
-  #       #     test: scripttests
-  #       #     coverage: true
-  #       #   - os: ubuntu-18.04
-  #       #     features: huge
-  #       #     compiler: gcc
-  #       #     test: scripttests test_libvterm
-  #       #     coverage: true
-  #       #   - os: ubuntu-18.04
-  #       #     features: huge
-  #       #     compiler: gcc
-  #       #     test: -C testgui
-  #       #     coverage: true
-  #       #     extra: testgui
-  #       #   - os: ubuntu-18.04
-  #       #     features: huge
-  #       #     compiler: gcc
-  #       #     extra: unittests
-  #       #   - os: ubuntu-18.04
-  #       #     features: huge
-  #       #     compiler: clang-11
-  #       #     extra: asan
-  # 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  # 
+  trial-on-linux:
+    runs-on: ${{ matrix.os }}
+    # continue-on-error: true
+
+    env:
+      CC: ${{ matrix.compiler }}
+      SND_DUMMY_DIR: ~/snd-dummy
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+        # features: [tiny, normal, huge]
+        compiler: [gcc, clang]
+        extra: [none]
+        # include:
+        #   - os: ubuntu-18.04
+        #     features: tiny
+        #     compiler: gcc
+        #     test: testtiny
+        #     extra: nogui
+        #   - os: ubuntu-18.04
+        #     features: tiny
+        #     compiler: clang
+        #     test: testtiny
+        #     extra: nogui
+        #   - os: ubuntu-18.04
+        #     features: huge
+        #     compiler: clang
+        #     test: scripttests
+        #     coverage: true
+        #   - os: ubuntu-18.04
+        #     features: huge
+        #     compiler: gcc
+        #     test: scripttests test_libvterm
+        #     coverage: true
+        #   - os: ubuntu-18.04
+        #     features: huge
+        #     compiler: gcc
+        #     test: -C testgui
+        #     coverage: true
+        #     extra: testgui
+        #   - os: ubuntu-18.04
+        #     features: huge
+        #     compiler: gcc
+        #     extra: unittests
+        #   - os: ubuntu-18.04
+        #     features: huge
+        #     compiler: clang-11
+        #     extra: asan
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
   #     - name: Show parameters
   #       run: |
   #         echo "${{ toJson(strategy) }}"
@@ -84,15 +84,15 @@ jobs:
   #         mkdir -p "${HOME}/bin"
   #         echo "${HOME}/bin" >> $GITHUB_PATH
   # 
-  #     - id: test-1
-  #       name: Test 1
-  #       uses: ./.github/actions/test
-  # 
-  #     - name: Test 2
-  #       uses: ./.github/actions/test
-  #       with:
-  #         nice-input: 'Nice!!'
-  # 
+      - id: test-1
+        name: Test 1
+        uses: .github/actions/test
+
+      - name: Test 2
+        uses: .github/actions/test
+        with:
+          nice-input: 'Nice!!'
+
   #     - name: Test 3
   #       run: |
   #         echo $GITHUB_ENV
@@ -348,21 +348,21 @@ jobs:
   #             - os: macos-11.0
   #               compiler: clang
   #               post: true
-
-  trial-on-macos:
-    runs-on: macos-latest
-
-    steps:
-      - name: clang
-        run: |
-          command -v clang
-          clang -v
-
-      - name: gcc
-        run: |
-          command -v gcc
-          gcc -v
-
+  # 
+  # trial-on-macos:
+  #   runs-on: macos-latest
+  # 
+  #   steps:
+  #     - name: clang
+  #       run: |
+  #         command -v clang
+  #         clang -v
+  # 
+  #     - name: gcc
+  #       run: |
+  #         command -v gcc
+  #         gcc -v
+  # 
   #   runs-on: ${{ matrix.os }}
   # 
   #   needs: generate-matrix
