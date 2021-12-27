@@ -86,10 +86,10 @@ jobs:
   # 
       - id: test-1
         name: Test 1
-        uses: .github/actions/test
+        uses: ./.github/actions/test
 
       - name: Test 2
-        uses: .github/actions/test
+        uses: ./.github/actions/test
         with:
           nice-input: 'Nice!!'
 
