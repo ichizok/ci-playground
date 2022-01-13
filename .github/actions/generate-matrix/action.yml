@@ -11,9 +11,6 @@ outputs:
   matrix:
     description: JSON string
     value: ${{ steps.set-matrix.outputs.matrix }}
-  post-matrix:
-    description: JSON string
-    value: ${{ steps.set-matrix.outputs.post-matrix }}
 
 runs:
   using: composite
@@ -25,11 +22,7 @@ runs:
         require 'json'
         require 'yaml'
         matrix = YAML.load DATA.read
-        post_matrix = matrix.map do |k, v|
-          [k, v.select { |x| x.fetch("post", false) }]
-        end.to_h
         puts "::set-output name=matrix::#{JSON.generate matrix}"
-        puts "::set-output name=post-matrix::#{JSON.generate post_matrix}"
         __END__
         ${{ inputs.matrix }}
         EOT
