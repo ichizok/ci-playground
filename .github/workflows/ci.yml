@@ -3,92 +3,67 @@ name: GitHub CI
 on: [ push, workflow_dispatch ]
 
 jobs:
-  generate-matrix:
-    runs-on: ubuntu-latest
+  # generate-matrix:
+  #   runs-on: ubuntu-latest
+  # 
+  #   outputs:
+  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
+  # 
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - id: set-matrix
+  #       uses: ./.github/actions/generate-matrix
+  #       with:
+  #         matrix: |
+  #           os:
+  #             - ubuntu-latest
+  #             - macos-latest
+  #           compiler:
+  #             - clang
+  #             - gcc
+  #           include:
+  #             - os: macos-10.15
+  #               compiler: clang
+  #             - os: macos-latest
+  #               compiler: clang
+  #               post: true
+  # 
+  # trial-matrix:
+  #   needs: generate-matrix
+  # 
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   strategy:
+  #     fail-fast: true
+  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+  # 
+  #   steps:
+  #     - name: Show strategy
+  #       run: |
+  #         cat <<'EOT' | jq -r .
+  #         ${{ toJSON(strategy) }}
+  #         EOT
+  # 
+  #     - name: Show matrix
+  #       run: |
+  #         cat <<'EOT' | jq -r .
+  #         ${{ toJSON(matrix) }}
+  #         EOT
+  # 
+  #     - name: Show post
+  #       run: |
+  #         : "post: ${{ matrix.post }}"
 
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-      post-matrix: ${{ steps.set-matrix.outputs.post-matrix }}
-
-    steps:
-      - uses: actions/checkout@v2
-      - id: set-matrix
-        uses: ./.github/actions/generate-matrix
-        with:
-          matrix: |
-            os:
-              - ubuntu-latest
-              - macos-latest
-            compiler:
-              - clang
-              - gcc
-            include:
-              - os: macos-10.15
-                compiler: clang
-              - os: macos-latest
-                compiler: clang
-                post: true
-
-  trial-matrix:
-    needs: generate-matrix
-
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: true
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-
-    steps:
-      - name: Show strategy
-        run: |
-          cat <<'EOT' | jq -r .
-          ${{ toJSON(strategy) }}
-          EOT
-
-      - name: Show matrix
-        run: |
-          cat <<'EOT' | jq -r .
-          ${{ toJSON(matrix) }}
-          EOT
-
-      - name: Show post
-        run: |
-          : "post: ${{ matrix.post }}"
-
-
-  trial-vim:
+  trial-linux:
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
+          - ubuntu-18.04
+          - ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Estimate 1 - normal
-        run: |
-          vim -u NONE --not-a-term -esNX -V1 -S test.vim -c q
-
-      - name: Estimate 1 - high priority
-        run: |
-          sudo nice -n-20 sudo -u $USER vim -u NONE --not-a-term -esNX -V1 -S test.vim -c q
-
-      - name: Estimate 2 - normal
-        run: |
-          vim -u NONE --not-a-term -esNX -V1 -S test.vim -c q
-
-      - name: Estimate 2 - high priority
-        run: |
-          sudo nice -n-20 sudo -u $USER vim -u NONE --not-a-term -esNX -V1 -S test.vim -c q
-
-      - name: Estimate 3 - normal
-        run: |
-          vim -u NONE --not-a-term -esNX -V1 -S test.vim -c q
-
-      - name: Estimate 3 - high priority
-        run: |
-          sudo nice -n-20 sudo -u $USER vim -u NONE --not-a-term -esNX -V1 -S test.vim -c q
+      - name: Show Installed packages
+        run: dpkg -l
