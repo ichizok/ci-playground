@@ -60,40 +60,39 @@ jobs:
   trial-gh:
     runs-on: ubuntu-latest
 
+    # if: github.ref == 'master' && github.sender.login != 'github-actions[bot]'
+
     steps:
       - name: Show context
         run: |
+          (
           echo "github.event_name=${{ github.event_name }}"
           echo "${{ toJSON(github.event) }}"
+          ) || true
 
-    # if: |
-    #   github.ref == 'master' \
-    #     && (github.event_name != 'pull_request' \
-    #       || !  (github.event.pull_request.action == 'closed' \
-    #           && github.event.pull_request.merged == true \
-    #           && startsWith(github.event.pull_request.head.ref, 'trial/')))
-    # 
-    # steps:
-    #   - name: Commit
-    #     run: |
-    #       echo hello >> dir/sample.txt
-    #       git config --local user.name 'github-actions[bot]'
-    #       git config --local user.email 'github-actions[bot]@users.noreply.github.com'
-    #       git switch -c trial/gh
-    #       git add dir/sample.txt
-    #       git commit -m 'Add message'
-    #       git push -u origin trial/gh
-    # 
-    #   - name: Create pull request
-    #     id: pull_request
-    #     env:
-    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     run: |
-    #       gh pr create --base master --title 'trial: Add message' --body '' | tee .pull_request
-    #       echo "::set-output name=url::value=$(cat .pull_request)"
-    # 
-    #   - name: Merge pull request
-    #     env:
-    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     run: |
-    #       gh pr merge ${{ steps.pull_request.outputs.url }} --auto --merge --delete-branch
+      - name: Commit
+        if: github.ref == 'master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo hello >> dir/sample.txt
+          git config --local user.name 'github-actions[bot]'
+          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+          git switch -c trial/gh
+          git add dir/sample.txt
+          git commit -m 'Add message'
+          git push -u origin trial/gh
+
+      # - name: Create pull request
+      #   id: pull_request
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     gh pr create --base master --title 'trial: Add message' --body "### Test\n\n* message1\n*message2" | tee .pull_request
+      #     echo "::set-output name=url::value=$(cat .pull_request)"
+      # 
+      # - name: Merge pull request
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     gh pr merge ${{ steps.pull_request.outputs.url }} --auto --merge --delete-branch
