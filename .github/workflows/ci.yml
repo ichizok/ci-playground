@@ -92,8 +92,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --base master --title 'trial: Add message' --body "### Test\n\n* message1\n*message2" | tee .pull_request
-          echo "::set-output name=url::value=$(cat .pull_request)"
+          cat << EOT > /tmp/message
+          ### Test
+
+          * message 1
+          * message 2
+          EOT
+          gh pr create --base master --title 'trial: Add message' --body-file /tmp/message | tee /tmp/pull_request
+          echo "::set-output name=url::$(cat /tmp/pull_request)"
 
       - name: Merge pull request
         if: github.ref == 'refs/heads/master'
