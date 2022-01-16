@@ -63,6 +63,8 @@ jobs:
     # if: github.ref == 'refs/heads/master' && github.sender.login != 'github-actions[bot]'
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: Show context
         run: |
           (
