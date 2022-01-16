@@ -60,7 +60,7 @@ jobs:
   trial-gh:
     runs-on: ubuntu-latest
 
-    # if: github.ref == 'refs/heads/master' && github.sender.login != 'github-actions[bot]'
+    # if: github.ref_name == 'master' && github.sender.login != 'github-actions[bot]'
 
     steps:
       - uses: actions/checkout@v2
@@ -73,7 +73,7 @@ jobs:
           ) || true
 
       - name: Commit
-        if: github.ref == 'refs/heads/master'
+        if: github.ref_name == 'master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -87,7 +87,7 @@ jobs:
           git push -u origin trial/gh
 
       - name: Create pull request
-        if: github.ref == 'refs/heads/master'
+        if: github.ref_name == 'master'
         id: pull_request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -102,7 +102,7 @@ jobs:
           echo "::set-output name=url::$(cat /tmp/pull_request)"
 
       - name: Merge pull request
-        if: github.ref == 'refs/heads/master'
+        if: github.ref_name == 'master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
