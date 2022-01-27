@@ -1,26 +1,28 @@
-" set rtp^=/tmp/vim-perf
-" call vimperf#setup()
-function Estimate(t)
-  " call vimperf#start('prof_'..a:t..'.out')
-  let repeat = 3
-  let n = 1000 / a:t
-  let start = reltime()
+vim9script
+# set rtp^=/tmp/vim-perf
+# vimperf#setup()
+def Estimate(t: string)
+  # vimperf#start('prof_' .. t .. '.out')
+  var repeat = 3
+  var n = 1000 / str2nr(t)
+  var start = reltime()
   for _ in range(repeat)
-    for _ in range(n)
-      execute 'sleep' a:t
+    for __ in range(n)
+      execute 'sleep' t
     endfor
   endfor
-  let elapsed = reltimefloat(reltime(start)) / repeat
-  " call vimperf#stop()
-  let calibrator = (n * a:t * (a:t =~# 'm$' ? 1 : 1000)) / (elapsed * 1000)
-  echo printf('%dx sleep %s', n, a:t)
-  echo printf('Elapsed     = %f', elapsed)
-  echo printf('Calibration = %f', calibrator)
+  var elapsed = reltimefloat(reltime(start)) / repeat
+  # vimperf#stop()
+  var calibrator = (n * str2nr(t) * (t =~# 'm$' ? 1 : 1000)) / (elapsed * 1000)
+  echo printf('%dx sleep %s', n, t)
+  echo printf('  Elapsed     = %f', elapsed)
+  echo printf('  Unit        = %f', elapsed / n)
+  echo printf('  Calibration = %f', calibrator)
   echo ''
-endfunction
+enddef
 sleep 1
-call Estimate('1m')
-call Estimate('10m')
-call Estimate('50m')
-call Estimate('100m')
-call Estimate('1000m')
+Estimate('1m')
+Estimate('10m')
+Estimate('50m')
+Estimate('100m')
+Estimate('1000m')
