@@ -122,11 +122,11 @@ jobs:
       - name: Benchmark by Vim
         run: |
           echo;echo 'Trial #1'
-          vim -u NONE -esNX -V1 -S test.vim -c q
+          vim -i NONE -u NONE -esNX -V1 -S test.vim -c q
           echo;echo 'Trial #2'
-          vim -u NONE -esNX -V1 -S test.vim -c q
+          vim -i NONE -u NONE -esNX -V1 -S test.vim -c q
           echo;echo 'Trial #3'
-          vim -u NONE -esNX -V1 -S test.vim -c q
+          vim -i NONE -u NONE -esNX -V1 -S test.vim -c q
 
       - name: Benchmark by Python
         run: |
