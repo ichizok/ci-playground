@@ -20,8 +20,8 @@ def tt(ms, n):
 
 if __name__ == '__main__':
     loop = 3
-    tt(1000, loop)
-    tt(100, loop)
-    tt(50, loop)
-    tt(10, loop)
     tt(1, loop)
+    tt(10, loop)
+    tt(50, loop)
+    tt(100, loop)
+    tt(1000, loop)
