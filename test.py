@@ -1,6 +1,15 @@
-#!/usr/bin/env python3
 import time
 import timeit
+import sys
+
+
+def set_rt():
+    import platform
+    if platform.system() == 'Darwin':
+        from threading_ext import darwin
+        policy_info = darwin.get_time_constraint_policy()
+        policy_info['preemptible'] = False
+        darwin.set_time_constraint_policy(policy_info)
 
 
 def sleep(ms):
@@ -19,6 +28,9 @@ def tt(ms, n):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'rt':
+        set_rt()
+
     loop = 3
     tt(1, loop)
     tt(10, loop)
