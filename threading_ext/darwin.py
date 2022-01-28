@@ -1,6 +1,14 @@
-#!/usr/bin/env python3
-
-from ctypes import CDLL, CFUNCTYPE, POINTER, Structure, c_int, c_uint, c_uint32, c_void_p, byref, pointer, sizeof
+from ctypes import (
+    CDLL,
+    POINTER,
+    Structure,
+    c_int,
+    c_uint,
+    c_uint32,
+    c_void_p,
+    byref,
+    sizeof
+)
 from ctypes.util import find_library
 
 
