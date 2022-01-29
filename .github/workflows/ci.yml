@@ -55,41 +55,53 @@ jobs:
   #       run: |
   #         gh pr merge ${{ steps.pull_request.outputs.url }} --auto --merge --delete-branch
 
-  prepare:
+  setup:
     runs-on: ubuntu-latest
 
     outputs:
       env: ${{ toJSON(env) }}
-      matrix: ${{ toJSON(matrix) }}
+      matrix: ${{ steps.matrix.outputs.json }}
 
     env:
       VERSION: v1.0
       URL: https://github.com/
 
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Matrix
+        id: matrix
+        uses: ./.github/actions/generate-matrix
+        with:
+          matrix: |
+            compiler:
+              - clang
+              - gcc
+            arch:
+              - x86_64
+              - arm64
+              - dummy
+            include:
+              - compiler: gcc
+                arch: powerpc
+            exclude:
+              - compiler: gcc
+                arch: arm64
+
+  prepare:
+    needs: setup
+
+    if: always()
+
+    runs-on: ubuntu-latest
+
+    env: ${{ fromJSON(needs.setup.outputs.matrix) }}
+
     strategy:
       fail-fast: false
-      matrix:
-        compiler:
-          - clang
-          - gcc
-        arch:
-          - x86_64
-          - arm64
-          - dummy
-        include:
-          - compiler: gcc
-            arch: powerpc
-        exclude:
-          - compiler: gcc
-            arch: arm64
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
 
     steps:
-      - name: Check matrix
-        run: |
-          cat <<EOT
-          ${{ toJSON(matrix) }}
-          EOT
-
       - name: Prepare
         run: |
           ${{ matrix.arch != 'dummy' }} \
@@ -101,17 +113,17 @@ jobs:
           path: artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
 
   trial:
-    needs: prepare
+    needs: [setup, prepare]
 
     if: always()
 
     runs-on: ubuntu-latest
 
-    env: ${{ fromJSON(needs.prepare.outputs.env) }}
+    env: ${{ fromJSON(needs.setup.outputs.env) }}
 
     strategy:
-      fail-fast: true
-      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
 
     steps:
       - uses: actions/download-artifact@v2
@@ -136,4 +148,4 @@ jobs:
           }
           do_curl ${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts \
             | jq -r '.artifacts[].id' \
-            | xargs -I{} do_curl -X DELETE ${{ github.api_url }}/repos/${{ github.repository }}/actions//artifacts/{}
+            | xargs -I{} do_curl -X DELETE ${{ github.api_url }}/repos/${{ github.repository }}/actions/artifacts/{}

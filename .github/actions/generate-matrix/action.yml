@@ -8,14 +8,14 @@ inputs:
     required: true
 
 outputs:
-  matrix:
+  json:
     description: JSON string
-    value: ${{ steps.set-matrix.outputs.matrix }}
+    value: ${{ steps.matrix.outputs.matrix }}
 
 runs:
   using: composite
   steps:
-    - id: set-matrix
+    - id: matrix
       shell: bash
       run: |
         cat <<'EOT' | ruby
