@@ -18,6 +18,7 @@ runs:
     - id: matrix
       shell: bash
       run: |
+        echo '::group::Format matrix to json'
         cat <<'EOT' | ruby
         require 'json'
         require 'yaml'
@@ -26,3 +27,4 @@ runs:
         __END__
         ${{ inputs.matrix }}
         EOT
+        echo '::endgroup::'
