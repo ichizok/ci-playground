@@ -95,7 +95,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    env: ${{ fromJSON(needs.setup.outputs.env) }}
 
     strategy:
       fail-fast: false
