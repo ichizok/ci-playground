@@ -6,57 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # generate-matrix:
-  #   runs-on: ubuntu-latest
-  # 
-  #   outputs:
-  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
-  # 
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - id: set-matrix
-  #       uses: ./.github/actions/generate-matrix
-  #       with:
-  #         matrix: |
-  #           os:
-  #             - ubuntu-latest
-  #             - macos-latest
-  #           compiler:
-  #             - clang
-  #             - gcc
-  #           include:
-  #             - os: macos-10.15
-  #               compiler: clang
-  #             - os: macos-latest
-  #               compiler: clang
-  #               post: true
-  # 
-  # trial-matrix:
-  #   needs: generate-matrix
-  # 
-  #   runs-on: ${{ matrix.os }}
-  # 
-  #   strategy:
-  #     fail-fast: true
-  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-  # 
-  #   steps:
-  #     - name: Show strategy
-  #       run: |
-  #         cat <<'EOT' | jq -r .
-  #         ${{ toJSON(strategy) }}
-  #         EOT
-  # 
-  #     - name: Show matrix
-  #       run: |
-  #         cat <<'EOT' | jq -r .
-  #         ${{ toJSON(matrix) }}
-  #         EOT
-  # 
-  #     - name: Show post
-  #       run: |
-  #         : "post: ${{ matrix.post }}"
-
   # trial-gh:
   #   runs-on: ubuntu-latest
   # 
@@ -106,42 +55,79 @@ jobs:
   #       run: |
   #         gh pr merge ${{ steps.pull_request.outputs.url }} --auto --merge --delete-branch
 
-  trial-bm:
-    runs-on: ${{ matrix.os }}
+  prepare:
+    runs-on: ubuntu-latest
+
+    outputs:
+      env: ${{ toJSON(env) }}
+      matrix: ${{ toJSON(matrix) }}
+
+    env:
+      VERSION: v1.0
+      URL: https://github.com/
 
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
+        compiler:
+          - clang
+          - gcc
+        arch:
+          - x86_64
+          - arm64
+          - dummy
+        include:
+          - compiler: gcc
+            arch: powerpc
+        exclude:
+          - compiler: gcc
+            arch: arm64
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Benchmark by Vim
+      - name: Prepare
         run: |
-          echo;echo 'Trial #1'
-          vim -i NONE -u NONE -esNX -V1 -S test.vim -c q
-          echo;echo 'Trial #2'
-          vim -i NONE -u NONE -esNX -V1 -S test.vim -c q
-          echo;echo 'Trial #3'
-          vim -i NONE -u NONE -esNX -V1 -S test.vim -c q
+          ${{ matrix.arch != 'dummy' }} \
+            && echo "${{ matrix.compiler }},${{ matrix.arch }}" > artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
 
-      - name: Benchmark by Python
-        run: |
-          echo;echo 'Trial #1'
-          python3 test.py
-          echo;echo 'Trial #2'
-          python3 test.py
-          echo;echo 'Trial #3'
-          python3 test.py
+      - uses: actions/upload-artifact@v2
+        with:
+          name: artifact-${{ matrix.compiler }}-${{ matrix.arch }}
+          path: artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
 
-      - name: Benchmark by Python (set rt)
+  trial:
+    needs: prepare
+
+    if: always()
+
+    runs-on: ubuntu-latest
+
+    env: ${{ fromJSON(needs.prepare.outputs.env) }}
+
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact-${{ matrix.compiler }}-${{ matrix.arch }}
+
+      - name: Trial
+        run: cat artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
+
+  cleanup:
+    needs: trial
+
+    if: always()
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete artifacts
         run: |
-          echo;echo 'Trial #1'
-          python3 test.py rt
-          echo;echo 'Trial #2'
-          python3 test.py rt
-          echo;echo 'Trial #3'
-          python3 test.py rt
+          curl -s -H "Accept: application/vnd.github.v3+json" \
+            ${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts \
+            | jq -r '.artifacts[].id' \
+            | xargs -I{} \
+              curl -s -X DELETE -H "Accept: application/vnd.github.v3+json" \
+                ${{ github.api_url }}/repos/${{ github.repository }}/actions//artifacts/{} \
