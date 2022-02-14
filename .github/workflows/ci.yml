@@ -162,10 +162,12 @@ jobs:
           - windows-2022
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: Set up vspath
         shell: bash
         run: |
-          echo "VCVARSALL=$(vswhere -products * -latest -property installationPath)\\VC\\Auxiliary\\Build\\vcvarsall.bat" >$GITHUB_ENV
+          echo "VCVARSALL=$(vswhere -products \* -latest -property installationPath)\\VC\\Auxiliary\\Build\\vcvarsall.bat" >$GITHUB_ENV
 
       - name: Show vspath
         shell: cmd
