@@ -163,12 +163,11 @@ jobs:
 
     steps:
       - name: Set up vspath
+        shell: bash
         run: |
-          vswhere -products * -latest -property installationPath > vspath-${{ matrix.os }}
-          type vspath-${{ matrix.os }}
+          echo "VCVARSALL=$(vswhere -products * -latest -property installationPath)\\VC\\Auxiliary\\Build\\vcvarsall.bat" >$GITHUB_ENV
 
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          body: test
-          files: vspath-${{ matrix.os }}
+      - name: Show vspath
+        shell: cmd
+        run: |
+          echo "%VCVARSALL%"
