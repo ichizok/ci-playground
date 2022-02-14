@@ -170,11 +170,10 @@ jobs:
           echo "VCVARSALL=$(vswhere -products \* -latest -property installationPath)\\VC\\Auxiliary\\Build\\vcvarsall.bat" >$GITHUB_ENV
 
       - name: Check vspath
-        shell: cmd
+        shell: bash
         run: |
-          dir C:\Program Files (x86)\Microsoft Visual Studio || sort < NUL > NUL
-          echo.
-          dir C:\Program Files\Microsoft Visual Studio || sort < NUL > NUL
+          ls '/C/Program Files (x86)/Microsoft Visual Studio' || true
+          ls '/C/Program Files/Microsoft Visual Studio' || true
 
       - name: Show vspath
         shell: cmd
