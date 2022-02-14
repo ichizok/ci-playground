@@ -172,7 +172,9 @@ jobs:
       - name: Check vspath
         shell: bash
         run: |
+          echo '/C/Program Files (x86)/Microsoft Visual Studio/'
           ls '/C/Program Files (x86)/Microsoft Visual Studio' || true
+          echo '/C/Program Files/Microsoft Visual Studio/'
           ls '/C/Program Files/Microsoft Visual Studio' || true
 
       - name: Show vspath
