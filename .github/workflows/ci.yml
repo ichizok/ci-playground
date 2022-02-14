@@ -164,7 +164,7 @@ jobs:
     steps:
       - name: Set up vspath
         run: |
-          vswhere -products * -latest -prerelease -property installationPath > vspath-${{ matrix.os }}
+          vswhere -products * -latest -property installationPath > vspath-${{ matrix.os }}
           type vspath-${{ matrix.os }}
 
       - uses: softprops/action-gh-release@v1
