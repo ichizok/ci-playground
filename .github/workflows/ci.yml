@@ -151,33 +151,23 @@ jobs:
   #             | jq -r '.artifacts[].id' \
   #             | xargs -I{} curl -s -X DELETE "${headers[@]}" ${api_url}/artifacts/{}
 
-  windows:
+  macos:
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         os:
-          - windows-2019
-          - windows-2022
+          - macos-10.15
+          - macos-11
+
+    env:
+      VIM: /usr/bin/vim
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Vim version
+        run: ${VIM} --version
 
-      - name: Set up vspath
-        shell: bash
+      - name: Vim check
         run: |
-          echo "VCVARSALL=$(vswhere -products \* -latest -property installationPath)\\VC\\Auxiliary\\Build\\vcvarsall.bat" >$GITHUB_ENV
-
-      - name: Check vspath
-        shell: bash
-        run: |
-          echo '/C/Program Files (x86)/Microsoft Visual Studio/'
-          ls '/C/Program Files (x86)/Microsoft Visual Studio' || true
-          echo '/C/Program Files/Microsoft Visual Studio/'
-          ls '/C/Program Files/Microsoft Visual Studio' || true
-
-      - name: Show vspath
-        shell: cmd
-        run: |
-          echo "%VCVARSALL%"
+          ${VIM} -u NONE -i NONE --not-a-term -e -s -V1 -c 'echo "has(mac):" has("mac")' -c 'echo "has(macunix):" has("macunix")' -c q
