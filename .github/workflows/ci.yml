@@ -151,23 +151,13 @@ jobs:
   #             | jq -r '.artifacts[].id' \
   #             | xargs -I{} curl -s -X DELETE "${headers[@]}" ${api_url}/artifacts/{}
 
-  macos:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-10.15
-          - macos-11
-
-    env:
-      VIM: /usr/bin/vim
+  trial-secret:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Vim version
-        run: ${VIM} --version
+      - uses: actions/checkout@v2
 
-      - name: Vim check
-        run: |
-          ${VIM} -u NONE -i NONE --not-a-term -e -s -V1 -c 'echo "has(mac):" has("mac")' -c 'echo "has(macunix):" has("macunix")' -c q
+      - name: Check secret log
+        env:
+          SECRET_VALUE: ${{ secrets.SECRET_VALUE }}
+        run: ./test.sh
