@@ -160,4 +160,4 @@ jobs:
       - name: Check secret log
         env:
           SECRET_VALUE: ${{ secrets.SECRET_VALUE }}
-        run: ./test.sh
+        run: sh test.sh
