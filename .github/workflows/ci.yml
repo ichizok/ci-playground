@@ -151,13 +151,26 @@ jobs:
   #             | jq -r '.artifacts[].id' \
   #             | xargs -I{} curl -s -X DELETE "${headers[@]}" ${api_url}/artifacts/{}
 
-  trial-secret:
-    runs-on: ubuntu-latest
+  trial-netif:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - macos-latest
+          - ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Show netif (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: Get-NetAdapter
 
-      - name: Check secret log
-        env:
-          SECRET_VALUE: ${{ secrets.SECRET_VALUE }}
-        run: sh test.sh
+      - name: Show netif (macOS)
+        if: startsWith(matrix.os, 'macos')
+        run: ifconfig
+
+      - name: Show netif (Linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: ip a
