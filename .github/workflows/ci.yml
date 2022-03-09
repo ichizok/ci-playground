@@ -151,26 +151,20 @@ jobs:
   #             | jq -r '.artifacts[].id' \
   #             | xargs -I{} curl -s -X DELETE "${headers[@]}" ${api_url}/artifacts/{}
 
-  trial-netif:
+  trial-stdio:
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         os:
-          - windows-latest
           - macos-latest
           - ubuntu-latest
 
     steps:
-      - name: Show netif (Windows)
-        if: startsWith(matrix.os, 'windows')
-        run: Get-NetAdapter
-
-      - name: Show netif (macOS)
-        if: startsWith(matrix.os, 'macos')
-        run: ifconfig
-
-      - name: Show netif (Linux)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: ip a
+      - name: Show stdio
+        run: |
+          echo 'altscreen on' >screenrc
+          screen -dmLU -c screenrc -S show-stdio bash -c 'sleep 3 & lsof -p $!'
+          while screen -list 2>/dev/null | grep -qs show-stdio; do sleep 1; done
+          cat screenlog.0
