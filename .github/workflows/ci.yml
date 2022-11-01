@@ -17,7 +17,7 @@ jobs:
   #         echo "${{ toJSON(github.event) }}"
   #         ) || true
   # 
-  #     - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v3
   # 
   #     - name: Commit
   #       if: github.ref_name == 'master'
@@ -67,7 +67,7 @@ jobs:
   #     URL: https://github.com/
   # 
   #   steps:
-  #     - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v3
   # 
   #     - name: Matrix
   #       id: matrix
@@ -106,7 +106,7 @@ jobs:
   #         ${{ matrix.arch != 'dummy' }} \
   #           && echo "${{ matrix.compiler }},${{ matrix.arch }}" > artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
   # 
-  #     - uses: actions/upload-artifact@v2
+  #     - uses: actions/upload-artifact@v3
   #       with:
   #         name: artifact-${{ matrix.compiler }}-${{ matrix.arch }}
   #         path: artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
@@ -125,7 +125,7 @@ jobs:
   #     matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
   # 
   #   steps:
-  #     - uses: actions/download-artifact@v2
+  #     - uses: actions/download-artifact@v3
   #       with:
   #         name: artifact-${{ matrix.compiler }}-${{ matrix.arch }}
   # 
@@ -150,21 +150,32 @@ jobs:
   #         curl -s "${headers[@]}" ${api_url}/runs/${{ github.run_id }}/artifacts \
   #             | jq -r '.artifacts[].id' \
   #             | xargs -I{} curl -s -X DELETE "${headers[@]}" ${api_url}/artifacts/{}
+  # 
+  # trial-stdio:
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os:
+  #         - macos-latest
+  #         - ubuntu-latest
+  # 
+  #   steps:
+  #     - name: Show stdio
+  #       run: |
+  #         echo 'altscreen on' >screenrc
+  #         screen -dmLU -c screenrc -S show-stdio bash -c 'sleep 3 & lsof -p $!'
+  #         while screen -list 2>/dev/null | grep -qs show-stdio; do sleep 1; done
+  #         cat screenlog.0
 
-  trial-stdio:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
+  trial-expand:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Show stdio
-        run: |
-          echo 'altscreen on' >screenrc
-          screen -dmLU -c screenrc -S show-stdio bash -c 'sleep 3 & lsof -p $!'
-          while screen -list 2>/dev/null | grep -qs show-stdio; do sleep 1; done
-          cat screenlog.0
+      - uses: actions/checkout@v3
+
+      - name: Test
+        uses: ./.github/actions/test
+        with:
+          nice-input: VALUE_${{ true && 'TRUE' || 'FALSE' }}
