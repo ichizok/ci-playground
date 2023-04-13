@@ -203,6 +203,6 @@ jobs:
 
       - name: Diff
         run: |
-          zsh -c 'for i in {0..9}; echo $i' > file0
-          zsh -c 'for i in {1..10}; echo $i' > file1
-          /usr/bin/diff -U0 file0 file1
+          zsh -c 'for i in {1..10}; echo $i' > file0
+          zsh -c 'for i in {0..9}; echo $i' > file1
+          /usr/bin/diff -U0 file0 file1 || true
