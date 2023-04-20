@@ -4,14 +4,17 @@ description: Greeting
 
 inputs:
   nice-input:
+    description: nice input
     required: false
     default: 'Yes!'
   example:
+    description: example
     required: false
     default: 'Example'
 
 outputs:
   reply:
+    description: reply
     value: ${{ steps.work.outputs.reply-msg }}
 
 runs:
@@ -27,7 +30,7 @@ runs:
     - id: work
       shell: bash
       run: |
-        echo "::set-output name=reply-msg::${NICE_INPUT} .. OK!!"
+        echo "reply_msg=${NICE_INPUT} .. OK!!" >> $GITHUB_OUTPUT
     - id: heredoc
       shell: bash
       run: |
