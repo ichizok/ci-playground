@@ -168,41 +168,47 @@ jobs:
   #         screen -dmLU -c screenrc -S show-stdio bash -c 'sleep 3 & lsof -p $!'
   #         while screen -list 2>/dev/null | grep -qs show-stdio; do sleep 1; done
   #         cat screenlog.0
-  # 
-  # trial-expand:
-  #   runs-on: ubuntu-latest
-  # 
-  #   steps:
-  #     - uses: actions/checkout@v3
-  # 
-  #     - name: Test 1
-  #       uses: ./.github/actions/test
-  #       with:
-  #         nice-input: value${{ true && 'TRUE' }}.OK
-  # 
-  #     - name: Test 2
-  #       uses: ./.github/actions/test
-  #       with:
-  #         nice-input: value${{ false && 'TRUE' }}.OK
 
-  trial-diff:
-    runs-on: ${{ matrix.os }}
+  trial-expand:
+    runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        os:
-          - macos-10.15
-          - macos-11
-          - macos-12
+    env:
+      TEST_TITLE: Hello World
 
     steps:
-      - name: Show version
-        run: |
-          uname -a
-          /usr/bin/diff --version
+      - name: title =${{ env.TEST_TIFLE }}=
+        run: echo ok
 
-      - name: Diff
-        run: |
-          zsh -c 'for i in {1..10}; echo $i' > file0
-          zsh -c 'for i in {0..9}; echo $i' > file1
-          /usr/bin/diff -U0 file0 file1 || true
+      - uses: actions/checkout@v3
+
+      - name: Test 1
+        uses: ./.github/actions/test
+        with:
+          nice-input: value${{ true && 'TRUE' }}.OK
+
+      - name: Test 2
+        uses: ./.github/actions/test
+        with:
+          nice-input: value${{ false && 'TRUE' }}.OK
+
+  # trial-diff:
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   strategy:
+  #     matrix:
+  #       os:
+  #         - macos-10.15
+  #         - macos-11
+  #         - macos-12
+  # 
+  #   steps:
+  #     - name: Show version
+  #       run: |
+  #         uname -a
+  #         /usr/bin/diff --version
+  # 
+  #     - name: Diff
+  #       run: |
+  #         zsh -c 'for i in {1..10}; echo $i' > file0
+  #         zsh -c 'for i in {0..9}; echo $i' > file1
+  #         /usr/bin/diff -U0 file0 file1 || true
