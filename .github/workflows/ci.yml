@@ -176,7 +176,7 @@ jobs:
       TEST_TITLE: Hello World
 
     steps:
-      - name: title =${{ env.TEST_TIFLE }}=
+      - name: title =${{ env.TEST_TITLE }}=
         run: echo ok
 
       - uses: actions/checkout@v3
