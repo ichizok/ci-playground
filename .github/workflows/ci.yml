@@ -184,12 +184,12 @@ jobs:
       - name: Test 1
         uses: ./.github/actions/test
         with:
-          nice-input: value${{ true && 'TRUE' }}.OK
+          nice-input: value${{ true && 'TRUE!' || 'FALSE!' }}.OK
 
       - name: Test 2
         uses: ./.github/actions/test
         with:
-          nice-input: value${{ false && 'TRUE' }}.OK
+          nice-input: value${{ false && 'TRUE!' || 'FALSE!' }}.OK
 
   # trial-diff:
   #   runs-on: ${{ matrix.os }}
