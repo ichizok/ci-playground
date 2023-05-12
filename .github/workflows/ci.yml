@@ -181,6 +181,12 @@ jobs:
 
       - uses: actions/checkout@v3
 
+      - name: Test 0
+        run: |
+          echo "Enter test 0"
+          { echo "Test 0"; false; } || exit 0
+          echo "Leave test 0"
+
       - name: Test 1
         uses: ./.github/actions/test
         with:
