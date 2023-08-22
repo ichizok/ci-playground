@@ -197,6 +197,12 @@ jobs:
         with:
           nice-input: value${{ false && 'TRUE!' || 'FALSE!' }}.OK
 
+      - name: Test 3
+        run: |
+          VAR1="${{ env.TEST_TITLE || 'No title' }}"
+          VAR2="${{ '' || env.TEST_TITLE }}"
+          echo $VAR1 $VAR2
+
   # trial-diff:
   #   runs-on: ${{ matrix.os }}
   # 
