@@ -199,9 +199,15 @@ jobs:
 
       - name: Test 3
         run: |
-          VAR1="${{ env.TEST_TITLE || 'No title' }}"
-          VAR2="${{ '' || env.TEST_TITLE }}"
-          echo $VAR1 $VAR2
+          : ${A:=${{ env.FOOBAR }}}
+          : ${A:=$(git rev-parse --short @)}
+          echo "A=$A"
+
+      - name: Test 4
+        run: |
+          : ${A:=${{ env.TEST_TITLE }}}
+          : ${A:=$(git rev-parse --short @)}
+          echo "A=$A"
 
   # trial-diff:
   #   runs-on: ${{ matrix.os }}
