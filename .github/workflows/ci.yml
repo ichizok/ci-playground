@@ -6,6 +6,34 @@ on:
   workflow_dispatch:
 
 jobs:
+  trial-deno:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        deno-version:
+          - v1.x
+          - "1.36.0"
+          - "1.33.0"
+          - "1.30.0"
+          - "1.27.0"
+          - "1.24.0"
+          - "1.21.0"
+
+    steps:
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno-version }}
+
+      - name: Deno.systemMemoryInfo
+        run: deno eval 'console.log(Deno.systemMemoryInfo());'
+
   # trial-gh:
   #   runs-on: ubuntu-latest
   # 
@@ -168,65 +196,3 @@ jobs:
   #         screen -dmLU -c screenrc -S show-stdio bash -c 'sleep 3 & lsof -p $!'
   #         while screen -list 2>/dev/null | grep -qs show-stdio; do sleep 1; done
   #         cat screenlog.0
-
-  trial-expand:
-    runs-on: ubuntu-latest
-
-    env:
-      TEST_TITLE: Hello World
-
-    steps:
-      - name: title =${{ env.TEST_TITLE }}=
-        run: echo ok
-
-      - uses: actions/checkout@v3
-
-      - name: Test 0
-        run: |
-          echo "Enter test 0"
-          { echo "Test 0"; false; } || exit 0
-          echo "Leave test 0"
-
-      - name: Test 1
-        uses: ./.github/actions/test
-        with:
-          nice-input: value${{ true && 'TRUE!' || 'FALSE!' }}.OK
-
-      - name: Test 2
-        uses: ./.github/actions/test
-        with:
-          nice-input: value${{ false && 'TRUE!' || 'FALSE!' }}.OK
-
-      - name: Test 3
-        run: |
-          : ${A:=${{ env.FOOBAR }}}
-          : ${A:=$(git rev-parse --short @)}
-          echo "A=$A"
-
-      - name: Test 4
-        run: |
-          : ${A:=${{ env.TEST_TITLE }}}
-          : ${A:=$(git rev-parse --short @)}
-          echo "A=$A"
-
-  # trial-diff:
-  #   runs-on: ${{ matrix.os }}
-  # 
-  #   strategy:
-  #     matrix:
-  #       os:
-  #         - macos-10.15
-  #         - macos-11
-  #         - macos-12
-  # 
-  #   steps:
-  #     - name: Show version
-  #       run: |
-  #         uname -a
-  #         /usr/bin/diff --version
-  # 
-  #     - name: Diff
-  #       run: |
-  #         zsh -c 'for i in {1..10}; echo $i' > file0
-  #         zsh -c 'for i in {0..9}; echo $i' > file1
-  #         /usr/bin/diff -U0 file0 file1 || true
