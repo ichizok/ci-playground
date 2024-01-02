@@ -18,8 +18,9 @@ jobs:
           - windows-latest
         deno-version:
           - v1.x
-          - "1.20.0"
-          - "1.19.0"
+          - "1.27.0"
+          - "1.24.0"
+          - "1.21.0"
 
     steps:
       - name: Setup Deno
@@ -28,7 +29,7 @@ jobs:
           deno-version: ${{ matrix.deno-version }}
 
       - name: Deno.systemMemoryInfo
-        run: deno eval 'console.log(Deno.systemMemoryInfo());'
+        run: deno --unstable eval 'console.log(Deno.systemMemoryInfo());'
 
   # trial-gh:
   #   runs-on: ubuntu-latest
