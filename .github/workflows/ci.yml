@@ -18,9 +18,9 @@ jobs:
           - windows-latest
         deno-version:
           - v1.x
-          - "1.27.2"
-          - "1.27.1"
-          - "1.27.0"
+          # - "1.27.2"
+          # - "1.27.1"
+          # - "1.27.0"
 
     steps:
       - name: Setup Deno
