@@ -31,6 +31,21 @@ jobs:
       - name: Deno.systemMemoryInfo
         run: deno --unstable eval 'console.log(Deno.systemMemoryInfo());'
 
+  trial-secret:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set secret to env
+        run: echo "MY_SECRET=${{ secrets.SECRET_VALUE }}" >> $GITHUB_ENV
+
+      - name: Use env
+        uses: ./.github/actions/test
+        with:
+          example: ${{ env.MY_SECRET }}
+
   # trial-gh:
   #   runs-on: ubuntu-latest
   # 
@@ -42,7 +57,7 @@ jobs:
   #         echo "${{ toJSON(github.event) }}"
   #         ) || true
   # 
-  #     - uses: actions/checkout@v3
+  #     - uses: actions/checkout@v4
   # 
   #     - name: Commit
   #       if: github.ref_name == 'master'
@@ -92,7 +107,7 @@ jobs:
   #     URL: https://github.com/
   # 
   #   steps:
-  #     - uses: actions/checkout@v3
+  #     - uses: actions/checkout@v4
   # 
   #     - name: Matrix
   #       id: matrix
