@@ -4,6 +4,15 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      hello:
+        description: hello
+        required: true
+        type: boolean
+      world:
+        description: world
+        required: false
+        type: boolean
 
 jobs:
   trial-deno:
