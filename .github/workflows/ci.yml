@@ -15,34 +15,48 @@ on:
         type: boolean
 
 jobs:
-  trial-deno:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-13
-          - macos-14
-          - windows-latest
-        deno-version:
-          - v1.x
-          # - "1.27.2"
-          # - "1.27.1"
-          # - "1.27.0"
+  trial-multiline:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: ${{ matrix.deno-version }}
+      - name: Multiline variables
+        run: |
+          echo "MULTILINE=${{
+            inputs.hello == "hello" &&
+            inputs.world == "world"
+          }}" >> $GITHUB_ENV
 
-      - name: Deno.systemMemoryInfo
-        run: deno eval 'console.log(Deno.systemMemoryInfo());'
+      - name: Check env
+        run: echo "${MULTILINE}"
 
-      - name: os.cpus
-        run: deno eval 'import os from "node:os";console.log(os.cpus());'
+  # trial-deno:
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os:
+  #         - ubuntu-latest
+  #         - macos-13
+  #         - macos-14
+  #         - windows-latest
+  #       deno-version:
+  #         - v1.x
+  #         # - "1.27.2"
+  #         # - "1.27.1"
+  #         # - "1.27.0"
+  # 
+  #   steps:
+  #     - name: Setup Deno
+  #       uses: denoland/setup-deno@v1
+  #       with:
+  #         deno-version: ${{ matrix.deno-version }}
+  # 
+  #     - name: Deno.systemMemoryInfo
+  #       run: deno eval 'console.log(Deno.systemMemoryInfo());'
+  # 
+  #     - name: os.cpus
+  #       run: deno eval 'import os from "node:os";console.log(os.cpus());'
 
   # trial-secret:
   #   runs-on: ubuntu-latest
