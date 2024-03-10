@@ -21,7 +21,10 @@ jobs:
     steps:
       - name: Multiline variables
         run: |
-          echo "MULTILINE=${{ inputs.hello == "hello" && inputs.world == "world" }}" >> $GITHUB_ENV
+          echo "MULTILINE=${{
+            inputs.hello == 'hello' &&
+            inputs.world == 'world'
+          }}" >> $GITHUB_ENV
 
       - name: Check env
         run: echo "${MULTILINE}"
