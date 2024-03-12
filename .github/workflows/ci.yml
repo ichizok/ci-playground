@@ -16,6 +16,7 @@ on:
       greeting:
         description: greeting
         type: string
+        default: github actions hello
 
 jobs:
   trial-multiline:
@@ -29,13 +30,13 @@ jobs:
             inputs.world == 'world'
           }}" >> $GITHUB_ENV
 
-      - name: Check env
-        run: echo "${MULTILINE}"
-
       - name: Check greeting
         env:
           GREETING: ${{ inputs.greeting }}
-        run: echo "[${GREETING}]"
+        run: echo "greeting=$(echo "${GREETING}" | sed -e 's/./&-/g')" >> $GITHUB_ENV
+
+      - name: Check env
+        run: echo "${MULTILINE}"
 
   # trial-deno:
   #   runs-on: ${{ matrix.os }}
