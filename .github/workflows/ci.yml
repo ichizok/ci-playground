@@ -13,6 +13,9 @@ on:
         description: world
         required: false
         type: boolean
+      greeting:
+        description: greeting
+        type: string
 
 jobs:
   trial-multiline:
@@ -28,6 +31,11 @@ jobs:
 
       - name: Check env
         run: echo "${MULTILINE}"
+
+      - name: Check greeting
+        env:
+          GREETING: ${{ inputs.greeting }}
+        run: echo "[${GREETING}]"
 
   # trial-deno:
   #   runs-on: ${{ matrix.os }}
