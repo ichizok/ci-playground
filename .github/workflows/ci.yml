@@ -44,9 +44,10 @@ jobs:
       - name: Multiline input
         uses: ./.github/actions/test
         with:
-          nice-input: |
+          jq-input: |
             hello
             world
+            github,actions
 
   # trial-deno:
   #   runs-on: ${{ matrix.os }}
