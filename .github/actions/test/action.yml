@@ -49,4 +49,4 @@ runs:
       env:
         INPUT: ${{ inputs.jq-input }}
       run: |
-        echo -en "${INPUT}" | jq -csrR 'split("[, \n]";"")'
+        jq --arg input "${INPUT}" -cnr '$input | split("[, \n]";"")'
