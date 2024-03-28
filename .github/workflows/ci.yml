@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Multiline variables
         run: |
           echo "MULTILINE=${{
@@ -37,6 +40,13 @@ jobs:
 
       - name: Check env
         run: echo "${MULTILINE}"
+
+      - name: Multiline input
+        uses: ./.github/actions/test
+        with:
+          nice-input: |
+            hello
+            world
 
   # trial-deno:
   #   runs-on: ${{ matrix.os }}
