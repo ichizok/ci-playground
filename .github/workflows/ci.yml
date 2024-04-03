@@ -28,8 +28,8 @@ jobs:
 
       - name: Preparation
         run: |
-          mkdir -p build
-          echo hello > build/index.txt
+          mkdir -p app
+          echo hello > app/index.txt
           find -type f -not -path './.*/*' | sort
 
       - name: Setup Docker Buildx
