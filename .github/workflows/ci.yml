@@ -26,14 +26,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Preparation
         run: |
           mkdir -p app
           echo hello > app/index.txt
           find -type f -not -path './.*/*' | sort
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Build Docker Image
         uses: docker/build-push-action@v5
