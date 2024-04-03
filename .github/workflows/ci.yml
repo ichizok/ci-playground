@@ -19,35 +19,57 @@ on:
         default: github actions hello
 
 jobs:
-  trial-multiline:
+  trial-docker-buildx:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Multiline variables
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Preparation
         run: |
-          echo "MULTILINE=${{
-            inputs.hello == 'hello' &&
-            inputs.world == 'world'
-          }}" >> $GITHUB_ENV
+          mkdir -p target
+          echo hello > target/index.txt
 
-      - name: Check greeting
-        env:
-          GREETING: ${{ inputs.greeting }}
-        run: echo "greeting=$(echo "${GREETING}" | sed -e 's/./&-/g')" >> $GITHUB_ENV
-
-      - name: Check env
-        run: echo "${MULTILINE}"
-
-      - name: Multiline input
-        uses: ./.github/actions/test
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
         with:
-          jq-input: |
-            hello
-            world
-            github,actions
+          push: false
+          tags: "buildtest:latest"
+          outputs: type=image,oci-mediatypes=true,compression=gzip,compression-level=3,force-compression=true
+
+  # trial-multiline:
+  #   runs-on: ubuntu-latest
+  # 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  # 
+  #     - name: Multiline variables
+  #       run: |
+  #         echo "MULTILINE=${{
+  #           inputs.hello == 'hello' &&
+  #           inputs.world == 'world'
+  #         }}" >> $GITHUB_ENV
+  # 
+  #     - name: Check greeting
+  #       env:
+  #         GREETING: ${{ inputs.greeting }}
+  #       run: echo "greeting=$(echo "${GREETING}" | sed -e 's/./&-/g')" >> $GITHUB_ENV
+  # 
+  #     - name: Check env
+  #       run: echo "${MULTILINE}"
+  # 
+  #     - name: Multiline input
+  #       uses: ./.github/actions/test
+  #       with:
+  #         jq-input: |
+  #           hello
+  #           world
+  #           github,actions
 
   # trial-deno:
   #   runs-on: ${{ matrix.os }}
