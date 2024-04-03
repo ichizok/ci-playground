@@ -1,5 +1,5 @@
 .git
 .gitignore
-#target/
-#!target/*.txt
+build/
+!build/*.txt
 README.md

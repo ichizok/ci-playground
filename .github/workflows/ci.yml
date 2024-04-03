@@ -31,8 +31,8 @@ jobs:
 
       - name: Preparation
         run: |
-          mkdir -p target
-          echo hello > target/index.txt
+          mkdir -p build
+          echo hello > build/index.txt
           find -type f -not -path './.*/*' | sort
 
       - name: Build Docker Image

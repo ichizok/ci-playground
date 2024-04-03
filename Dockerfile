@@ -1,4 +1,4 @@
 FROM gcr.io/distroless/static:nonroot
 
 WORKDIR /nonroot
-COPY target/index.txt /webapp/index.txt
+COPY build/index.txt /webapp/index.txt
