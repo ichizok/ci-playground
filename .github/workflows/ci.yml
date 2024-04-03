@@ -31,13 +31,14 @@ jobs:
 
       - name: Preparation
         run: |
-          mkdir -p app
-          echo hello > app/index.txt
+          mkdir -p target
+          echo hello > target/index.txt
           find -type f -not -path './.*/*' | sort
 
       - name: Build Docker Image
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: false
           tags: "buildtest:latest"
           outputs: type=image,oci-mediatypes=true,compression=gzip,compression-level=3,force-compression=true
