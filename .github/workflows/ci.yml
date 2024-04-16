@@ -19,29 +19,50 @@ on:
         default: github actions hello
 
 jobs:
-  trial-docker-buildx:
-    runs-on: ubuntu-latest
+  trial-bufsize:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-13
+          - macos-14
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Check pipebufsize
+        run: python3 pipebufsize.py
 
-      - name: Preparation
-        run: |
-          mkdir -p target
-          echo hello > target/index.txt
-          find -type f -not -path './.*/*' | sort
+      - name: Check ptsbufsize
+        run: python3 ptsbufsize.py
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: false
-          tags: "buildtest:latest"
-          outputs: type=image,oci-mediatypes=true,compression=gzip,compression-level=3,force-compression=true
+  # trial-docker-buildx:
+  #   runs-on: ubuntu-latest
+  # 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  # 
+  #     - name: Setup Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
+  # 
+  #     - name: Preparation
+  #       run: |
+  #         mkdir -p target
+  #         echo hello > target/index.txt
+  #         find -type f -not -path './.*/*' | sort
+  # 
+  #     - name: Build Docker Image
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: .
+  #         push: false
+  #         tags: "buildtest:latest"
+  #         outputs: type=image,oci-mediatypes=true,compression=gzip,compression-level=3,force-compression=true
 
   # trial-multiline:
   #   runs-on: ubuntu-latest
