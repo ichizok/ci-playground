@@ -47,9 +47,14 @@ jobs:
           echo "start_dt=$(date +'%F %H:%M:%S')" >> $GITHUB_OUTPUT
           cat <<'EOT' > test.swift
           import AppKit
-          NSSound(named: "Tink")?.play()
+          if let s = NSSound(named: "Tink") {
+            if !s.play() {
+              exit(1)
+            }
+          }
           EOT
-          swift test.swift
+          xcrun swiftc -o test.out test.swift
+          ./test.out
 
       - name: Log
         if: always()
