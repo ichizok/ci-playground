@@ -19,26 +19,68 @@ on:
         default: github actions hello
 
 jobs:
-  trial-bufsize:
+  trial-sound:
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-13
+          - macos-12
           - macos-14
+        number:
+          - 1
+        include:
+          - os: macos-12
+            number: 2
+          - os: macos-12
+            number: 3
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Test
+        id: test
+        run: |
+          echo "start_dt=$(date +'%F %H:%M:%S')" >> $GITHUB_OUTPUT
+          cat <<'EOT' > test.swift
+          import AppKit
+          NSSound(named: "Tink")?.play()
+          EOT
+          swift test.swift
 
-      - name: Check pipebufsize
-        run: python3 pipebufsize.py
+      - name: Log
+        if: always()
+        run: |
+          log show --no-pager 2>&1 | head -n10 | tee "${{ matrix.os }}-${{ matrix.number }}.log"
+          log show --start "${{ steps.test.outputs.start_dt }}" --no-pager >>"${{ matrix.os }}-${{ matrix.number }}.log" 2>&1
 
-      - name: Check ptsbufsize
-        run: python3 ptsbufsize.py
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-${{ matrix.number }}-${{ github.run_number }}_${{ github.run_attempt }}-artifact
+          path: ${{ matrix.os }}-${{ matrix.number }}.log
+          retention-days: 1
+
+  # trial-bufsize:
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os:
+  #         - ubuntu-latest
+  #         - macos-13
+  #         - macos-14
+  # 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  # 
+  #     - name: Check pipebufsize
+  #       run: python3 pipebufsize.py
+  # 
+  #     - name: Check ptsbufsize
+  #       run: python3 ptsbufsize.py
 
   # trial-docker-buildx:
   #   runs-on: ubuntu-latest
