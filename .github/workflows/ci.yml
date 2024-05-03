@@ -50,7 +50,7 @@ jobs:
       - name: Install BlackHole-2ch
         if: matrix.os == 'macos-12'
         run: |
-          if ! [[ -d /Library/Audio/Plug-Ins/HAL ]]; then
+          if system_profiler -json SPAudioDataType | jq -er '.SPAudioDataType[]._items == []'; then
             brew install blackhole-2ch
             system_profiler -json SPAudioDataType || true
             ls -l /Library/Audio/Plug-Ins/HAL || true
