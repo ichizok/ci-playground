@@ -47,6 +47,15 @@ jobs:
       - name: List audio plugins
         run: ls -l /Library/Audio/Plug-Ins/HAL || true
 
+      - name: Install Soundflower
+        if: matrix.os == 'macos-12'
+        run: |
+          if ! [[ -d /Library/Audio/Plug-Ins/HAL ]]; then
+            brew install soundflower
+            system_profiler SPAudioDataType || true
+            ls -l /Library/Audio/Plug-Ins/HAL || true
+          fi
+
       - name: Test
         id: test
         run: |
