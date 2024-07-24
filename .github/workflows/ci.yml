@@ -19,71 +19,82 @@ on:
         default: github actions hello
 
 jobs:
-  trial-sound:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macos-12
-          - macos-14
-        number:
-          - 1
-        include:
-          - os: macos-12
-            number: 2
-          - os: macos-12
-            number: 3
+  trial-expand:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Grant microphone access for macos-14
-        if: matrix.os == 'macos-14'
-        run: sqlite3 $HOME/Library/Application\ Support/com.apple.TCC/TCC.db "INSERT OR IGNORE INTO access VALUES ('kTCCServiceMicrophone','/usr/local/opt/runner/provisioner/provisioner',1,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,1687786159,NULL,NULL,'UNUSED',1687786159);"
+      - run: |
+          echo ${{
+            (github.event_name == 'push' && 'Event: push') ||
+            (github.event_name == 'pull_request' && 'Event: pull_request') ||
+            (github.event_name == 'workflow_dispatch' && 'Event: workflow_dispatch')
+          }}
 
-      - name: Show audio devices
-        run: system_profiler -json SPAudioDataType || true
-
-      - name: List audio plugins
-        run: ls -l /Library/Audio/Plug-Ins/HAL || true
-
-      - name: Install BlackHole-2ch
-        if: matrix.os == 'macos-12'
-        run: |
-          if system_profiler -json SPAudioDataType | jq -er '.SPAudioDataType[]._items == []'; then
-            brew install blackhole-2ch
-            system_profiler -json SPAudioDataType || true
-            ls -l /Library/Audio/Plug-Ins/HAL || true
-          fi
-
-      - name: Test
-        id: test
-        run: |
-          echo "start_dt=$(date +'%F %H:%M:%S')" >> $GITHUB_OUTPUT
-          cat <<'EOT' > test.swift
-          import AppKit
-          if let s = NSSound(named: "Tink") {
-            if !s.play() {
-              exit(1)
-            }
-          }
-          EOT
-          xcrun swiftc -o test.out test.swift
-          ./test.out
-
-      - name: Log
-        if: always()
-        run: |
-          log show --no-pager 2>&1 | head -n10 | tee "${{ matrix.os }}-${{ matrix.number }}.log"
-          log show --start "${{ steps.test.outputs.start_dt }}" --no-pager >>"${{ matrix.os }}-${{ matrix.number }}.log" 2>&1
-
-      - name: Upload artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.os }}-${{ matrix.number }}-${{ github.run_number }}_${{ github.run_attempt }}-artifact
-          path: ${{ matrix.os }}-${{ matrix.number }}.log
-          retention-days: 1
+  # trial-sound:
+  #   runs-on: ${{ matrix.os }}
+  # 
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os:
+  #         - macos-12
+  #         - macos-14
+  #       number:
+  #         - 1
+  #       include:
+  #         - os: macos-12
+  #           number: 2
+  #         - os: macos-12
+  #           number: 3
+  # 
+  #   steps:
+  #     - name: Grant microphone access for macos-14
+  #       if: matrix.os == 'macos-14'
+  #       run: sqlite3 $HOME/Library/Application\ Support/com.apple.TCC/TCC.db "INSERT OR IGNORE INTO access VALUES ('kTCCServiceMicrophone','/usr/local/opt/runner/provisioner/provisioner',1,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,1687786159,NULL,NULL,'UNUSED',1687786159);"
+  # 
+  #     - name: Show audio devices
+  #       run: system_profiler -json SPAudioDataType || true
+  # 
+  #     - name: List audio plugins
+  #       run: ls -l /Library/Audio/Plug-Ins/HAL || true
+  # 
+  #     - name: Install BlackHole-2ch
+  #       if: matrix.os == 'macos-12'
+  #       run: |
+  #         if system_profiler -json SPAudioDataType | jq -er '.SPAudioDataType[]._items == []'; then
+  #           brew install blackhole-2ch
+  #           system_profiler -json SPAudioDataType || true
+  #           ls -l /Library/Audio/Plug-Ins/HAL || true
+  #         fi
+  # 
+  #     - name: Test
+  #       id: test
+  #       run: |
+  #         echo "start_dt=$(date +'%F %H:%M:%S')" >> $GITHUB_OUTPUT
+  #         cat <<'EOT' > test.swift
+  #         import AppKit
+  #         if let s = NSSound(named: "Tink") {
+  #           if !s.play() {
+  #             exit(1)
+  #           }
+  #         }
+  #         EOT
+  #         xcrun swiftc -o test.out test.swift
+  #         ./test.out
+  # 
+  #     - name: Log
+  #       if: always()
+  #       run: |
+  #         log show --no-pager 2>&1 | head -n10 | tee "${{ matrix.os }}-${{ matrix.number }}.log"
+  #         log show --start "${{ steps.test.outputs.start_dt }}" --no-pager >>"${{ matrix.os }}-${{ matrix.number }}.log" 2>&1
+  # 
+  #     - name: Upload artifact
+  #       if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: ${{ matrix.os }}-${{ matrix.number }}-${{ github.run_number }}_${{ github.run_attempt }}-artifact
+  #         path: ${{ matrix.os }}-${{ matrix.number }}.log
+  #         retention-days: 1
 
   # trial-bufsize:
   #   runs-on: ${{ matrix.os }}
