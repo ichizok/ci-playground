@@ -19,19 +19,44 @@ on:
         default: github actions hello
 
 jobs:
-  trial-expand:
+  trial-reviewdog:
     runs-on: ubuntu-latest
 
-    steps:
-      - run: |
-          echo ${{
-            (github.event_name == 'push' && 'Event: push') ||
-            (github.event_name == 'pull_request' && 'Event: pull_request') ||
-            (github.event_name == 'workflow_dispatch' && 'Event: workflow_dispatch')
-          }}
+    env:
+      REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REVIEWDOG_REPORTER: ${{ github.event_name == 'pull_request' && 'github-pr-review' || 'github-check' }}
 
-      - run: exit 0
-      - run: echo finish
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Formatting
+        run: clang-format --style=Google -i main.c
+
+      - name: Run reviewdog
+        run: |
+          tmpfile=$(mktemp)
+          git diff >"${tmpfile}"
+          reviewdog -f=diff -name=diff -filter-mode=diff_context -reporter=${{ env.REVIEWDOG_REPORTER }} -fail-level=any -log-level=debug -tee <"${tmpfile}"
+
+  # trial-expand:
+  #   runs-on: ubuntu-latest
+  # 
+  #   steps:
+  #     - run: |
+  #         echo ${{
+  #           (github.event_name == 'push' && 'Event: push') ||
+  #           (github.event_name == 'pull_request' && 'Event: pull_request') ||
+  #           (github.event_name == 'workflow_dispatch' && 'Event: workflow_dispatch')
+  #         }}
+  # 
+  #     - run: exit 0
+  #     - run: echo finish
 
   # trial-sound:
   #   runs-on: ${{ matrix.os }}
