@@ -1,0 +1,120 @@
+diff --git a/filter/diff_filter.go b/filter/diff_filter.go
+index a449089..33881c7 100644
+--- a/filter/diff_filter.go
++++ b/filter/diff_filter.go
+@@ -128,12 +128,15 @@ func (df *DiffFilter) ShouldReport(path string, lnum int) (bool, *diff.FileDiff,
+ 	file := df.difffiles[npath]
+ 	lines, ok := df.difflines[npath]
+ 	if !ok {
++		fmt.Println("#### ShouldReport (1)")
+ 		return df.mode == ModeNoFilter, file, nil
+ 	}
+ 	line, ok := lines[lnum]
+ 	if !ok {
++		fmt.Println("#### ShouldReport (2)")
+ 		return df.mode == ModeNoFilter || df.mode == ModeFile, file, nil
+ 	}
++	fmt.Println("#### ShouldReport (3)")
+ 	return df.isSignificantLine(line), file, line
+ }
+ 
+diff --git a/filter/filter.go b/filter/filter.go
+index 3e9d929..49a45a1 100644
+--- a/filter/filter.go
++++ b/filter/filter.go
+@@ -1,6 +1,8 @@
+ package filter
+ 
+ import (
++	"fmt"
++
+ 	"github.com/reviewdog/reviewdog/diff"
+ 	"github.com/reviewdog/reviewdog/pathutil"
+ 	"github.com/reviewdog/reviewdog/proto/rdf"
+@@ -39,6 +41,7 @@ func FilterCheck(results []*rdf.Diagnostic, diff []*diff.FileDiff, strip int,
+ 	checks := make([]*FilteredDiagnostic, 0, len(results))
+ 	df := NewDiffFilter(diff, strip, cwd, mode)
+ 	for _, result := range results {
++		fmt.Printf("### FilterCheck result=%+v\n", result)
+ 		check := &FilteredDiagnostic{Diagnostic: result, SourceLines: make(map[int]string)}
+ 		loc := result.GetLocation()
+ 		startLine := int(loc.GetRange().GetStart().GetLine())
+@@ -47,8 +50,10 @@ func FilterCheck(results []*rdf.Diagnostic, diff []*diff.FileDiff, strip int,
+ 			endLine = startLine
+ 		}
+ 		check.InDiffContext = true
++		fmt.Printf("### FilterCheck startLine=%v, endLine=%v\n", startLine, endLine)
+ 		for l := startLine; l <= endLine; l++ {
+ 			shouldReport, difffile, diffline := df.ShouldReport(loc.GetPath(), l)
++			fmt.Printf("### FilterCheck shouldReport=%v\n", shouldReport)
+ 			check.ShouldReport = check.ShouldReport || shouldReport
+ 			// all lines must be in diff.
+ 			check.InDiffContext = check.InDiffContext && diffline != nil
+diff --git a/reviewdog.go b/reviewdog.go
+index f47875b..f4d02e2 100644
+--- a/reviewdog.go
++++ b/reviewdog.go
+@@ -76,16 +76,20 @@ type DiffService interface {
+ 
+ func (w *Reviewdog) runFromResult(ctx context.Context, results []*rdf.Diagnostic,
+ 	filediffs []*diff.FileDiff, strip int) error {
++	fmt.Println("### runFromResult (1)")
+ 	wd, err := os.Getwd()
+ 	if err != nil {
+ 		return err
+ 	}
+ 
++	fmt.Println("### runFromResult (2)")
+ 	pathutil.NormalizePathInResults(results, wd)
+ 
++	fmt.Printf("### runFromResult (3) results=%+v\n", results)
+ 	checks := filter.FilterCheck(results, filediffs, strip, wd, w.filterMode)
+ 	shouldFail := false
+ 
++	fmt.Println("### runFromResult (4)")
+ 	for _, check := range checks {
+ 		comment := &Comment{
+ 			Result:   check,
+@@ -107,35 +111,42 @@ func (w *Reviewdog) runFromResult(ctx context.Context, results []*rdf.Diagnostic
+ 		}
+ 	}
+ 
++	fmt.Printf("### runFromResult (5) shouldFail=%v\n", shouldFail)
+ 	if bulk, ok := w.c.(BulkCommentService); ok {
+ 		if err := bulk.Flush(ctx); err != nil {
+ 			return err
+ 		}
+ 	}
+ 
++	fmt.Println("### runFromResult (6)")
+ 	if shouldFail {
+ 		return fmt.Errorf("found at least one issue with severity greater than or equal to the given level: %s", w.failLevel.String())
+ 	}
+ 
++	fmt.Println("### runFromResult (7)")
+ 	return nil
+ }
+ 
+ // Run runs Reviewdog application.
+ func (w *Reviewdog) Run(ctx context.Context, r io.Reader) error {
++	fmt.Println("### before w.p.Parse")
+ 	results, err := w.p.Parse(r)
+ 	if err != nil {
+ 		return fmt.Errorf("parse error: %w", err)
+ 	}
+ 
++	fmt.Println("### before w.d.Diff")
+ 	d, err := w.d.Diff(ctx)
+ 	if err != nil {
+ 		return fmt.Errorf("fail to get diff: %w", err)
+ 	}
+ 
++	fmt.Println("### before diff.ParseMultiFile")
+ 	filediffs, err := diff.ParseMultiFile(bytes.NewReader(d))
+ 	if err != nil {
+ 		return fmt.Errorf("fail to parse diff: %w", err)
+ 	}
+ 
++	fmt.Println("### before runFromResult")
+ 	return w.runFromResult(ctx, results, filediffs, w.d.Strip())
+ }
