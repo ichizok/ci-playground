@@ -5,6 +5,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <string.h>
+
 void use_gethostbyname(const char *name)
 {
     struct hostent *host = gethostbyname(name);
@@ -19,6 +20,7 @@ void use_gethostbyname(const char *name)
         printf("gethostbyname:\n %s is %s\n", name, inet_ntoa(inaddr));
     }
 }
+
 void use_getaddrinfo(const char *name)
 {
     int err;
@@ -43,6 +45,7 @@ void use_getaddrinfo(const char *name)
     }
     freeaddrinfo(res);
 }
+
 int main(int argc, char *argv[])
 {
     if (argc > 1)
