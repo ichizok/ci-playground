@@ -48,7 +48,10 @@ jobs:
         run: clang-format --style=Google -i main.c
 
       - name: Run reviewdog
-        run: reviewdog -f=diff -name=diff -filter-mode=diff_context -reporter=${{ env.REVIEWDOG_REPORTER }} -fail-level=any -log-level=debug -tee < <(git diff)
+        run: |
+          false
+          echo "Run reviewdog"
+          reviewdog -f=diff -name=diff -filter-mode=diff_context -reporter=${{ env.REVIEWDOG_REPORTER }} -fail-level=any -log-level=debug -tee < <(git diff)
 
   # trial-expand:
   #   runs-on: ubuntu-latest
