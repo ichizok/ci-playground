@@ -49,7 +49,7 @@ jobs:
 
       - name: Run reviewdog
         run: |
-          false
+          false || true
           echo "Run reviewdog"
           reviewdog -f=diff -name=diff -filter-mode=diff_context -reporter=${{ env.REVIEWDOG_REPORTER }} -fail-level=any -log-level=debug -tee < <(git diff)
 
