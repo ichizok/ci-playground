@@ -19,27 +19,41 @@ on:
         default: github actions hello
 
 jobs:
-  trial-reviewdog:
+  trial-envs:
     runs-on: ubuntu-latest
-
-    env:
-      REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      REVIEWDOG_REPORTER: ${{ github.event_name == 'pull_request' && 'github-pr-review' || 'github-check' }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup reviewdog
-        uses: reviewdog/action-setup@v1
+      - name: Envs test
+        uses: ./.github/actions/test
+        env:
+          PHRASE: Hello world
         with:
-          reviewdog_version: latest
+          example: ${{ env.PHRASE }}
 
-      - name: Formatting
-        run: clang-format --style=Google -i main.c
-
-      - name: Run reviewdog
-        run: reviewdog -f=diff -name=diff -filter-mode=diff_context -reporter=${{ env.REVIEWDOG_REPORTER }} -fail-level=any -log-level=debug -tee < <(git diff)
+  # trial-reviewdog:
+  #   runs-on: ubuntu-latest
+  # 
+  #   env:
+  #     REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     REVIEWDOG_REPORTER: ${{ github.event_name == 'pull_request' && 'github-pr-review' || 'github-check' }}
+  # 
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  # 
+  #     - name: Setup reviewdog
+  #       uses: reviewdog/action-setup@v1
+  #       with:
+  #         reviewdog_version: latest
+  # 
+  #     - name: Formatting
+  #       run: clang-format --style=Google -i main.c
+  # 
+  #     - name: Run reviewdog
+  #       run: reviewdog -f=diff -name=diff -filter-mode=diff_context -reporter=${{ env.REVIEWDOG_REPORTER }} -fail-level=any -log-level=debug -tee < <(git diff)
 
   # trial-expand:
   #   runs-on: ubuntu-latest
