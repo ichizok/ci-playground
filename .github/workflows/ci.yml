@@ -44,6 +44,17 @@ jobs:
           print_env GITHUB_REF_NAME
           print_env GITHUB_SHA
 
+      - name: SHA test
+        run: |
+          if ${{ github.event_name == 'pull_request' }}; then
+            git fetch --depth=1 origin "${GITHUB_HEAD_REF}"
+            commit=$(git describe --always --abbrev=0 "origin/${GITHUB_HEAD_REF}")
+          else
+            commit=${GITHUB_SHA}
+          fi
+          echo "${commit}"
+          git describe --always "${commit}"
+
   # trial-reviewdog:
   #   runs-on: ubuntu-latest
   # 
