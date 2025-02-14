@@ -33,6 +33,28 @@ jobs:
         with:
           example: ${{ env.PHRASE }}
 
+      - name: Envs test (2)
+        run: |
+          print_env() {
+            eval "echo $1=\$$1"
+          }
+          print_env GITHUB_BASE_REF
+          print_env GITHUB_HEAD_REF
+          print_env GITHUB_REF
+          print_env GITHUB_REF_NAME
+          print_env GITHUB_SHA
+
+      - name: SHA test
+        run: |
+          if ${{ github.event_name == 'pull_request' }}; then
+            git fetch --depth=1 origin "${GITHUB_HEAD_REF}"
+            commit=$(git describe --always --abbrev=0 "origin/${GITHUB_HEAD_REF}")
+          else
+            commit=${GITHUB_SHA}
+          fi
+          echo "${commit}"
+          git describe --always "${commit}"
+
   # trial-reviewdog:
   #   runs-on: ubuntu-latest
   # 
