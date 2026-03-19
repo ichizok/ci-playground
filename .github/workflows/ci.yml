@@ -23,7 +23,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run action
+      - name: Checkout
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      - name: Run local action
+        uses: ./.github/actions/gh-script
+
+      - name: Run remote action
         uses: ichizok/action-playground@0d21949
 
   # trial-envs:
