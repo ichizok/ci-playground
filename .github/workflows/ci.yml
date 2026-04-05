@@ -19,33 +19,43 @@ on:
         default: github actions hello
 
 jobs:
-  trial-action:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Run local action
-        uses: ./.github/actions/gh-script
-
-      - name: Run remote action
-        uses: ichizok/action-playground@0d21949
-
-  # trial-envs:
+  # trial-action:
   #   runs-on: ubuntu-latest
   # 
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
   # 
-  #     - name: Envs test
-  #       uses: ./.github/actions/test
-  #       env:
-  #         PHRASE: Hello world
-  #       with:
-  #         example: ${{ env.PHRASE }}
+  #     - name: Run local action
+  #       uses: ./.github/actions/gh-script
   # 
+  #     - name: Run remote action
+  #       uses: ichizok/action-playground@0d21949
+
+  trial-envs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Envs test
+        uses: ./.github/actions/test
+        env:
+          CC: good-compiler
+          PHRASE: Hello world
+        with:
+          nice-input: yah yah yah
+          example: ${{ env.PHRASE }}
+
+      - name: Envs test
+        run: |
+          print_env() {
+            eval "echo $1=\$$1"
+          }
+          print_env CC
+          print_env NICE_INPUT
+
   #     - name: Envs test (2)
   #       run: |
   #         print_env() {
