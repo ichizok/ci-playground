@@ -37,10 +37,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Envs test
-        uses: ./.github/actions/test
+        id: envs-test
+        uses: ./.github/actions/nesting
         env:
           CC: good-compiler
           PHRASE: Hello world
@@ -49,12 +50,15 @@ jobs:
           example: ${{ env.PHRASE }}
 
       - name: Envs test
+        env:
+          REPLY: ${{ steps.envs-test.outputs.reply }}
         run: |
           print_env() {
             eval "echo $1=\$$1"
           }
           print_env CC
           print_env NICE_INPUT
+          print_env REPLY
 
   #     - name: Envs test (2)
   #       run: |

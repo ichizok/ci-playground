@@ -1,0 +1,32 @@
+name: Nesting
+
+description: Nesting action
+
+inputs:
+  nice-input:
+    description: nice input
+    required: false
+    default: 'Yes!'
+  example:
+    description: example
+    required: false
+    default: 'Example'
+  jq-input:
+    description: jq input
+    required: false
+
+outputs:
+  reply:
+    description: reply
+    value: ${{ steps.test.outputs.reply }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Call test
+      id: test
+      uses: ./.github/actions/test
+      with:
+        nice-input: ${{ inputs.nice-input }}
+        example: ${{ inputs.example }}
+        jq-input: ${{ inputs.jq-input }}
