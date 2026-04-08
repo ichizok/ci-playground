@@ -44,10 +44,9 @@ jobs:
         uses: ./.github/actions/nesting
         env:
           CC: good-compiler
-          PHRASE: Hello world
         with:
-          nice-input: yah yah yah
-          example: ${{ env.PHRASE }}
+          nice-input: true
+          example: 999
 
       - name: Envs test
         env:
