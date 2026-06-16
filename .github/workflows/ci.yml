@@ -19,45 +19,57 @@ on:
         default: github actions hello
 
 jobs:
+  trial-secrets-ref:
+    runs-on: ubuntu-latest
+    env:
+      ENV_VALUE: test_env
+    steps:
+      - name: Set env name
+        run: echo "NAME=ENV_VALUE" >> $GITHUB_ENV
+      - name: Check secrets
+        env:
+          TEST_VALUE: ${{ env[env.NAME] }}
+        run: if [[ ${TEST_VALUE} = ${ENV_VALUE} ]]; then echo OK; else echo FAIL; fi
+      - name: Set secret name
+        run: echo "NAME=SECRET_VALUE" >> $GITHUB_ENV
+      - name: Check secrets
+        env:
+          SECRET_VALUE: ${{ secrets[env.NAME] }}
+        run: if [[ ${SECRET_VALUE} =~ ^test ]]; then echo OK; else echo FAIL; fi
+
   # trial-action:
   #   runs-on: ubuntu-latest
-  # 
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-  # 
   #     - name: Run local action
   #       uses: ./.github/actions/gh-script
-  # 
   #     - name: Run remote action
   #       uses: ichizok/action-playground@0d21949
 
-  trial-envs:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Envs test
-        id: envs-test
-        uses: ./.github/actions/nesting
-        env:
-          CC: good-compiler
-        with:
-          nice-input: true
-          example: 999
-
-      - name: Envs test
-        env:
-          REPLY: ${{ steps.envs-test.outputs.reply }}
-        run: |
-          print_env() {
-            eval "echo $1=\$$1"
-          }
-          print_env CC
-          print_env NICE_INPUT
-          print_env REPLY
+  # trial-envs:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+  #     - name: Envs test
+  #       id: envs-test
+  #       uses: ./.github/actions/nesting
+  #       env:
+  #         CC: good-compiler
+  #       with:
+  #         nice-input: true
+  #         example: 999
+  #     - name: Envs test
+  #       env:
+  #         REPLY: ${{ steps.envs-test.outputs.reply }}
+  #       run: |
+  #         print_env() {
+  #           eval "echo $1=\$$1"
+  #         }
+  #         print_env CC
+  #         print_env NICE_INPUT
+  #         print_env REPLY
 
   #     - name: Envs test (2)
   #       run: |
@@ -69,7 +81,6 @@ jobs:
   #         print_env GITHUB_REF
   #         print_env GITHUB_REF_NAME
   #         print_env GITHUB_SHA
-  # 
   #     - name: SHA test
   #       run: |
   #         if ${{ github.event_name == 'pull_request' }}; then
@@ -80,32 +91,26 @@ jobs:
   #         fi
   #         echo "${commit}"
   #         git describe --always "${commit}"
-  # 
+
   # trial-reviewdog:
   #   runs-on: ubuntu-latest
-  # 
   #   env:
   #     REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #     REVIEWDOG_REPORTER: ${{ github.event_name == 'pull_request' && 'github-pr-review' || 'github-check' }}
-  # 
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@v4
-  # 
   #     - name: Setup reviewdog
   #       uses: reviewdog/action-setup@v1
   #       with:
   #         reviewdog_version: latest
-  # 
   #     - name: Formatting
   #       run: clang-format --style=Google -i main.c
-  # 
   #     - name: Run reviewdog
   #       run: reviewdog -f=diff -name=diff -filter-mode=diff_context -reporter=${{ env.REVIEWDOG_REPORTER }} -fail-level=any -log-level=debug -tee < <(git diff)
 
   # trial-expand:
   #   runs-on: ubuntu-latest
-  # 
   #   steps:
   #     - run: |
   #         echo ${{
@@ -113,13 +118,11 @@ jobs:
   #           (github.event_name == 'pull_request' && 'Event: pull_request') ||
   #           (github.event_name == 'workflow_dispatch' && 'Event: workflow_dispatch')
   #         }}
-  # 
   #     - run: exit 0
   #     - run: echo finish
 
   # trial-sound:
   #   runs-on: ${{ matrix.os }}
-  # 
   #   strategy:
   #     fail-fast: false
   #     matrix:
@@ -133,18 +136,14 @@ jobs:
   #           number: 2
   #         - os: macos-12
   #           number: 3
-  # 
   #   steps:
   #     - name: Grant microphone access for macos-14
   #       if: matrix.os == 'macos-14'
   #       run: sqlite3 $HOME/Library/Application\ Support/com.apple.TCC/TCC.db "INSERT OR IGNORE INTO access VALUES ('kTCCServiceMicrophone','/usr/local/opt/runner/provisioner/provisioner',1,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,1687786159,NULL,NULL,'UNUSED',1687786159);"
-  # 
   #     - name: Show audio devices
   #       run: system_profiler -json SPAudioDataType || true
-  # 
   #     - name: List audio plugins
   #       run: ls -l /Library/Audio/Plug-Ins/HAL || true
-  # 
   #     - name: Install BlackHole-2ch
   #       if: matrix.os == 'macos-12'
   #       run: |
@@ -153,7 +152,6 @@ jobs:
   #           system_profiler -json SPAudioDataType || true
   #           ls -l /Library/Audio/Plug-Ins/HAL || true
   #         fi
-  # 
   #     - name: Test
   #       id: test
   #       run: |
@@ -168,13 +166,11 @@ jobs:
   #         EOT
   #         xcrun swiftc -o test.out test.swift
   #         ./test.out
-  # 
   #     - name: Log
   #       if: always()
   #       run: |
   #         log show --no-pager 2>&1 | head -n10 | tee "${{ matrix.os }}-${{ matrix.number }}.log"
   #         log show --start "${{ steps.test.outputs.start_dt }}" --no-pager >>"${{ matrix.os }}-${{ matrix.number }}.log" 2>&1
-  # 
   #     - name: Upload artifact
   #       if: always()
   #       uses: actions/upload-artifact@v4
@@ -185,7 +181,6 @@ jobs:
 
   # trial-bufsize:
   #   runs-on: ${{ matrix.os }}
-  # 
   #   strategy:
   #     fail-fast: false
   #     matrix:
@@ -193,33 +188,26 @@ jobs:
   #         - ubuntu-latest
   #         - macos-13
   #         - macos-14
-  # 
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@v4
-  # 
   #     - name: Check pipebufsize
   #       run: python3 pipebufsize.py
-  # 
   #     - name: Check ptsbufsize
   #       run: python3 ptsbufsize.py
 
   # trial-docker-buildx:
   #   runs-on: ubuntu-latest
-  # 
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@v4
-  # 
   #     - name: Setup Docker Buildx
   #       uses: docker/setup-buildx-action@v3
-  # 
   #     - name: Preparation
   #       run: |
   #         mkdir -p target
   #         echo hello > target/index.txt
   #         find -type f -not -path './.*/*' | sort
-  # 
   #     - name: Build Docker Image
   #       uses: docker/build-push-action@v5
   #       with:
@@ -230,26 +218,21 @@ jobs:
 
   # trial-multiline:
   #   runs-on: ubuntu-latest
-  # 
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@v4
-  # 
   #     - name: Multiline variables
   #       run: |
   #         echo "MULTILINE=${{
   #           inputs.hello == 'hello' &&
   #           inputs.world == 'world'
   #         }}" >> $GITHUB_ENV
-  # 
   #     - name: Check greeting
   #       env:
   #         GREETING: ${{ inputs.greeting }}
   #       run: echo "greeting=$(echo "${GREETING}" | sed -e 's/./&-/g')" >> $GITHUB_ENV
-  # 
   #     - name: Check env
   #       run: echo "${MULTILINE}"
-  # 
   #     - name: Multiline input
   #       uses: ./.github/actions/test
   #       with:
@@ -260,7 +243,6 @@ jobs:
 
   # trial-deno:
   #   runs-on: ${{ matrix.os }}
-  # 
   #   strategy:
   #     fail-fast: false
   #     matrix:
@@ -274,37 +256,30 @@ jobs:
   #         # - "1.27.2"
   #         # - "1.27.1"
   #         # - "1.27.0"
-  # 
   #   steps:
   #     - name: Setup Deno
   #       uses: denoland/setup-deno@v1
   #       with:
   #         deno-version: ${{ matrix.deno-version }}
-  # 
   #     - name: Deno.systemMemoryInfo
   #       run: deno eval 'console.log(Deno.systemMemoryInfo());'
-  # 
   #     - name: os.cpus
   #       run: deno eval 'import os from "node:os";console.log(os.cpus());'
 
   # trial-secret:
   #   runs-on: ubuntu-latest
-  # 
   #   steps:
   #     - name: Checkout
   #       uses: actions/checkout@v4
-  # 
   #     - name: Set secret to env
   #       run: echo "MY_SECRET=${{ secrets.SECRET_VALUE }}" >> $GITHUB_ENV
-  # 
   #     - name: Use env
   #       uses: ./.github/actions/test
   #       with:
   #         example: ${{ env.MY_SECRET }}
-  # 
+
   # trial-gh:
   #   runs-on: ubuntu-latest
-  # 
   #   steps:
   #     - name: Show context
   #       run: |
@@ -312,9 +287,7 @@ jobs:
   #         echo "github.event_name=${{ github.event_name }}"
   #         echo "${{ toJSON(github.event) }}"
   #         ) || true
-  # 
   #     - uses: actions/checkout@v4
-  # 
   #     - name: Commit
   #       if: github.ref_name == 'master'
   #       env:
@@ -328,7 +301,6 @@ jobs:
   #         git add dir/sample.txt
   #         git commit -m 'Add message'
   #         git push -u origin trial/gh
-  # 
   #     - name: Create pull request
   #       if: github.ref_name == 'master'
   #       id: pull_request
@@ -337,34 +309,28 @@ jobs:
   #       run: |
   #         cat << EOT > /tmp/message
   #         ### Test
-  # 
   #         * message 1
   #         * message 2
   #         EOT
   #         gh pr create --base master --title 'trial: Add message' --body-file /tmp/message | tee /tmp/pull_request
   #         echo "::set-output name=url::$(cat /tmp/pull_request)"
-  # 
   #     - name: Merge pull request
   #       if: github.ref_name == 'master'
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #       run: |
   #         gh pr merge ${{ steps.pull_request.outputs.url }} --auto --merge --delete-branch
-  # 
+
   # setup:
   #   runs-on: ubuntu-latest
-  # 
   #   outputs:
   #     env: ${{ toJSON(env) }}
   #     matrix: ${{ steps.matrix.outputs.json }}
-  # 
   #   env:
   #     VERSION: v1.0
   #     URL: https://github.com/
-  # 
   #   steps:
   #     - uses: actions/checkout@v4
-  # 
   #     - name: Matrix
   #       id: matrix
   #       uses: ./.github/actions/generate-matrix
@@ -382,59 +348,41 @@ jobs:
   #           exclude:
   #             - compiler: gcc
   #               arch: arm64
-  # 
   # prepare:
   #   needs: setup
-  # 
   #   if: always()
-  # 
   #   runs-on: ubuntu-latest
-  # 
   #   env: ${{ fromJSON(needs.setup.outputs.env) }}
-  # 
   #   strategy:
   #     fail-fast: false
   #     matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
-  # 
   #   steps:
   #     - name: Prepare
   #       run: |
   #         ${{ matrix.arch != 'dummy' }} \
   #           && echo "${{ matrix.compiler }},${{ matrix.arch }}" > artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
-  # 
   #     - uses: actions/upload-artifact@v3
   #       with:
   #         name: artifact-${{ matrix.compiler }}-${{ matrix.arch }}
   #         path: artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
-  # 
   # trial:
   #   needs: [setup, prepare]
-  # 
   #   if: always()
-  # 
   #   runs-on: ubuntu-latest
-  # 
   #   env: ${{ fromJSON(needs.setup.outputs.env) }}
-  # 
   #   strategy:
   #     fail-fast: false
   #     matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
-  # 
   #   steps:
   #     - uses: actions/download-artifact@v3
   #       with:
   #         name: artifact-${{ matrix.compiler }}-${{ matrix.arch }}
-  # 
   #     - name: Trial
   #       run: cat artifact-${{ matrix.compiler }}-${{ matrix.arch }}.txt
-  # 
   # cleanup:
   #   needs: trial
-  # 
   #   if: always()
-  # 
   #   runs-on: ubuntu-latest
-  # 
   #   steps:
   #     - name: Delete artifacts
   #       run: |
@@ -446,17 +394,15 @@ jobs:
   #         curl -s "${headers[@]}" ${api_url}/runs/${{ github.run_id }}/artifacts \
   #             | jq -r '.artifacts[].id' \
   #             | xargs -I{} curl -s -X DELETE "${headers[@]}" ${api_url}/artifacts/{}
-  # 
+
   # trial-stdio:
   #   runs-on: ${{ matrix.os }}
-  # 
   #   strategy:
   #     fail-fast: false
   #     matrix:
   #       os:
   #         - macos-latest
   #         - ubuntu-latest
-  # 
   #   steps:
   #     - name: Show stdio
   #       run: |
