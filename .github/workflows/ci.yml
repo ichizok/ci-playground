@@ -19,23 +19,31 @@ on:
         default: github actions hello
 
 jobs:
-  trial-secrets-ref:
+  trial-json:
     runs-on: ubuntu-latest
     env:
-      ENV_VALUE: test_env
+      VALUE: ${{ toJSON(case(github.event_name=='workflow_dispatch', [inputs.hello, inputs.world, inputs.greeting], ['event_name', github.event_name])) }}
     steps:
-      - name: Set env name
-        run: echo "NAME=ENV_VALUE" >> $GITHUB_ENV
-      - name: Check secrets
-        env:
-          TEST_VALUE: ${{ env[env.NAME] }}
-        run: if [[ ${TEST_VALUE} = ${ENV_VALUE} ]]; then echo OK; else echo FAIL; fi
-      - name: Set secret name
-        run: echo "NAME=SECRET_VALUE" >> $GITHUB_ENV
-      - name: Check secrets
-        env:
-          SECRET_VALUE: ${{ secrets[env.NAME] }}
-        run: if [[ ${SECRET_VALUE} =~ ^test ]]; then echo OK; else echo FAIL; fi
+      - name: Check value
+        run: echo "VALUE=$VALUE"
+
+  # trial-secrets-ref:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     ENV_VALUE: test_env
+  #   steps:
+  #     - name: Set env name
+  #       run: echo "NAME=ENV_VALUE" >> $GITHUB_ENV
+  #     - name: Check secrets
+  #       env:
+  #         TEST_VALUE: ${{ env[env.NAME] }}
+  #       run: if [[ ${TEST_VALUE} = ${ENV_VALUE} ]]; then echo OK; else echo FAIL; fi
+  #     - name: Set secret name
+  #       run: echo "NAME=SECRET_VALUE" >> $GITHUB_ENV
+  #     - name: Check secrets
+  #       env:
+  #         SECRET_VALUE: ${{ secrets[env.NAME] }}
+  #       run: if [[ ${SECRET_VALUE} =~ ^test ]]; then echo OK; else echo FAIL; fi
 
   # trial-action:
   #   runs-on: ubuntu-latest
